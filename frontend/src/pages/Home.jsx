@@ -15,8 +15,7 @@ const Home = () => {
           textAlign: "center",
         }}
       >
-        <h1>Styllo Vidros</h1>
-        <p>Excelência em Vidraçaria e Design</p>
+        <h2>Excelência em Vidraçaria e Design</h2>
       </header>
 
       <main>

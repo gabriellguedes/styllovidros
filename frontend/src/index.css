@@ -341,6 +341,10 @@ body {
   background-color: #fafafa;
 }
 
+.nav_logo {
+  width: 45pt;
+}
+
 @media (max-width: 768px) {
   .contact-card {
     grid-template-columns: 1fr;
