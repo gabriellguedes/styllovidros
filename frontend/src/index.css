@@ -229,6 +229,117 @@ body {
   color: #a855f7;
   border-bottom: 3px solid #a855f7;
 }
+.dash-header {
+  margin-bottom: 40px;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 20px;
+}
+.dash-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.dash-section {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+}
+.dash-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.dash-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+.btn-add {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.btn-del {
+  color: #ff4d4d;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.dash-table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.dash-table th {
+  padding: 12px;
+  border-bottom: 2px solid #eee;
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+
+.dash-table td {
+  padding: 15px 12px;
+  border-bottom: 1px solid #f5f5f5;
+  vertical-align: middle;
+}
+
+.dep-preview {
+  font-size: 0.8rem;
+  color: #777;
+  margin: 4px 0 0 0;
+}
+
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.status-pill.published {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.status-pill.pending {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-icon:hover {
+  transform: scale(1.1);
+}
+.btn-danger {
+  color: #e74c3c;
+}
+
+.row-pending {
+  background-color: #fafafa;
+}
 
 @media (max-width: 768px) {
   .contact-card {
@@ -236,5 +347,8 @@ body {
   }
   .nav-links span {
     display: none; /* Esconde o texto em ecrãs pequenos, deixa só o ícone */
+  }
+  .dash-form {
+    grid-template-columns: 1fr;
   }
 }

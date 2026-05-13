@@ -126,3 +126,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Configuração de arquivos de mídia (Fotos e Vídeos)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Permite que o site use frames do mesmo domínio
+X_FRAME_OPTIONS = 'SAMEORIGIN'
