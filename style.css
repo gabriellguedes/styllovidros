@@ -1,0 +1,65 @@
+:root {
+    --primary-purple: #4B0082;
+    --accent-purple: #8A2BE2;
+    --light-glass: rgba(255, 255, 255, 0.15);
+    --text-white: #ffffff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { font-family: 'Poppins', sans-serif; color: #333; line-height: 1.6; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+/* Hero Section com Background Gradient */
+.hero {
+    background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+    min-height: 80vh;
+    padding: 100px 0;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+/* Glassmorphism Form */
+.hero-form {
+    background: var(--light-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.hero-form input, .hero-form select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: none;
+}
+
+.btn-main {
+    width: 100%;
+    padding: 15px;
+    background: #00d26a; /* Verde WhatsApp para contraste */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}
