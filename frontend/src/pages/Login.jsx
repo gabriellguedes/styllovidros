@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock } from "lucide-react";
+import api from "../api";
 
 const Login = () => {
-  const [password, setPassword] = useState("");
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Defina uma senha simples para o seu amigo (ou integre com o Django depois)
-    if (password === "styllo123") {
+    try {
+      // Chamada para o endpoint do Django
+      const response = await api.post("login/", credentials);
+
+      // Salvamos o token e o status
+      localStorage.setItem("token", response.data.token);
       localStorage.setItem("auth", "true");
+
       navigate("/dashboard");
-    } else {
-      alert("Senha incorreta!");
+    } catch (error) {
+      alert("Usuário ou senha inválidos!");
+      console.error(error);
     }
   };
 
@@ -26,18 +35,26 @@ const Login = () => {
         className="contact-card"
         style={{ display: "block", padding: "40px" }}
       >
-        <h2 style={{ textAlign: "center" }}>
-          <Lock /> Acesso Restrito
-        </h2>
+        <h2 style={{ textAlign: "center" }}>Login Administrativo</h2>
         <form onSubmit={handleLogin} className="contact-form">
           <input
+            type="text"
+            placeholder="Usuário"
+            onChange={(e) =>
+              setCredentials({ ...credentials, username: e.target.value })
+            }
+            required
+          />
+          <input
             type="password"
-            placeholder="Digite a senha mestre"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Senha"
+            onChange={(e) =>
+              setCredentials({ ...credentials, password: e.target.value })
+            }
+            required
           />
           <button type="submit" className="btn-submit">
-            Entrar no Painel
+            Entrar
           </button>
         </form>
       </div>
