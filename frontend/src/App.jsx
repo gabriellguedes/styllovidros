@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Importação dos Componentes/Páginas
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import EnviarDepoimento from "./pages/EnviarDepoimento";
@@ -14,14 +16,19 @@ function App() {
       <div className="App">
         <Navbar />
         <Routes>
-          {/* Rota Principal (Landing Page) */}
           <Route path="/" element={<Home />} />
-
-          {/* Rota para o Cliente avaliar */}
           <Route path="/avaliar" element={<EnviarDepoimento />} />
+          <Route path="/login" element={<Login />} />
 
-          {/* Rota do Administrador (Amigo Vidraceiro) */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                {" "}
+                <Dashboard />{" "}
+              </ProtectedRoute>
+            }
+          />
         </Routes>
 
         <footer style={{ textAlign: "center", padding: "40px", color: "#666" }}>
