@@ -345,6 +345,48 @@ body {
   width: 45pt;
 }
 
+.lead-card {
+  background: #f8f9fa;
+  border-left: 4px solid var(--primary);
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 4px;
+}
+
+.lead-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.lead-date {
+  font-size: 0.8rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lead-msg {
+  font-style: italic;
+  color: #444;
+  margin-bottom: 10px;
+}
+.lead-footer {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  font-size: 0.9rem;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+.contact-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 @media (max-width: 768px) {
   .contact-card {
     grid-template-columns: 1fr;

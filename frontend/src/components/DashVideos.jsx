@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import { Video, Trash2, Link as LinkIcon } from "lucide-react";
+import toast from "react-hot-toast";
 
 const DashVideos = () => {
   const [videos, setVideos] = useState([]);
@@ -17,11 +18,26 @@ const DashVideos = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.post("videos/", novoVideo);
-    setNovoVideo({ titulo: "", url_video: "" });
-    fetchVideos();
+    try {
+      await api.post("videos/", novoVideo);
+      toast.success("Vídeo adicionado à galeria!");
+      setNovoVideo({ titulo: "", url_video: "" });
+      fetchVideos();
+    } catch (err) {
+      toast.error("Erro ao salvar vídeo.");
+    }
   };
-
+  const deleteVideo = async (id) => {
+    if (window.confirm("Excluir este serviço?")) {
+      try {
+        await api.delete(`videos/${id}/`);
+        toast.success("Vídeo removido.");
+        fetchVideos();
+      } catch (err) {
+        toast.error("Erro ao remover vídeo.");
+      }
+    }
+  };
   return (
     <div className="dash-section">
       <h3>
@@ -55,13 +71,7 @@ const DashVideos = () => {
         {videos.map((v) => (
           <div key={v.id} className="dash-item">
             <span>{v.titulo}</span>
-            <button
-              onClick={async () => {
-                await api.delete(`videos/${v.id}/`);
-                fetchVideos();
-              }}
-              className="btn-del"
-            >
+            <button onClick={() => deleteVideo(v.id)} className="btn-del">
               <Trash2 size={16} />
             </button>
           </div>

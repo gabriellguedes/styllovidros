@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -14,15 +15,14 @@ const Login = () => {
     try {
       // Chamada para o endpoint do Django
       const response = await api.post("login/", credentials);
-
+      toast.success("Bem-vindo, Styllo Vidros!");
       // Salvamos o token e o status
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("auth", "true");
 
       navigate("/dashboard");
     } catch (error) {
-      alert("Usuário ou senha inválidos!");
-      console.error(error);
+      toast.error("Usuário ou senha inválidos!");
     }
   };
 

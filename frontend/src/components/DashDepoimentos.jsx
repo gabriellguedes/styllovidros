@@ -7,6 +7,7 @@ import {
   Star,
   MessageSquare,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 const DashDepoimentos = () => {
   const [depoimentos, setDepoimentos] = useState([]);
@@ -32,9 +33,14 @@ const DashDepoimentos = () => {
     try {
       // Usamos PATCH para alterar apenas o campo de exibição
       await api.patch(`depoimentos/${id}/`, { exibir_no_site: !statusAtual });
+      if (!statusAtual) {
+        toast.success("Depoimento publicado no site! 🚀");
+      } else {
+        toast("Depoimento ocultado.", { icon: "🙈" });
+      }
       fetchDepoimentos(); // Recarrega a lista
     } catch (err) {
-      console.error("Erro ao atualizar status:", err);
+      toast.error("Erro ao atualizar status.");
     }
   };
 
@@ -46,9 +52,10 @@ const DashDepoimentos = () => {
     ) {
       try {
         await api.delete(`depoimentos/${id}/`);
+        toast.success("Depoimento excluído.", { icon: "🗑️" });
         fetchDepoimentos();
       } catch (err) {
-        console.error("Erro ao excluir depoimento:", err);
+        toast.error("Erro ao excluir.");
       }
     }
   };
