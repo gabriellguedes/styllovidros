@@ -23,7 +23,12 @@
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: var(--primary-dark);
+  background: linear-gradient(
+    135deg,
+    var(--primary-medium),
+    var(--accent-purple)
+  );
+  /*background-color: var(--primary-dark);*/
   color: var(--text-white);
   line-height: 1.6;
 }
@@ -90,22 +95,121 @@ body {
 }
 
 /* HEADER / HERO SECTION */
+
+/* 1. O Header principal */
 .hero-banner {
-  background: linear-gradient(
-    135deg,
-    var(--primary-medium),
-    var(--accent-purple)
-  );
-  padding: 60px 20px;
+  background: var(--primary-dark); /* Roxo escuro da referência */
+  display: flex;
+  justify-content: center; /* Alinha o grupo todo no centro da página */
+  align-items: center; /* Alinha verticalmente */
+  gap: 50px; /* Espaço entre a logo e o vídeo */
+  padding: 40px 5%;
+  min-height: 300px;
+  width: 100%;
+}
+
+/* 2. Alinhamento da Logo com o Texto */
+.hero-logo-link {
+  display: flex;
+  align-items: center; /* Alinha a imagem com o centro do bloco de texto */
+  text-decoration: none;
+  gap: 20px; /* Espaço entre a imagem e o texto */
+}
+
+.nav_logo {
+  width: 120px; /* Ajuste o tamanho conforme sua logo original */
+  height: auto;
+}
+
+/* 3. Container do H1 e Label (um embaixo do outro) */
+.hero-text-container {
+  display: flex;
+  flex-direction: column;
+  text-align: left; /* Garante que o texto fique alinhado à esquerda (lado direito da imagem) */
+}
+
+.hero-text-container h1 {
+  color: #fff;
+  font-size: 2.5rem;
+  margin: 0;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.hero-text-container h1 span {
+  color: var(--accent-purple);
+}
+
+.hero-text-container label {
+  color: #fff;
+  font-size: 1.1rem;
+  margin-top: 5px;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+/* 4. Seção do Vídeo (Direita) */
+.hero-video-section {
+  flex: 1; /* Faz o vídeo ocupar o espaço restante */
+  max-width: 500px; /* Limita para não ficar gigante */
+}
+/* VideoGallery Carrosel*/
+/* Container do Carrossel */
+.video-carousel-container {
+  padding: 20px 0;
+}
+
+/* Customização das setas do Swiper para Roxo */
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--accent-purple) !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--accent-purple) !important;
+}
+
+/* Card do Vídeo dentro do Slide */
+.video-thumbnail-wrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  background: #000;
+}
+
+.video-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+  transition: transform 0.3s ease;
+}
+
+.video-card:hover .video-thumb {
+  transform: scale(1.05);
+  opacity: 0.6;
+}
+
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.play-overlay:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.video-info h4 {
+  margin-top: 12px;
+  font-size: 1rem;
+  color: var(--text-white);
   text-align: center;
 }
-
-.hero-banner h1 {
-  font-size: 2.2rem;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
 /* LAYOUT PRINCIPAL (GRID ESTILO REFERÊNCIA) */
 .main-layout {
   display: grid;
@@ -228,7 +332,44 @@ body {
   font-style: italic;
   color: var(--text-muted);
 }
+/* Grid de Depoimentos */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
 
+.testimonial-card {
+  background: var(--white);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+  border-left: 5px solid var(--accent);
+}
+
+.testimonial-text {
+  font-style: italic;
+  margin: 15px 0;
+  color: #555;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.testimonial-author img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.stars-row {
+  margin-bottom: 10px;
+}
 /* BOTÃO DE CONTATO FINAL (ESTILO CONSULTOR TÉCNICO) */
 .cta-footer {
   background-color: var(--primary-dark);
@@ -252,7 +393,12 @@ body {
 .btn-consultor:hover {
   transform: scale(1.05);
 }
-
+.footer_wrap {
+  background-color: var(--primary-dark);
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
 /* WHATSAPP FLUTUANTE */
 .whatsapp-float {
   position: fixed;
@@ -277,10 +423,14 @@ body {
 }
 
 /* RESPONSIVIDADE (MOBILE) */
-@media (max-width: 600px) {
-  .hero-banner h1 {
-    font-size: 1.5rem;
+@media (max-width: 768px) {
+  .app-wrapper {
+    max-width: 100%;
   }
+  .hero-banner h1 {
+    font-size: 1.7rem;
+  }
+
   .materials-grid {
     grid-template-columns: 1fr;
   }
@@ -290,5 +440,43 @@ body {
   }
   .section-block {
     padding: 15px;
+  }
+  /* No celular a imagem fica em cima do texto */
+
+  .hero-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 0;
+    gap: 10px;
+  }
+
+  .hero-logo-link {
+    gap: 0;
+  }
+  .hero-text-container label {
+    font-size: 0.7rem;
+  }
+  .hero-text-container {
+    text-align: center;
+  }
+  /*Video Gallery*/
+  .hero-video-section {
+    max-width: 100%;
+  }
+  .swiper-button-next {
+    display: none !important;
+  }
+  .swiper-button-prev {
+    display: none !important;
+  }
+  .video-carousel-container {
+    padding: 0;
+  }
+
+  .main-layout > div {
+    max-width: 100%;
+  }
+  .testimonials-sidebar {
+    max-width: 100%;
   }
 }

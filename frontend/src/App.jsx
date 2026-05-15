@@ -47,7 +47,7 @@ function App() {
           />
         </Routes>
 
-        <footer style={{ textAlign: "center", padding: "40px", color: "#666" }}>
+        <footer className="footer_wrap">
           © 2026 Styllo Vidros - Todos os direitos reservados.
         </footer>
       </div>

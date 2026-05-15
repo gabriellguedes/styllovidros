@@ -1,52 +1,76 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { PlayCircle } from "lucide-react";
+import toast from "react-hot-toast";
+
+// Estilos do Swiper
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const VideoGallery = () => {
   const [videos, setVideos] = useState([]);
 
   useEffect(() => {
-    api
-      .get("videos/")
-      .then((res) => setVideos(res.data))
-      .catch((err) => console.error(err));
+    const fetchVideos = async () => {
+      try {
+        const res = await api.get("videos/");
+        setVideos(res.data);
+      } catch (err) {
+        console.error("Erro ao carregar vídeos", err);
+      }
+    };
+    fetchVideos();
   }, []);
 
-  // Função para transformar link normal do YouTube em link de incorporação (embed)
-  const getEmbedUrl = (url) => {
-    if (url.includes("youtube.com/watch?v=")) {
-      return url.replace("watch?v=", "embed/");
-    }
-    if (url.includes("youtu.be/")) {
-      return url.replace("youtu.be/", "youtube.com/embed/");
-    }
-    return url;
+  // Função para extrair ID do vídeo do YouTube para a capa (Thumbnail)
+  const getYouTubeId = (url) => {
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
   };
 
-  if (videos.length === 0) return null;
-
   return (
-    <section className="section-container">
-      <h2 className="section-title">
-        <PlayCircle /> Nossas Instalações em Vídeo
-      </h2>
-      <div className="video-grid">
+    <div className="video-carousel-container">
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        spaceBetween={0}
+        slidesPerView={1}
+        navigation={true}
+        pagination={{ clickable: true }}
+        autoplay={{ delay: 5000 }}
+        className="mySwiper"
+      >
         {videos.map((video) => (
-          <div key={video.id} className="video-card">
-            <iframe
-              width="100%"
-              height="215"
-              src={getEmbedUrl(video.url_video)}
-              title={video.titulo}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-            <h3 className="video-label">{video.titulo}</h3>
-          </div>
+          <SwiperSlide key={video.id}>
+            <div className="video-card">
+              <div className="video-thumbnail-wrapper">
+                <img
+                  src={`https://img.youtube.com/vi/${getYouTubeId(video.url_video)}/maxresdefault.jpg`}
+                  alt={video.titulo}
+                  className="video-thumb"
+                />
+                <a
+                  href={video.url_video}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="play-overlay"
+                >
+                  <PlayCircle size={50} color="white" />
+                </a>
+              </div>
+              {/*
+              <div className="video-info">
+                <h4>{video.titulo}</h4>
+              </div> */}
+            </div>
+          </SwiperSlide>
         ))}
-      </div>
-    </section>
+      </Swiper>
+    </div>
   );
 };
 

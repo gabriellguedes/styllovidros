@@ -13,22 +13,27 @@ const Home = () => {
     <div className="app-wrapper">
       {/* 1. Hero Section com Gradiente */}
       <header className="hero-banner">
-        {/* Logo / Nome da Marca */}
-        <div>
-          <section className="">
-            <Link to="/" className="navbar-logo">
-              <img class="nav_logo" src="/logo.png" />
+        {/* Seção da Logo e Títulos */}
+        <section className="hero-brand-section">
+          <Link to="/" className="hero-logo-link">
+            <img
+              className="nav_logo"
+              src="/logo.png"
+              alt="Logo Styllo Vidros"
+            />
+            <div className="hero-text-container">
               <h1>
                 STYLLO <span>VIDROS</span>
               </h1>
-              <p>Excelência em Vidraçaria e Design</p>
-            </Link>
-          </section>
-          <section className="">
-            {/* Aqui você pode incluir o componente de Vídeos do YouTube se desejar */}
-            <VideosHome />
-          </section>
-        </div>
+              <label>Excelência em Vidraçaria e Design</label>
+            </div>
+          </Link>
+        </section>
+
+        {/* Seção do Carrossel de Vídeos */}
+        <section className="hero-video-section">
+          <VideosHome />
+        </section>
       </header>
 
       {/* 2. Grid Principal (2 colunas no Desktop) */}
