@@ -4,11 +4,11 @@ import { Toaster } from "react-hot-toast";
 // Importação dos Componentes/Páginas
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import EnviarDepoimento from "./pages/EnviarDepoimento";
 import Dashboard from "./pages/Dashboard";
 import ContatoForm from "./components/ContatoForm";
+import FooterHome from "./components/FooterHome";
 import "./index.css";
 
 function App() {
@@ -29,7 +29,6 @@ function App() {
         }}
       />
       <div className="App">
-        {/*<Navbar />*/}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/avaliar" element={<EnviarDepoimento />} />
@@ -46,21 +45,7 @@ function App() {
             }
           />
         </Routes>
-
-        {/* 3. Rodapé com Botão de Consultor */}
-        <footer className="cta-footer">
-          <p className="footer-brand">
-            STYLLO VIDROS: Referência em vidraçaria em geral.
-          </p>
-          <p className="footer-contact">
-            Atendimento: (61) 99298-7278 / (61) 99394-2936
-          </p>
-          <a href="https://wa.me/seunumeroaqui" className="btn-consultor">
-            Falar com um consultor técnico
-          </a>
-          <Navbar />
-          <footer className="footer_wrap">© 2026 Styllo Vidros</footer>
-        </footer>
+        <FooterHome />
       </div>
     </Router>
   );

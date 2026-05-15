@@ -33,7 +33,7 @@ const Home = () => {
         </section>
 
         {/* Seção do Carrossel de Vídeos */}
-        <section className="hero-video-section">
+        <section className="hero-video-section responsive_view">
           <VideosHome />
         </section>
       </header>
@@ -64,11 +64,6 @@ const Home = () => {
           </section>
         </aside>
       </main>
-
-      {/* WhatsApp Flutuante */}
-      <a href="https://wa.me/seunumeroaqui" className="whatsapp-float">
-        <MessageCircle size={30} color="white" />
-      </a>
     </div>
   );
 };
