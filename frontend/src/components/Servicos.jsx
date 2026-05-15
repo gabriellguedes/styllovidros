@@ -25,9 +25,6 @@ const Servicos = () => {
     <section
       style={{ padding: "40px 20px", maxWidth: "1200px", margin: "0 auto" }}
     >
-      <h2 style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <Camera color="#8A2BE2" /> Nossos Trabalhos
-      </h2>
       <div
         style={{
           display: "grid",

@@ -21,6 +21,7 @@
   padding: 0;
 }
 
+html,
 body {
   font-family: "Poppins", sans-serif;
   background: linear-gradient(
@@ -31,6 +32,8 @@ body {
   /*background-color: var(--primary-dark);*/
   color: var(--text-white);
   line-height: 1.6;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* NAVBAR CUSTOMIZADA */
@@ -41,7 +44,6 @@ body {
   align-items: center;
   justify-content: center;
   padding: 0 5%;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 .navbar-container {
   display: flex;
@@ -106,6 +108,7 @@ body {
   padding: 40px 5%;
   min-height: 300px;
   width: 100%;
+  margin-bottom: 15px;
 }
 
 /* 2. Alinhamento da Logo com o Texto */
@@ -150,6 +153,7 @@ body {
 
 /* 4. Seção do Vídeo (Direita) */
 .hero-video-section {
+  min-width: 0;
   flex: 1; /* Faz o vídeo ocupar o espaço restante */
   max-width: 500px; /* Limita para não ficar gigante */
 }
@@ -215,9 +219,23 @@ body {
   display: grid;
   grid-template-columns: 2fr 1fr; /* Coluna da esquerda maior, depoimentos na direita */
   gap: 20px;
+  width: 100%;
   max-width: 1300px;
-  margin: 20px auto;
-  padding: 0 20px;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+.content-column,
+.testimonials-sidebar {
+  min-width: 0;
+  overflow: hidden; /* Garante que nada saia do limite do bloco */
+}
+
+/* 4. Garante que o Swiper não force largura */
+.swiper-container,
+.swiper {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 /* SEÇÃO DE MATERIAIS */
@@ -263,112 +281,149 @@ body {
   margin: 0;
 }
 
-/* SEÇÃO ESPECIALISTAS / VÍDEO */
-.video-feature {
-  position: relative;
-  border-radius: var(--radius);
-  overflow: hidden;
-  height: 250px;
-  background: url("https://images.unsplash.com/photo-1503708928676-1cb796a0891e?auto=format&fit=crop&q=80&w=1000")
-    center/cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.video-overlay {
-  background: rgba(0, 0, 0, 0.4);
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 20px;
-}
-
-.play-button {
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 15px;
-  cursor: pointer;
-  border: 2px solid white;
-}
-
-/* COLUNA LATERAL DE DEPOIMENTOS */
-.testimonials-sidebar {
-  background-color: var(--primary-medium);
-  border-radius: var(--radius);
-  padding: 25px;
-}
-
-.testimonial-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.testimonial-avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 3px solid var(--accent-purple);
-  margin-bottom: 10px;
-  object-fit: cover;
-}
-
-.testimonial-text {
-  font-size: 0.9rem;
-  font-style: italic;
-  color: var(--text-muted);
-}
-/* Grid de Depoimentos */
-.testimonials-grid {
+/* SEÇÃO FALE COM UM ESPECIALISTAS */
+.contact-card {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1fr 1.5fr;
+  background: var(--white);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
-.testimonial-card {
-  background: var(--white);
-  padding: 25px;
-  border-radius: 15px;
-  box-shadow: var(--shadow);
-  border-left: 5px solid var(--accent);
+.contact-info {
+  background: var(--primary);
+  color: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-form {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.btn-submit {
+  background: #25d366; /* Verde WhatsApp */
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+
+.btn-submit:hover {
+  background: #1eb954;
+  transform: scale(1.02);
+}
+
+.msg-success {
+  color: #28a745;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+.msg-error {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+/* Container da Barra Lateral (Aside) */
+.testimonials-sidebar {
+}
+.testimonials-sidebar section {
+  background-color: var(
+    --primary-medium
+  ); /* Roxo um pouco mais claro que o fundo */
+  padding: 20px;
+  border-radius: var(--radius);
+}
+/* Card Interno do Depoimento */
+.testimonial-item-card {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+  min-height: 300px;
+  justify-content: center;
+}
+
+.testimonial-avatar-wrapper {
+  margin-bottom: 15px;
+}
+
+.testimonial-img {
+  width: 150px;
+  height: 190px;
+  object-fit: cover;
+
+  /* Coordenadas para pontas em cima e embaixo */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+
+  border-radius: 0;
+  display: block;
+  margin: 0 auto;
+  background-color: var(--accent-purple);
+}
+
+/* Ajuste a borda (wrapper) para seguir o mesmo corte */
+.testimonial-avatar-wrapper {
+  position: relative;
+  display: inline-block;
+  padding: 4px;
+  background: var(--accent-purple);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  margin-bottom: 15px;
 }
 
 .testimonial-text {
+  font-size: 1.1rem;
+  color: var(--white);
   font-style: italic;
-  margin: 15px 0;
-  color: #555;
+  line-height: 1.4;
+  margin-bottom: 15px;
+  position: relative;
 }
 
 .testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: bold;
+  color: var(--white);
+  font-weight: 600;
+  margin: 0;
+  font-size: 1.1rem;
 }
 
-.testimonial-author img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
+.testimonial-city {
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 
-.stars-row {
-  margin-bottom: 10px;
+/* Customização dos pontos do carrossel */
+.testimonial-swiper .swiper-pagination-bullet {
+  background: #fff !important;
+  opacity: 0.5;
+}
+
+.testimonial-swiper .swiper-pagination-bullet-active {
+  background: var(--accent-purple) !important;
+  opacity: 1;
 }
 /* BOTÃO DE CONTATO FINAL (ESTILO CONSULTOR TÉCNICO) */
 .cta-footer {
@@ -463,6 +518,9 @@ body {
   .hero-video-section {
     max-width: 100%;
   }
+  .video-thumbnail-wrapper {
+    border-radius: 0;
+  }
   .swiper-button-next {
     display: none !important;
   }
@@ -472,11 +530,27 @@ body {
   .video-carousel-container {
     padding: 0;
   }
+  /********************************
+    MAIN - 
+  *********************************/
+  .main-layout {
+    padding: 0;
+  }
 
   .main-layout > div {
     max-width: 100%;
   }
   .testimonials-sidebar {
     max-width: 100%;
+  }
+  .testimonials-sidebar section {
+  }
+  .testimonial-item-card {
+    flex-direction: initial;
+    padding: 0;
+  }
+  .testimonial-img {
+    width: 90px;
+    height: 120px;
   }
 }

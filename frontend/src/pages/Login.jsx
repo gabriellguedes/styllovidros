@@ -35,7 +35,7 @@ const Login = () => {
         className="contact-card"
         style={{ display: "block", padding: "40px" }}
       >
-        <h2 style={{ textAlign: "center" }}>Login Administrativo</h2>
+        <h2 style={{ textAlign: "center" }}>Painel Administrativo</h2>
         <form onSubmit={handleLogin} className="contact-form">
           <input
             type="text"

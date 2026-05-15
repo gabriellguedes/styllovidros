@@ -2,11 +2,13 @@
 import React from "react";
 import { Play, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Camera } from "lucide-react";
 import Navbar from "../components/Navbar";
 import ServicosHome from "../components/Servicos";
 import DepoimentosHome from "../components/Depoimentos";
 import VideosHome from "../components/VideoGallery";
 import ContatoHome from "../components/ContatoForm";
+import ContatoForm from "../components/ContatoForm";
 
 const Home = () => {
   return (
@@ -42,44 +44,26 @@ const Home = () => {
         <div className="content-column">
           {/* Bloco de Materiais/Serviços */}
           <section className="section-block">
-            <h2 className="section-header">Nossos Materiais</h2>
+            <h2 className="section-header">Nossos Trabalhos</h2>
             <ServicosHome />
           </section>
 
           {/* Bloco de Especialistas/Vídeo */}
           <section className="section-block">
-            <h2 className="section-header">Nossos Especialistas</h2>
-            <div className="video-feature">
-              <div className="video-overlay">
-                <div className="play-button">
-                  <Play size={32} fill="white" />
-                </div>
-                <h3>Soluções Especiais para Arquitetos</h3>
-                <p>Projetos sob medida / Suporte técnico</p>
-              </div>
-            </div>
+            <h2 className="section-header">Solicite um Orçamento</h2>
+
+            <ContatoForm />
           </section>
         </div>
 
         {/* Coluna da Direita (Depoimentos - Sidebar) */}
         <aside className="testimonials-sidebar">
-          <h2 className="section-header">Depoimentos</h2>
-          <DepoimentosHome />
+          <section className="section-block">
+            <h2 className="section-header">Depoimentos</h2>
+            <DepoimentosHome />
+          </section>
         </aside>
       </main>
-
-      {/* 3. Rodapé com Botão de Consultor */}
-      <footer className="cta-footer">
-        <p className="footer-brand">
-          STYLLO VIDROS: Referência em vidraçaria em geral.
-        </p>
-        <p className="footer-contact">
-          Atendimento: (61) 99298-7278 / (61) 99394-2936
-        </p>
-        <a href="https://wa.me/seunumeroaqui" className="btn-consultor">
-          Falar com um consultor técnico
-        </a>
-      </footer>
 
       {/* WhatsApp Flutuante */}
       <a href="https://wa.me/seunumeroaqui" className="whatsapp-float">

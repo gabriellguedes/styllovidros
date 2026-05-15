@@ -30,17 +30,6 @@ const ContatoForm = () => {
   return (
     <section className="section-container">
       <div className="contact-card">
-        <div className="contact-info">
-          <h2>Solicite um Orçamento</h2>
-          <p>
-            Transforme seu ambiente com a Styllo Vidros. Nossa equipe entrará em
-            contato em breve.
-          </p>
-          <div className="info-item">
-            <Phone size={20} /> (61) 99298-7278
-          </div>
-        </div>
-
         <form onSubmit={handleSubmit} className="contact-form">
           <input
             type="text"

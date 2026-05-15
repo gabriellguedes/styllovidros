@@ -1,54 +1,69 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import { Star, MessageSquare } from "lucide-react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, EffectFade, Pagination } from "swiper/modules";
+import { UserCircle } from "lucide-react";
 
-// Adicione 'props' aqui como parâmetro da função
-const Depoimentos = (props) => {
+// Importar estilos necessários do Swiper
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/pagination";
+
+const DepoimentosHome = () => {
   const [depoimentos, setDepoimentos] = useState([]);
 
   useEffect(() => {
-    // Agora 'props.type' funcionará corretamente
-    const url =
-      props.type === "approved" ? "depoimentos/?approved=true" : "depoimentos/";
-
-    api
-      .get(url)
-      .then((response) => setDepoimentos(response.data))
-      .catch((error) => console.error(error));
-  }, [props.type]);
-
-  const renderEstrelas = (quantidade) => {
-    return [...Array(5)].map((_, i) => (
-      <Star
-        key={i}
-        size={16}
-        fill={i < quantidade ? "#FFD700" : "none"}
-        color="#FFD700"
-      />
-    ));
-  };
+    const fetchDepoimentos = async () => {
+      const res = await api.get("depoimentos/");
+      // Filtra apenas os que o seu amigo aprovou no dashboard
+      setDepoimentos(res.data.filter((d) => d.exibir_no_site === true));
+    };
+    fetchDepoimentos();
+  }, []);
 
   return (
-    <section className="section-container">
-      <h2 className="section-title">
-        <MessageSquare /> O que dizem nossos clientes
-      </h2>
-      <div className="testimonial-item">
-        {depoimentos.map((dep) => (
-          <div key={dep.id} className="testimonial-card">
-            <div className="stars-row">{renderEstrelas(dep.estrelas)}</div>
-            <p className="testimonial-text">"{dep.texto}"</p>
-            <div className="testimonial-author">
-              {dep.foto_cliente && (
-                <img src={dep.foto_cliente} alt={dep.nome_cliente} />
-              )}
-              <span>{dep.nome_cliente}</span>
+    <div className="testimonials-carousel">
+      <Swiper
+        modules={[Autoplay, EffectFade, Pagination]}
+        effect={"fade"} // Ativa o efeito de esmaecimento
+        fadeEffect={{ crossFade: true }}
+        slidesPerView={1} // No efeito Fade, o padrão ideal é 1 para suavidade
+        loop={true}
+        autoplay={{ delay: 4000, disableOnInteraction: false }}
+        pagination={{ clickable: true }}
+        className="testimonial-swiper"
+      >
+        {depoimentos.map((d) => (
+          <SwiperSlide key={d.id}>
+            <div className="testimonial-item-card">
+              <div className="testimonial-avatar-wrapper">
+                {d.foto_cliente ? (
+                  <img
+                    src={d.foto_cliente}
+                    alt={d.nome_cliente}
+                    className="testimonial-img"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "#333",
+                    }}
+                  />
+                ) : (
+                  <UserCircle size={50} color="#8a2be2" />
+                )}
+              </div>
+              <div className="testimonial-content">
+                <h4 className="testimonial-author">{d.nome_cliente}</h4>
+                <p className="testimonial-text">"{d.texto}"</p>
+                {/*<span className="testimonial-city">{d.cidade}</span>*/}
+              </div>
             </div>
-          </div>
+          </SwiperSlide>
         ))}
-      </div>
-    </section>
+      </Swiper>
+    </div>
   );
 };
 
-export default Depoimentos;
+export default DepoimentosHome;

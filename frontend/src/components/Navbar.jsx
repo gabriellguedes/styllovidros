@@ -25,6 +25,11 @@ const Navbar = () => {
       <div className="navbar-container">
         {/* Links de Navegação */}
         <ul className="nav-menu">
+          <li>
+            <Link to="/" className="nav-links">
+              Home
+            </Link>
+          </li>
           {isAuth ? (
             <>
               <li>

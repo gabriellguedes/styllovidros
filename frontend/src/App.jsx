@@ -47,8 +47,19 @@ function App() {
           />
         </Routes>
 
-        <footer className="footer_wrap">
-          © 2026 Styllo Vidros - Todos os direitos reservados.
+        {/* 3. Rodapé com Botão de Consultor */}
+        <footer className="cta-footer">
+          <p className="footer-brand">
+            STYLLO VIDROS: Referência em vidraçaria em geral.
+          </p>
+          <p className="footer-contact">
+            Atendimento: (61) 99298-7278 / (61) 99394-2936
+          </p>
+          <a href="https://wa.me/seunumeroaqui" className="btn-consultor">
+            Falar com um consultor técnico
+          </a>
+          <Navbar />
+          <footer className="footer_wrap">© 2026 Styllo Vidros</footer>
         </footer>
       </div>
     </Router>
