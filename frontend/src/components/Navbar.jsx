@@ -23,12 +23,6 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Logo / Nome da Marca */}
-        <Link to="/" className="navbar-logo">
-          <img class="nav_logo" src="/logo.png" />
-          STYLLO <span>VIDROS</span>
-        </Link>
-
         {/* Links de Navegação */}
         <ul className="nav-menu">
           {isAuth ? (

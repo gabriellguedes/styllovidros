@@ -1,31 +1,86 @@
+// src/pages/Home.jsx
 import React from "react";
-import Servicos from "../components/Servicos";
-import VideoGallery from "../components/VideoGallery";
-import ContatoForm from "../components/ContatoForm";
-import Depoimentos from "../components/Depoimentos";
+import { Play, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import ServicosHome from "../components/Servicos";
+import DepoimentosHome from "../components/Depoimentos";
+import VideosHome from "../components/VideoGallery";
+import ContatoHome from "../components/ContatoForm";
 
 const Home = () => {
   return (
-    <>
-      <header
-        style={{
-          background: "linear-gradient(135deg, #4B0082, #8A2BE2)",
-          color: "white",
-          padding: "80px 20px",
-          textAlign: "center",
-        }}
-      >
-        <h2>Excelência em Vidraçaria e Design</h2>
+    <div className="app-wrapper">
+      {/* 1. Hero Section com Gradiente */}
+      <header className="hero-banner">
+        {/* Logo / Nome da Marca */}
+        <div>
+          <section className="">
+            <Link to="/" className="navbar-logo">
+              <img class="nav_logo" src="/logo.png" />
+              <h1>
+                STYLLO <span>VIDROS</span>
+              </h1>
+              <p>Excelência em Vidraçaria e Design</p>
+            </Link>
+          </section>
+          <section className="">
+            {/* Aqui você pode incluir o componente de Vídeos do YouTube se desejar */}
+            <VideosHome />
+          </section>
+        </div>
       </header>
 
-      <main>
-        <Servicos />
-        <VideoGallery />
-        <ContatoForm />
-        {/* Aqui passamos o parâmetro 'approved' para mostrar só os aceitos */}
-        <Depoimentos type="approved" />
+      {/* 2. Grid Principal (2 colunas no Desktop) */}
+      <main className="main-layout">
+        {/* Coluna da Esquerda (Conteúdo Principal) */}
+        <div className="content-column">
+          {/* Bloco de Materiais/Serviços */}
+          <section className="section-block">
+            <h2 className="section-header">Nossos Materiais</h2>
+            <ServicosHome />
+          </section>
+
+          {/* Bloco de Especialistas/Vídeo */}
+          <section className="section-block">
+            <h2 className="section-header">Nossos Especialistas</h2>
+            <div className="video-feature">
+              <div className="video-overlay">
+                <div className="play-button">
+                  <Play size={32} fill="white" />
+                </div>
+                <h3>Soluções Especiais para Arquitetos</h3>
+                <p>Projetos sob medida / Suporte técnico</p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* Coluna da Direita (Depoimentos - Sidebar) */}
+        <aside className="testimonials-sidebar">
+          <h2 className="section-header">Depoimentos</h2>
+          <DepoimentosHome />
+        </aside>
       </main>
-    </>
+
+      {/* 3. Rodapé com Botão de Consultor */}
+      <footer className="cta-footer">
+        <p className="footer-brand">
+          STYLLO VIDROS: Referência em vidraçaria em geral.
+        </p>
+        <p className="footer-contact">
+          Atendimento: (61) 99298-7278 / (61) 99394-2936
+        </p>
+        <a href="https://wa.me/seunumeroaqui" className="btn-consultor">
+          Falar com um consultor técnico
+        </a>
+      </footer>
+
+      {/* WhatsApp Flutuante */}
+      <a href="https://wa.me/seunumeroaqui" className="whatsapp-float">
+        <MessageCircle size={30} color="white" />
+      </a>
+    </div>
   );
 };
 

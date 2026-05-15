@@ -38,6 +38,7 @@ const Servicos = () => {
       >
         {servicos.map((item) => (
           <div
+            className="material-card"
             key={item.id}
             style={{
               borderRadius: "12px",

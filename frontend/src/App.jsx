@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import EnviarDepoimento from "./pages/EnviarDepoimento";
 import Dashboard from "./pages/Dashboard";
+import ContatoForm from "./components/ContatoForm";
 import "./index.css";
 
 function App() {
@@ -28,11 +29,12 @@ function App() {
         }}
       />
       <div className="App">
-        <Navbar />
+        {/*<Navbar />*/}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/avaliar" element={<EnviarDepoimento />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/Contato" element={<ContatoForm />} />
 
           <Route
             path="/dashboard"

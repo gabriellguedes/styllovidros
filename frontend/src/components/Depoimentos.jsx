@@ -33,7 +33,7 @@ const Depoimentos = (props) => {
       <h2 className="section-title">
         <MessageSquare /> O que dizem nossos clientes
       </h2>
-      <div className="testimonials-grid">
+      <div className="testimonial-item">
         {depoimentos.map((dep) => (
           <div key={dep.id} className="testimonial-card">
             <div className="stars-row">{renderEstrelas(dep.estrelas)}</div>
