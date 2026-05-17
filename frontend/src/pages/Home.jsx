@@ -6,6 +6,8 @@ import ServicosHome from "../components/Servicos";
 import DepoimentosHome from "../components/Depoimentos";
 import VideosHome from "../components/VideoGallery";
 import ContatoForm from "../components/ContatoForm";
+import HeaderHome from "../components/HeaderHome";
+import FooterHome from "../components/FooterHome";
 
 const Home = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,11 +28,16 @@ const Home = () => {
 
   return (
     <div className="app-wrapper">
+      <HeaderHome />
       {/* 2. Container Principal com efeito Parallax */}
       <main className="main-parallax-container">
         {/* Div que carrega a imagem de fundo fixa */}
         <div className="parallax-background"></div>
 
+        {/* Seção do Carrossel de Vídeos (some ao scroll) */}
+        <section className="hero-video-section responsive_view">
+          <VideosHome />
+        </section>
         <div className="main-layout content-over-parallax">
           {/* Coluna da Esquerda (Conteúdo Principal) */}
           <div className="content-column">
@@ -44,7 +51,7 @@ const Home = () => {
           {/* Coluna da Direita (Depoimentos - Sidebar) */}
           <aside className="testimonials-sidebar">
             <section className="section-block">
-              <h2 className="section-header">Depoimentos</h2>
+              <h2 className="section-header">Opiniões dos Clientes</h2>
               <DepoimentosHome />
             </section>
           </aside>
@@ -57,6 +64,7 @@ const Home = () => {
           </div>
         </div>
       </main>
+      <FooterHome />
     </div>
   );
 };

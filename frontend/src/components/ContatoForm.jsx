@@ -63,7 +63,7 @@ const ContatoForm = () => {
             required
           ></textarea>
 
-          <button type="submit" className="btn-submit">
+          <button type="submit" className="btn-submit-form">
             <Send size={18} /> Enviar Mensagem
           </button>
 

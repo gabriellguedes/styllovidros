@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Menu,
   LogOut,
+  TextAlignCenter,
 } from "lucide-react";
 
 const FooterHome = () => {
@@ -24,7 +25,7 @@ const FooterHome = () => {
       <div className="footer-container">
         {/* Coluna 1: Navegação */}
         <div className="footer-column">
-          <h3>Painel</h3>
+          <h3 className="footer-column-h3-01">Painel</h3>
           <ul>
             {isAuth ? (
               <>
@@ -47,6 +48,7 @@ const FooterHome = () => {
                       background: "none",
                       border: "none",
                       cursor: "pointer",
+                      color: "yellow",
                     }}
                   >
                     <LogOut size={18} /> Sair

@@ -8,8 +8,6 @@ import Home from "./pages/Home";
 import EnviarDepoimento from "./pages/EnviarDepoimento";
 import Dashboard from "./pages/Dashboard";
 import ContatoForm from "./components/ContatoForm";
-import HeaderHome from "./components/HeaderHome";
-import FooterHome from "./components/FooterHome";
 import "./style.css";
 
 function App() {
@@ -30,7 +28,6 @@ function App() {
         }}
       />
       <div className="App">
-        <HeaderHome />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/avaliar" element={<EnviarDepoimento />} />
@@ -47,7 +44,6 @@ function App() {
             }
           />
         </Routes>
-        <FooterHome />
       </div>
     </Router>
   );

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import VideosHome from "./VideoGallery";
 
 const HeaderHome = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -32,11 +31,6 @@ const HeaderHome = () => {
             <label>Excelência em Vidraçaria e Design</label>
           </div>
         </Link>
-      </section>
-
-      {/* Seção do Carrossel de Vídeos (some ao scroll) */}
-      <section className="hero-video-section responsive_view">
-        <VideosHome />
       </section>
     </header>
   );

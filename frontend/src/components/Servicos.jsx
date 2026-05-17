@@ -22,9 +22,7 @@ const Servicos = () => {
   if (loading) return <p className="text-center">Carregando portfólio...</p>;
 
   return (
-    <section
-      style={{ padding: "40px 20px", maxWidth: "1200px", margin: "0 auto" }}
-    >
+    <section className="section-services">
       <div
         style={{
           display: "grid",
