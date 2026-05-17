@@ -9,7 +9,7 @@ import EnviarDepoimento from "./pages/EnviarDepoimento";
 import Dashboard from "./pages/Dashboard";
 import ContatoForm from "./components/ContatoForm";
 import FooterHome from "./components/FooterHome";
-import "./index.css";
+import "./style.css";
 
 function App() {
   return (

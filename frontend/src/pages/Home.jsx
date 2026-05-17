@@ -1,22 +1,37 @@
 // src/pages/Home.jsx
-import React from "react";
-import { Play, MessageCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Camera } from "lucide-react";
-import Navbar from "../components/Navbar";
 import ServicosHome from "../components/Servicos";
 import DepoimentosHome from "../components/Depoimentos";
 import VideosHome from "../components/VideoGallery";
-import ContatoHome from "../components/ContatoForm";
 import ContatoForm from "../components/ContatoForm";
 
 const Home = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Monitora o scroll para alterar o Header
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="app-wrapper">
-      {/* 1. Hero Section com Gradiente */}
-      <header className="hero-banner">
+      {/* 1. Hero Section com classe dinâmica para scroll */}
+      <header className={`hero-banner ${isScrolled ? "scrolled" : ""}`}>
         {/* Seção da Logo e Títulos */}
-        <section className="hero-brand-section">
+        <section
+          className={`hero-brand-section ${isScrolled ? "scrolled" : ""}`}
+        >
           <Link to="/" className="hero-logo-link">
             <img
               className="nav_logo"
@@ -32,37 +47,42 @@ const Home = () => {
           </Link>
         </section>
 
-        {/* Seção do Carrossel de Vídeos */}
+        {/* Seção do Carrossel de Vídeos (some ao scroll) */}
         <section className="hero-video-section responsive_view">
           <VideosHome />
         </section>
       </header>
 
-      {/* 2. Grid Principal (2 colunas no Desktop) */}
-      <main className="main-layout">
-        {/* Coluna da Esquerda (Conteúdo Principal) */}
-        <div className="content-column">
-          {/* Bloco de Materiais/Serviços */}
-          <section className="section-block">
-            <h2 className="section-header">Nossos Trabalhos</h2>
-            <ServicosHome />
-          </section>
+      {/* 2. Container Principal com efeito Parallax */}
+      <main className="main-parallax-container">
+        {/* Div que carrega a imagem de fundo fixa */}
+        <div className="parallax-background"></div>
 
-          {/* Bloco de Especialistas/Vídeo */}
-          <section className="section-block">
-            <h2 className="section-header">Solicite um Orçamento</h2>
+        <div className="main-layout content-over-parallax">
+          {/* Coluna da Esquerda (Conteúdo Principal) */}
+          <div className="content-column">
+            {/* Bloco de Materiais/Serviços */}
+            <section className="section-block">
+              <h2 className="section-header">Nossos Trabalhos</h2>
+              <ServicosHome />
+            </section>
+          </div>
 
-            <ContatoForm />
-          </section>
+          {/* Coluna da Direita (Depoimentos - Sidebar) */}
+          <aside className="testimonials-sidebar">
+            <section className="section-block">
+              <h2 className="section-header">Depoimentos</h2>
+              <DepoimentosHome />
+            </section>
+          </aside>
+          {/* Bloco de Orçamento */}
+          <div>
+            <section className="section-block">
+              <h2 className="section-header">Solicite um Orçamento</h2>
+              <ContatoForm />
+            </section>
+          </div>
         </div>
-
-        {/* Coluna da Direita (Depoimentos - Sidebar) */}
-        <aside className="testimonials-sidebar">
-          <section className="section-block">
-            <h2 className="section-header">Depoimentos</h2>
-            <DepoimentosHome />
-          </section>
-        </aside>
       </main>
     </div>
   );

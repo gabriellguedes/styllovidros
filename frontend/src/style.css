@@ -1,0 +1,423 @@
+/* STYLLO VIDROS - DESIGN PREMIUM
+   Efeitos: Parallax, Header Dinâmico e Glassmorphism
+*/
+
+:root {
+  --primary-dark: #2d004d; /* Roxo muito escuro (Header/Footer) */
+  --primary-medium: #4b0082; /* Roxo principal */
+  --accent-purple: #8a2be2; /* Roxo vibrante (Destaques) */
+  --text-white: #ffffff;
+  --text-muted: #d1d1d1;
+  --white: #ffffff;
+  --shadow-dark: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --radius: 15px;
+}
+
+/* --- RESET E BASE --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--primary-dark);
+  color: var(--text-white);
+  line-height: 1.6;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.responsive_view {
+  display: none;
+}
+.desktop_view {
+  display: block;
+}
+/* --- HEADER FIXO E DINÂMICO --- */
+.hero-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 300px; /* Altura inicial */
+  background: var(--primary-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0 5%;
+}
+
+/* Estado reduzido quando o utilizador faz scroll */
+.hero-banner.scrolled {
+  min-height: 85px;
+  justify-content: flex-start;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.hero-logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 20px;
+  transition: all 0.5s ease;
+}
+
+.nav_logo {
+  width: 120px;
+  height: auto;
+  transition: width 0.5s ease;
+}
+
+.hero-banner.scrolled .nav_logo {
+  width: 55px;
+}
+
+.hero-text-container h1 {
+  color: var(--white);
+  font-size: 2.5rem;
+  margin: 0;
+  transition: font-size 0.5s ease;
+}
+.hero-banner.scrolled .hero-text-container {
+  display: flex;
+}
+.hero-banner.scrolled .hero-text-container h1 {
+  font-size: 1.6rem;
+}
+
+.hero-text-container h1 span {
+  color: var(--accent-purple);
+}
+
+.hero-text-container label {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  display: block;
+  transition: opacity 0.3s;
+}
+
+.hero-banner.scrolled .hero-text-container label,
+.hero-banner.scrolled .hero-video-section {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Card do Vídeo dentro do Slide */
+.video-thumbnail-wrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  background: #000;
+}
+
+.video-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+  transition: transform 0.3s ease;
+}
+
+.video-card:hover .video-thumb {
+  transform: scale(1.05);
+  opacity: 0.6;
+}
+
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.play-overlay:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.video-info h4 {
+  margin-top: 12px;
+  font-size: 1rem;
+  color: var(--text-white);
+  text-align: center;
+}
+
+/* --- EFEITO PARALLAX --- */
+.main-parallax-container {
+  position: relative;
+  margin-top: 300px; /* Espaço igual à altura do header inicial */
+}
+
+.parallax-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/tipos-de-vidro.jpeg");
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: -1;
+  filter: brightness(0.35); /* Escurece a imagem para destacar o conteúdo */
+}
+
+/* --- LAYOUT DE CONTEÚDO (GLASSMORPHISM) --- */
+.main-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-width: 0; /* Previne que o Swiper quebre o layout */
+}
+
+.content-column,
+.testimonials-sidebar {
+  min-width: 0;
+  overflow: hidden; /* Garante que nada saia do limite do bloco */
+}
+.section-block {
+  background-color: rgba(45, 0, 77, 0.75); /* Roxo translúcido */
+  backdrop-filter: blur(10px); /* Efeito de vidro focado */
+  border-radius: var(--radius);
+  padding: 30px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-dark);
+}
+
+.section-header {
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  border-bottom: 2px solid var(--accent-purple);
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* --- DEPOIMENTOS (HEXAGONAL) --- */
+
+.testimonial-avatar-wrapper {
+  width: 90px;
+  height: 90px;
+  position: relative;
+  display: inline-block;
+  padding: 4px;
+  background: var(--accent-purple);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  margin-bottom: 15px;
+}
+.testimonial-item-card {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+  min-height: 300px;
+  justify-content: center;
+}
+.testimonial-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.testimonial-text {
+  font-size: 1.1rem;
+  color: var(--white);
+  font-style: italic;
+  line-height: 1.4;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.testimonial-author {
+  color: var(--white);
+  font-weight: 600;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* --- FOOTER --- */
+.footer-main {
+  background-color: rgba(20, 0, 35, 0.95);
+  padding: 60px 0 0;
+  margin-top: 50px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding: 0 20px;
+}
+/* Copyright */
+.footer-bottom {
+  text-align: center;
+  margin-top: 50px;
+  padding: 5px 0;
+  background-color: var(--primary-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+  color: #888;
+}
+.footer-column h3 {
+  color: var(--accent-purple);
+  margin-bottom: 20px;
+}
+
+/* Footer NAV - Primeira coluna*/
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.footer-column ul li a {
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-column ul li a:hover {
+  color: white;
+}
+
+.social-links {
+  display: flex;
+  gap: 20px;
+}
+
+.social-links a i {
+  font-size: 35px;
+  color: white;
+  transition:
+    transform 0.3s,
+    color 0.3s;
+}
+
+.social-links a:hover i {
+  transform: scale(1.2);
+  color: var(--accent-purple);
+}
+
+/* --- BOTÕES E FLUTUANTES --- */
+.btn-consultor {
+  background-color: white;
+  color: var(--primary-dark);
+  padding: 12px 30px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: transform 0.3s;
+}
+
+.btn-consultor:hover {
+  transform: scale(1.05);
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 992px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  .footer-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .social-links {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Global Atributos */
+  .responsive_view {
+    display: block;
+  }
+  .desktop_view {
+    display: none;
+  }
+  /************************************************** 
+                        HEADER
+  ***************************************************/
+  .hero-brand-section {
+    padding: 40px 0;
+  }
+  .hero-brand-section.scrolled {
+    padding: 10px 0;
+  }
+  .nav_logo {
+    width: 90px;
+  }
+  .hero-banner {
+    height: 85px;
+    flex-direction: column;
+  }
+  .hero-logo-link {
+    gap: 0;
+  }
+  .hero-text-container h1 {
+    font-size: 1.5rem;
+  }
+  .hero-text-container label {
+    font-size: 0.7rem;
+  }
+  .hero-banner.scrolled {
+    height: 70px;
+  }
+  .hero-banner.scrolled .hero-text-container h1 {
+    font-size: 1.2rem;
+    width: 100%;
+    padding: 15px 0;
+  }
+  .main-parallax-container {
+    margin-top: 200px;
+  }
+  /*Video Gallery*/
+  .hero-video-section {
+    max-width: 100%;
+  }
+  .video-thumbnail-wrapper {
+    border-radius: 0;
+  }
+  .swiper-button-next {
+    display: none !important;
+  }
+  .swiper-button-prev {
+    display: none !important;
+  }
+  .video-carousel-container {
+    padding: 0;
+  }
+  /************************************************** 
+                        MAIN 
+  ***************************************************/
+  .main-layout {
+    padding: 150px 20px 40px 20px;
+  }
+  /************************************************** 
+                        FOOTER 
+  ***************************************************/
+  /* Coluna 01 - Nav */
+  .footer-column ul li {
+    text-align: center;
+  }
+}

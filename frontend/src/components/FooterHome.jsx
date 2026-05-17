@@ -24,19 +24,19 @@ const FooterHome = () => {
       <div className="footer-container">
         {/* Coluna 1: Navegação */}
         <div className="footer-column">
-          <h3>Menu</h3>
+          <h3>Painel</h3>
           <ul>
-            <li>
-              <Link to="/">Início</Link>
-            </li>
-            <li>
-              <Link to="/avaliar">Avaliar</Link>
-            </li>
-            <li>
-              <Link to="/Contato">Contato</Link>
-            </li>
             {isAuth ? (
               <>
+                <li>
+                  <Link to="/">Início</Link>
+                </li>
+                <li>
+                  <Link to="/avaliar">Avaliar</Link>
+                </li>
+                <li>
+                  <Link to="/Contato">Contato</Link>
+                </li>
                 <li>
                   <Link to="/dashboard">Painel</Link>
                 </li>
