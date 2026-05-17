@@ -26,33 +26,6 @@ const Home = () => {
 
   return (
     <div className="app-wrapper">
-      {/* 1. Hero Section com classe dinâmica para scroll */}
-      <header className={`hero-banner ${isScrolled ? "scrolled" : ""}`}>
-        {/* Seção da Logo e Títulos */}
-        <section
-          className={`hero-brand-section ${isScrolled ? "scrolled" : ""}`}
-        >
-          <Link to="/" className="hero-logo-link">
-            <img
-              className="nav_logo"
-              src="/logo.png"
-              alt="Logo Styllo Vidros"
-            />
-            <div className="hero-text-container">
-              <h1>
-                STYLLO <span>VIDROS</span>
-              </h1>
-              <label>Excelência em Vidraçaria e Design</label>
-            </div>
-          </Link>
-        </section>
-
-        {/* Seção do Carrossel de Vídeos (some ao scroll) */}
-        <section className="hero-video-section responsive_view">
-          <VideosHome />
-        </section>
-      </header>
-
       {/* 2. Container Principal com efeito Parallax */}
       <main className="main-parallax-container">
         {/* Div que carrega a imagem de fundo fixa */}
