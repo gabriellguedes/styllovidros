@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Video from "../components/DashVideos";
 import {
   BarChart3,
   MessageSquare,
@@ -10,6 +11,7 @@ import {
   Clock,
   User,
   MapPin,
+  PlayCircle,
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -178,6 +180,24 @@ const Dashboard = () => {
               >
                 <a>
                   <ClipboardList size={18} /> Orçamentos
+                </a>
+              </button>
+            </li>
+            <li
+              className={`dashboard-menu-item ${activeTab === "video_gallery" ? "active" : ""}`}
+            >
+              <button
+                onClick={() => handleTabChange("video_gallery")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  width: "100%",
+                  textAlign: "left",
+                  cursor: "pointer",
+                }}
+              >
+                <a>
+                  <PlayCircle size={18} /> Vídeos
                 </a>
               </button>
             </li>
@@ -418,6 +438,16 @@ const Dashboard = () => {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              </section>
+            )}
+
+            {/* --- VÍDEOS GALLERY --- */}
+            {activeTab === "video_gallery" && (
+              <section className="dashboard-data-section">
+                <h2>Lista de Vídeos</h2>
+                <div className="table-responsive">
+                  <Video />
                 </div>
               </section>
             )}
