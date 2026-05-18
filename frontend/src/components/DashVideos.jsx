@@ -74,7 +74,10 @@ const DashVideo = () => {
 
   // Função auxiliar para extrair a imagem de capa se for link do YouTube (Melhoria visual)
   const getThumbnail = (url) => {
-    return null;
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
   };
 
   return (
@@ -203,43 +206,71 @@ const DashVideo = () => {
       </form>
 
       {/* --- LISTAGEM DE VÍDEOS EM CARDS --- */}
+      {/* --- LISTAGEM DE VÍDEOS EM CARDS --- */}
       <div className="videos-management-grid">
-        {videos.map((video, index) => (
-          <div className="video-manage-card" key={video.id || index}>
-            {/* Preview do topo do Card */}
-            <div className="video-card-preview">
-              <span className="video-badge">Posição #{index + 1}</span>
-              <Film size={40} color="rgba(255, 255, 255, 0.2)" />
-            </div>
+        {videos.map((video, index) => {
+          // Captura o ID do vídeo do YouTube se ele existir
+          const youtubeId = getThumbnail(video.url_video);
 
-            {/* Corpo com Informações */}
-            <div className="video-card-body">
-              <h4 title={video.titulo}>{video.titulo}</h4>
-              <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                <Link2 size={14} /> Link configurado
-              </p>
-              <span
-                style={{
-                  fontSize: "0.75rem",
-                  color: "rgba(255,255,255,0.3)",
-                  wordBreak: "break-all",
-                }}
-              >
-                {video.url_video}
-              </span>
-            </div>
+          return (
+            <div className="video-manage-card" key={video.id || index}>
+              {/* Preview do topo do Card (Renderização Condicional Corrigida) */}
+              {youtubeId ? (
+                <div className="video-card-preview">
+                  <span className="video-badge">Posição #{index + 1}</span>
+                  <img
+                    src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+                    alt={video.titulo}
+                    className="video-thumb"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                    onError={(e) => {
+                      // Caso o vídeo não tenha capa em 'maxresdefault', usa a hqdefault como fallback
+                      e.target.src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="video-card-preview">
+                  <span className="video-badge">Posição #{index + 1}</span>
+                  <Film size={40} color="rgba(255, 255, 255, 0.2)" />
+                </div>
+              )}
 
-            {/* Ações Inferiores */}
-            <div className="video-card-footer">
-              <button
-                className="btn-video-delete"
-                onClick={() => handleDeleteVideo(video.id, video.titulo)}
-              >
-                <Trash2 size={14} /> Excluir
-              </button>
+              {/* Corpo com Informações */}
+              <div className="video-card-body">
+                <h4 title={video.titulo}>{video.titulo}</h4>
+                <p
+                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
+                >
+                  <Link2 size={14} /> Link configurado
+                </p>
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "rgba(255,255,255,0.3)",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {video.url_video}
+                </span>
+              </div>
+
+              {/* Ações Inferiores */}
+              <div className="video-card-footer">
+                <button
+                  className="btn-video-delete"
+                  onClick={() => handleDeleteVideo(video.id, video.titulo)}
+                >
+                  <Trash2 size={14} /> Excluir
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {videos.length === 0 && (
           <div

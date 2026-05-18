@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Video from "../components/DashVideos";
+import api from "../api";
 import {
   BarChart3,
   MessageSquare,
