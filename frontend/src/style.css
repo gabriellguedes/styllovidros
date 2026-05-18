@@ -953,6 +953,28 @@ body {
 .btn-logout:hover {
   background: rgba(255, 77, 77, 0.1);
 }
+.section-btn-bth {
+  padding-top: 10px;
+  display: flex;
+  justify-content: right;
+}
+.btn-bth {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 25px;
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+  border: 1px solid var(--white);
+  border-radius: 15px 15px;
+  padding: 10pt 20pt;
+}
+.btn-bth:hover {
+  color: var(--accent-purple);
+  border: 1px solid var(--accent-purple);
+}
 
 /* --- ÁREA DE CONTEÚDO PRINCIPAL --- */
 .dashboard-content {

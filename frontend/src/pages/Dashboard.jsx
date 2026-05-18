@@ -259,6 +259,11 @@ const Dashboard = () => {
                       : "Tudo em dia! Não há novos depoimentos para aprovação neste momento."}
                   </p>
                 </section>
+                <section className="section-btn-bth">
+                  <a href="/" className="btn-bth">
+                    ← Voltar para o site
+                  </a>
+                </section>
               </div>
             )}
 
