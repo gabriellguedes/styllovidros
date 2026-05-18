@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Camera, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
+import api from "../api";
+import toast from "react-hot-toast";
 
 const EnviarDepoimento = () => {
   // Estados para os campos do formulário
@@ -30,19 +32,31 @@ const EnviarDepoimento = () => {
     setEnviando(true);
     setStatusEnvio(null);
 
-    // Estrutura dos dados para enviar para sua API / Banco de dados futuramente
-    const dadosDepoimento = {
-      nome,
-      regiao,
-      mensagem,
-      foto,
-    };
+    // Criamos um loading toast que será atualizado no fim da requisição
+    const toastId = toast.loading("Enviando o seu depoimento...");
+
+    // Como há um arquivo de imagem, usamos obrigatoriamente FormData
+    const formData = new FormData();
+    formData.append("nome_cliente", nome); // Verifique se o seu backend espera 'nome_cliente' ou 'nome'
+    formData.append("regiao", regiao); // Verifique se o backend usa 'regiao' ou 'texto' etc.
+    formData.append("texto", mensagem); // Geralmente mapeado como 'texto' nos depoimentos
+
+    if (foto) {
+      formData.append("foto_cliente", foto); // Verifique se o seu backend espera 'foto_cliente' ou 'imagem'
+    }
 
     try {
-      // Simulação de uma requisição de rede (substitua pelo seu fetch/axios se necessário)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Faz a requisição POST para a sua rota de depoimentos
+      await api.post("depoimentos/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
+      // Atualiza o Toast para Sucesso
+      toast.success("Depoimento enviado para moderação!", { id: toastId });
       setStatusEnvio("sucesso");
+
       // Limpa o formulário após o sucesso
       setNome("");
       setRegiao("");
@@ -50,6 +64,12 @@ const EnviarDepoimento = () => {
       setFoto(null);
       setPreviewUrl("");
     } catch (error) {
+      console.error("Erro ao enviar depoimento:", error);
+
+      // Atualiza o Toast para Erro
+      toast.error("Houve um problema ao salvar seu depoimento.", {
+        id: toastId,
+      });
       setStatusEnvio("erro");
     } finally {
       setEnviando(false);
@@ -68,7 +88,7 @@ const EnviarDepoimento = () => {
           </p>
         </div>
 
-        {/* Mensagens de Feedback */}
+        {/* Mensagens de Feedback Visuais integradas na página */}
         {statusEnvio === "sucesso" && (
           <div
             className="form-message-success"
@@ -156,7 +176,6 @@ const EnviarDepoimento = () => {
                   marginBottom: "10px",
                 }}
               >
-                {/* Reutiliza o wrapper hexagonal do CSS para mostrar a foto cortada em tempo real */}
                 <div
                   className="testimonial-avatar-wrapper"
                   style={{ margin: "0" }}
