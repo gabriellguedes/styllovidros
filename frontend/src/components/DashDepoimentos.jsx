@@ -1,27 +1,17 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import {
-  CheckCircle,
-  XCircle,
-  Trash2,
-  Star,
-  MessageSquare,
-} from "lucide-react";
+import { Trash2, CheckCircle, XCircle, MessageSquare } from "lucide-react";
 import toast from "react-hot-toast";
 
 const DashDepoimentos = () => {
   const [depoimentos, setDepoimentos] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const fetchDepoimentos = async () => {
     try {
-      // Buscamos todos (sem o filtro de aprovados) para gestão
       const res = await api.get("depoimentos/");
       setDepoimentos(res.data);
-      setLoading(false);
     } catch (err) {
       console.error("Erro ao carregar depoimentos:", err);
-      setLoading(false);
     }
   };
 
@@ -29,114 +19,179 @@ const DashDepoimentos = () => {
     fetchDepoimentos();
   }, []);
 
-  const toggleAprovacao = async (id, statusAtual) => {
+  // Alterna a visibilidade do depoimento na Home (Ativa / Desativa)
+  const handleToggleVisibilidade = async (id, statusAtual) => {
     try {
-      // Usamos PATCH para alterar apenas o campo de exibição
-      await api.patch(`depoimentos/${id}/`, { exibir_no_site: !statusAtual });
-      if (!statusAtual) {
-        toast.success("Depoimento publicado no site! 🚀");
-      } else {
-        toast("Depoimento ocultado.", { icon: "🙈" });
-      }
-      fetchDepoimentos(); // Recarrega a lista
+      await api.patch(`depoimentos/${id}/`, {
+        exibir_no_site: !statusAtual,
+      });
+      toast.success(
+        !statusAtual ? "Depoimento aprovado no site!" : "Depoimento ocultado.",
+      );
+      fetchDepoimentos();
     } catch (err) {
-      toast.error("Erro ao atualizar status.");
+      toast.error("Erro ao atualizar o status do depoimento.");
     }
   };
 
-  const deleteDepoimento = async (id) => {
+  const handleDeleteDepoimento = async (id, autor) => {
     if (
       window.confirm(
-        "Tem certeza que deseja excluir este depoimento permanentemente?",
+        `Tem a certeza que deseja eliminar o depoimento de "${autor}"?`,
       )
     ) {
       try {
         await api.delete(`depoimentos/${id}/`);
-        toast.success("Depoimento excluído.", { icon: "🗑️" });
+        toast.success("Depoimento removido definitivamente.");
         fetchDepoimentos();
       } catch (err) {
-        toast.error("Erro ao excluir.");
+        toast.error("Erro ao remover o depoimento.");
       }
     }
   };
 
-  if (loading) return <p>Carregando gestão de depoimentos...</p>;
-
   return (
     <div className="dash-section">
-      <div className="dash-section-header">
-        <h3>
-          <MessageSquare size={20} /> Gestão de Depoimentos
-        </h3>
-        <span className="badge-count">{depoimentos.length} total</span>
+      <div style={{ marginBottom: "20px" }}>
+        <h2 style={{ color: "#fff", marginBottom: "5px" }}>
+          Gerir Depoimentos dos Clientes
+        </h2>
+        <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.9rem" }}>
+          Modere as avaliações que aparecem no carrossel de feedback da Styllo
+          Vidros.
+        </p>
       </div>
 
       <div className="dash-table-container">
-        <table className="dash-table">
+        <table
+          className="dashboard-table"
+          style={{ width: "100%", borderCollapse: "collapse", color: "#fff" }}
+        >
           <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Avaliação</th>
-              <th>Status</th>
-              <th>Ações</th>
+            <tr
+              style={{
+                textAlign: "left",
+                borderBottom: "2px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <th style={{ padding: "12px" }}>Cliente</th>
+              <th style={{ padding: "12px" }}>Avaliação (Texto)</th>
+              <th style={{ padding: "12px" }}>Estrelas / Nota</th>
+              <th style={{ padding: "12px" }}>Status no Site</th>
+              <th style={{ padding: "12px" }}>Ações</th>
             </tr>
           </thead>
           <tbody>
             {depoimentos.map((dep) => (
               <tr
                 key={dep.id}
-                className={!dep.exibir_no_site ? "row-pending" : ""}
+                style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
               >
-                <td>
+                <td style={{ padding: "12px" }}>
                   <strong>{dep.nome_cliente}</strong>
-                  <p className="dep-preview">{dep.texto.substring(0, 60)}...</p>
-                </td>
-                <td>
-                  <div className="stars-display">
-                    {dep.estrelas}{" "}
-                    <Star size={14} fill="#FFD700" color="#FFD700" />
+                  <div
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "rgba(255,255,255,0.4)",
+                    }}
+                  >
+                    ID: #{dep.id}
                   </div>
                 </td>
-                <td>
-                  {dep.exibir_no_site ? (
-                    <span className="status-pill published">Publicado</span>
-                  ) : (
-                    <span className="status-pill pending">Pendente</span>
-                  )}
+                <td
+                  style={{
+                    padding: "12px",
+                    fontStyle: "italic",
+                    color: "rgba(255,255,255,0.8)",
+                    maxWidth: "400px",
+                  }}
+                >
+                  "{dep.texto}"
                 </td>
-                <td className="actions-cell">
-                  <button
-                    onClick={() => toggleAprovacao(dep.id, dep.exibir_no_site)}
-                    className="btn-icon"
-                    title={
-                      dep.exibir_no_site
-                        ? "Ocultar do site"
-                        : "Publicar no site"
-                    }
+                <td style={{ padding: "12px", color: "#ffb703" }}>
+                  {dep.estrelas || "⭐⭐⭐⭐⭐"}
+                </td>
+                <td style={{ padding: "12px" }}>
+                  <span
+                    className={`status-pill ${dep.exibir_no_site ? "published" : "pending"}`}
+                    style={{
+                      padding: "4px 10px",
+                      borderRadius: "20px",
+                      fontSize: "0.75rem",
+                      fontWeight: "bold",
+                      background: dep.exibir_no_site
+                        ? "rgba(46, 125, 50, 0.2)"
+                        : "rgba(239, 108, 0, 0.2)",
+                      color: dep.exibir_no_site ? "#81c784" : "#ffb74d",
+                    }}
                   >
-                    {dep.exibir_no_site ? (
-                      <XCircle color="#orange" />
-                    ) : (
-                      <CheckCircle color="#2ecc71" />
-                    )}
-                  </button>
+                    {dep.exibir_no_site ? "Exibindo" : "Oculto"}
+                  </span>
+                </td>
+                <td style={{ padding: "12px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "12px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <button
+                      onClick={() =>
+                        handleToggleVisibilidade(dep.id, dep.exibir_no_site)
+                      }
+                      title={
+                        dep.exibir_no_site
+                          ? "Ocultar do Site"
+                          : "Publicar no Site"
+                      }
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        color: dep.exibir_no_site ? "#ffb74d" : "#81c784",
+                      }}
+                    >
+                      {dep.exibir_no_site ? (
+                        <XCircle size={18} />
+                      ) : (
+                        <CheckCircle size={18} />
+                      )}
+                    </button>
 
-                  <button
-                    onClick={() => deleteDepoimento(dep.id)}
-                    className="btn-icon btn-danger"
-                    title="Excluir permanentemente"
-                  >
-                    <Trash2 size={20} />
-                  </button>
+                    <button
+                      onClick={() =>
+                        handleDeleteDepoimento(dep.id, dep.nome_cliente)
+                      }
+                      title="Excluir Permanente"
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#ff4d4d",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {depoimentos.length === 0 && (
-          <p className="empty-msg">Nenhum depoimento recebido ainda.</p>
-        )}
       </div>
+
+      {depoimentos.length === 0 && (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "40px",
+            color: "rgba(255,255,255,0.4)",
+          }}
+        >
+          Nenhum depoimento cadastrado no banco de dados.
+        </div>
+      )}
     </div>
   );
 };

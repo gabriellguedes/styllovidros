@@ -7,116 +7,75 @@ import {
   MessageSquare,
   ClipboardList,
   LogOut,
-  Check,
-  Trash2,
   Clock,
-  User,
-  MapPin,
-  PlayCircle,
 } from "lucide-react";
+import DashServicos from "../components/DashServicos";
+import DashDepoimentos from "../components/DashDepoimentos";
+import DashLeads from "../components/DashLeads";
 
 const Dashboard = () => {
   // Estado para controlar a aba ativa no painel administrativo
   const [activeTab, setActiveTab] = useState("resumo");
   const [loading, setLoading] = useState(false);
 
+  // Estados para armazenar os dados das métricas em tempo real
+  const [qtdLeads, setQtdLeads] = useState(0);
+  const [depoimentosPendentes, setDepoimentosPendentes] = useState(0);
+
   const navigate = useNavigate();
-  const isAuth = localStorage.getItem("auth") === "true";
 
-  const handleLogout = () => {
-    localStorage.removeItem("auth");
-    localStorage.removeItem("token");
-    navigate("/");
-    window.location.reload();
-  };
+  // 1. Proteção de Rota: Se não estiver autenticado, manda de volta para a Home/Login
+  useEffect(() => {
+    const isAuth = localStorage.getItem("auth") === "true";
+    if (!isAuth) {
+      navigate("/");
+    } else {
+      fetchMetrics();
+    }
+  }, [navigate]);
 
-  // Estados para simular os dados do banco de dados
-  const [depoimentos, setDepoimentos] = useState([
-    {
-      id: 1,
-      cliente: "Carlos Souza",
-      regiao: "Águas Claras - DF",
-      texto:
-        "Excelente atendimento, a cortina de vidro ficou perfeita e o prazo foi cumprido à risca.",
-      status: "pendente",
-    },
-    {
-      id: 2,
-      cliente: "Ana Beatriz",
-      regiao: "Taguatinga - DF",
-      texto:
-        "O box de banheiro elegance mudou completamente o visual do meu quarto. Super recomendo!",
-      status: "pendente",
-    },
-    {
-      id: 3,
-      cliente: "Marcos Paulo",
-      regiao: "Asa Sul - DF",
-      texto:
-        "Equipe técnica extremamente profissional no reparo das minhas janelas.",
-      status: "aprovado",
-    },
-  ]);
+  // 2. Função para buscar os totais das tabelas e alimentar os Cards de Resumo
+  const fetchMetrics = async () => {
+    try {
+      // Busca quantidade de contatos/leads
+      const resContatos = await api.get("contatos/");
+      setQtdLeads(resContatos.data.length);
 
-  const [orcamentos, setOrcamentos] = useState([
-    {
-      id: 101,
-      cliente: "Roberto Alves",
-      telefone: "(61) 98888-1122",
-      servico: "Cortina de Vidro",
-      data: "17/05/2026",
-    },
-    {
-      id: 102,
-      cliente: "Juliana Mendes",
-      telefone: "(61) 99111-3344",
-      servico: "Espelhos Canelados",
-      data: "16/05/2026",
-    },
-    {
-      id: 103,
-      cliente: "Ricardo Frota",
-      telefone: "(61) 98222-5566",
-      servico: "Box de Banheiro",
-      data: "15/05/2026",
-    },
-  ]);
-
-  // Função para aprovar depoimento (Muda o status para aprovado e simula atualização)
-  const handleApproveDepoimento = (id) => {
-    setDepoimentos((prev) =>
-      prev.map((dep) => (dep.id === id ? { ...dep, status: "aprovado" } : dep)),
-    );
-    alert(
-      "Depoimento aprovado com sucesso! Ele agora aparecerá no carrossel do site.",
-    );
-  };
-
-  // Função para excluir depoimento ou orçamento
-  const handleDeleteItem = (id, tipo) => {
-    if (window.confirm(`Tem certeza que deseja remover este ${tipo}?`)) {
-      if (tipo === "depoimento") {
-        setDepoimentos((prev) => prev.filter((dep) => dep.id !== id));
-      } else {
-        setOrcamentos((prev) => prev.filter((orc) => orc.id !== id));
-      }
+      // Busca quantidade de depoimentos pendentes (exibir_no_site === false)
+      const resDepoimentos = await api.get("depoimentos/");
+      const pendentes = resDepoimentos.data.filter(
+        (d) => !d.exibir_no_site,
+      ).length;
+      setDepoimentosPendentes(pendentes);
+    } catch (err) {
+      console.error("Erro ao carregar métricas do painel:", err);
     }
   };
 
-  // Simulação de efeito de transição de carregamento ao trocar de aba
+  // 3. Função para gerenciar a troca de abas com efeito suave de carregamento
   const handleTabChange = (tabId) => {
     setLoading(true);
     setActiveTab(tabId);
+
+    // Atualiza as métricas sempre que voltar para o resumo
+    if (tabId === "resumo") {
+      fetchMetrics();
+    }
+
     setTimeout(() => {
       setLoading(false);
-    }, 400);
+    }, 300);
   };
 
-  // Filtragem rápida de métricas
-  const depoimentosPendentes = depoimentos.filter(
-    (d) => d.status === "pendente",
-  ).length;
-  const totalOrcamentos = orcamentos.length;
+  // 4. Efetuar o logout do sistema
+  const handleLogout = () => {
+    if (window.confirm("Deseja realmente sair do painel administrativo?")) {
+      localStorage.removeItem("auth");
+      localStorage.removeItem("token");
+      navigate("/");
+      window.location.reload();
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -142,7 +101,7 @@ const Dashboard = () => {
                   cursor: "pointer",
                 }}
               >
-                <a>
+                <a style={{ pointerEvents: "none" }}>
                   <BarChart3 size={18} /> Resumo
                 </a>
               </button>
@@ -160,9 +119,8 @@ const Dashboard = () => {
                   cursor: "pointer",
                 }}
               >
-                <a>
-                  <MessageSquare size={18} /> Depoimentos (
-                  {depoimentosPendentes})
+                <a style={{ pointerEvents: "none" }}>
+                  <MessageSquare size={18} /> Depoimentos
                 </a>
               </button>
             </li>
@@ -179,7 +137,7 @@ const Dashboard = () => {
                   cursor: "pointer",
                 }}
               >
-                <a>
+                <a style={{ pointerEvents: "none" }}>
                   <ClipboardList size={18} /> Orçamentos
                 </a>
               </button>
@@ -197,8 +155,27 @@ const Dashboard = () => {
                   cursor: "pointer",
                 }}
               >
-                <a>
-                  <PlayCircle size={18} /> Vídeos
+                <a style={{ pointerEvents: "none" }}>
+                  <ClipboardList size={18} /> Galeria Vídeos
+                </a>
+              </button>
+            </li>
+            {/* Lista de Trabalhos Feitos*/}
+            <li
+              className={`dashboard-menu-item ${activeTab === "service" ? "active" : ""}`}
+            >
+              <button
+                onClick={() => handleTabChange("service")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  width: "100%",
+                  textAlign: "left",
+                  cursor: "pointer",
+                }}
+              >
+                <a style={{ pointerEvents: "none" }}>
+                  <ClipboardList size={18} /> Trabalhos
                 </a>
               </button>
             </li>
@@ -240,7 +217,7 @@ const Dashboard = () => {
                 animation: "spin 1s linear infinite",
               }}
             />{" "}
-            Carregando informações...
+            A atualizar informações...
           </div>
         ) : (
           <>
@@ -260,7 +237,7 @@ const Dashboard = () => {
                   <div className="metric-card">
                     <div className="metric-info">
                       <h3>Pedidos de Orçamento</h3>
-                      <p>{totalOrcamentos}</p>
+                      <p>{qtdLeads}</p>
                     </div>
                     <div className="metric-icon">
                       <ClipboardList size={22} />
@@ -274,6 +251,7 @@ const Dashboard = () => {
                     style={{
                       color: "rgba(255,255,255,0.6)",
                       fontSize: "0.95rem",
+                      marginTop: "10px",
                     }}
                   >
                     {depoimentosPendentes > 0
@@ -287,169 +265,28 @@ const Dashboard = () => {
             {/* --- VISÃO: GERENCIAR DEPOIMENTOS --- */}
             {activeTab === "depoimentos" && (
               <section className="dashboard-data-section">
-                <h2>Moderação de Depoimentos</h2>
-                <div className="table-responsive">
-                  <table className="dashboard-table">
-                    <thead>
-                      <tr>
-                        <th>
-                          <User size={14} style={{ marginRight: "5px" }} />{" "}
-                          Cliente
-                        </th>
-                        <th>
-                          <MapPin size={14} style={{ marginRight: "5px" }} />{" "}
-                          Região
-                        </th>
-                        <th>Mensagem</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {depoimentos.map((dep) => (
-                        <tr key={dep.id}>
-                          <td>
-                            <strong>{dep.cliente}</strong>
-                          </td>
-                          <td>{dep.regiao}</td>
-                          <td>
-                            <span
-                              style={{
-                                fontSize: "0.9rem",
-                                fontStyle: "italic",
-                              }}
-                            >
-                              "{dep.texto}"
-                            </span>
-                          </td>
-                          <td>
-                            <span
-                              style={{
-                                padding: "4px 8px",
-                                borderRadius: "4px",
-                                fontSize: "0.8rem",
-                                fontWeight: "bold",
-                                background:
-                                  dep.status === "aprovado"
-                                    ? "rgba(37,211,102,0.2)"
-                                    : "rgba(255,193,7,0.2)",
-                                color:
-                                  dep.status === "aprovado"
-                                    ? "#25d366"
-                                    : "#ffc107",
-                              }}
-                            >
-                              {dep.status.toUpperCase()}
-                            </span>
-                          </td>
-                          <td>
-                            <div className="action-buttons">
-                              {dep.status === "pendente" && (
-                                <button
-                                  className="btn-action-approve"
-                                  title="Aprovar Depoimento"
-                                  onClick={() =>
-                                    handleApproveDepoimento(dep.id)
-                                  }
-                                >
-                                  <Check size={16} />
-                                </button>
-                              )}
-                              <button
-                                className="btn-action-delete"
-                                title="Excluir Depoimento"
-                                onClick={() =>
-                                  handleDeleteItem(dep.id, "depoimento")
-                                }
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <DashDepoimentos />
               </section>
             )}
 
             {/* --- VISÃO: SOLICITAÇÕES DE ORÇAMENTO --- */}
             {activeTab === "orcamentos" && (
               <section className="dashboard-data-section">
-                <h2>Lista de Orçamentos Recebidos</h2>
-                <div className="table-responsive">
-                  <table className="dashboard-table">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Nome do Cliente</th>
-                        <th>Contato WhatsApp</th>
-                        <th>Tipo de Serviço</th>
-                        <th>Data de Envio</th>
-                        <th>Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {orcamentos.map((orc) => (
-                        <tr key={orc.id}>
-                          <td>#{orc.id}</td>
-                          <td>
-                            <strong>{orc.cliente}</strong>
-                          </td>
-                          <td>
-                            <a
-                              href={`https://wa.me/55${orc.telefone.replace(/\D/g, "")}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              style={{
-                                color: "#25d366",
-                                textDecoration: "none",
-                                fontWeight: "500",
-                              }}
-                            >
-                              {orc.telefone} (Chamar)
-                            </a>
-                          </td>
-                          <td>
-                            <span
-                              style={{
-                                background: "rgba(138, 43, 226, 0.2)",
-                                padding: "4px 10px",
-                                borderRadius: "20px",
-                                fontSize: "0.85rem",
-                              }}
-                            >
-                              {orc.servico}
-                            </span>
-                          </td>
-                          <td>{orc.data}</td>
-                          <td>
-                            <button
-                              className="btn-action-delete"
-                              title="Remover Registro de Orçamento"
-                              onClick={() =>
-                                handleDeleteItem(orc.id, "orçamento")
-                              }
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <DashLeads />
               </section>
             )}
 
             {/* --- VÍDEOS GALLERY --- */}
             {activeTab === "video_gallery" && (
               <section className="dashboard-data-section">
-                <h2>Lista de Vídeos</h2>
-                <div className="table-responsive">
-                  <Video />
-                </div>
+                <Video />
+              </section>
+            )}
+
+            {/* --- VÍDEOS GALLERY --- */}
+            {activeTab === "service" && (
+              <section className="dashboard-data-section">
+                <DashServicos />
               </section>
             )}
           </>

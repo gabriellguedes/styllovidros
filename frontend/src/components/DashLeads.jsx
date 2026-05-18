@@ -7,8 +7,12 @@ const DashLeads = () => {
   const [leads, setLeads] = useState([]);
 
   const fetchLeads = async () => {
-    const res = await api.get("contatos/");
-    setLeads(res.data);
+    try {
+      const res = await api.get("contatos/");
+      setLeads(res.data);
+    } catch (err) {
+      console.error("Erro ao buscar contatos:", err);
+    }
   };
 
   useEffect(() => {
@@ -16,42 +20,126 @@ const DashLeads = () => {
   }, []);
 
   const deleteLead = async (id) => {
-    if (window.confirm("Excluir esta mensagem?")) {
-      await api.delete(`contatos/${id}/`);
-      toast.success("Mensagem removida");
-      fetchLeads();
+    if (window.confirm("Tem a certeza que deseja excluir esta mensagem?")) {
+      try {
+        await api.delete(`contatos/${id}/`);
+        toast.success("Mensagem removida com sucesso!");
+        fetchLeads();
+      } catch (err) {
+        toast.error("Erro ao remover mensagem.");
+      }
     }
   };
 
   return (
     <div className="dash-section">
-      <h3>
-        <Mail size={20} /> Mensagens de Clientes (Leads)
-      </h3>
-      <div className="leads-list">
-        {leads.map((lead) => (
-          <div key={lead.id} className="lead-card">
-            <div className="lead-header">
-              <strong>{lead.nome}</strong>
-              <span className="lead-date">
-                <Calendar size={14} />{" "}
-                {new Date(lead.data_envio).toLocaleDateString()}
-              </span>
-            </div>
-            <p className="lead-msg">"{lead.mensagem}"</p>
-            <div className="lead-footer">
-              <a href={`tel:${lead.telefone}`} className="contact-link">
-                <Phone size={14} /> {lead.telefone}
-              </a>
-              <span className="lead-email">{lead.email}</span>
-              <button onClick={() => deleteLead(lead.id)} className="btn-del">
-                <Trash2 size={16} />
-              </button>
-            </div>
-          </div>
-        ))}
-        {leads.length === 0 && <p>Nenhuma mensagem recebida.</p>}
+      <div style={{ marginBottom: "20px" }}>
+        <h2 style={{ color: "#fff", marginBottom: "5px" }}>
+          Mensagens e Orçamentos Recebidos
+        </h2>
+        <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.9rem" }}>
+          Abaixo estão os contatos enviados pelos clientes através do formulário
+          do site.
+        </p>
       </div>
+
+      <div className="dash-table-container">
+        <table
+          className="dashboard-table"
+          style={{ width: "100%", borderCollapse: "collapse", color: "#fff" }}
+        >
+          <thead>
+            <tr
+              style={{
+                textAlign: "left",
+                borderBottom: "2px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <th style={{ padding: "12px" }}>ID</th>
+              <th style={{ padding: "12px" }}>Nome do Cliente</th>
+              <th style={{ padding: "12px" }}>Contato WhatsApp</th>
+              <th style={{ padding: "12px" }}>Tipo de Serviço</th>
+              <th style={{ padding: "12px" }}>Mensagem / Detalhes</th>
+              <th style={{ padding: "12px" }}>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leads.map((lead) => (
+              <tr
+                key={lead.id}
+                style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+              >
+                <td style={{ padding: "12px" }}>#{lead.id}</td>
+                <td style={{ padding: "12px" }}>
+                  <strong>{lead.nome || lead.cliente}</strong>
+                </td>
+                <td style={{ padding: "12px" }}>
+                  <a
+                    href={`https://wa.me/55${(lead.telefone || "").replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      color: "#25d366",
+                      textDecoration: "none",
+                      fontWeight: "500",
+                    }}
+                  >
+                    {lead.telefone} (Chamar)
+                  </a>
+                </td>
+                <td style={{ padding: "12px" }}>
+                  <span
+                    style={{
+                      background: "rgba(138, 43, 226, 0.2)",
+                      padding: "4px 10px",
+                      borderRadius: "20px",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    {lead.servico || "Geral"}
+                  </span>
+                </td>
+                <td
+                  style={{
+                    padding: "12px",
+                    fontSize: "0.9rem",
+                    color: "rgba(255,255,255,0.7)",
+                  }}
+                >
+                  {lead.mensagem || "Sem mensagem informada."}
+                </td>
+                <td style={{ padding: "12px" }}>
+                  <button
+                    className="btn-action-delete"
+                    title="Remover Registro"
+                    onClick={() => deleteLead(lead.id)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#ff4d4d",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {leads.length === 0 && (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "40px",
+            color: "rgba(255,255,255,0.4)",
+          }}
+        >
+          Nenhum lead ou pedido de orçamento recebido até ao momento.
+        </div>
+      )}
     </div>
   );
 };
