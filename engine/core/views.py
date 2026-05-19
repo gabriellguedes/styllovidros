@@ -1,7 +1,9 @@
+from django.contrib.auth.models import User
 from rest_framework import viewsets
 from .models import Servico, Depoimento, Contato, Video
-from .serializers import ServicoSerializer, DepoimentoSerializer, ContatoSerializer, VideoSerializer
+from .serializers import ServicoSerializer, DepoimentoSerializer, ContatoSerializer, VideoSerializer, UserSerializer
 from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
 
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all().order_by('-criado_em')
@@ -29,3 +31,8 @@ class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all().order_by('-criado_em')
     serializer_class = VideoSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class UsuarioViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all().order_by('-id')
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]

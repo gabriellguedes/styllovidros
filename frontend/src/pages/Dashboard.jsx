@@ -3,15 +3,19 @@ import { useNavigate } from "react-router-dom";
 import Video from "../components/DashVideos";
 import api from "../api";
 import {
+  User,
   BarChart3,
   MessageSquare,
   ClipboardList,
   LogOut,
   Clock,
+  SquarePlay,
+  PiggyBank,
 } from "lucide-react";
 import DashServicos from "../components/DashServicos";
 import DashDepoimentos from "../components/DashDepoimentos";
 import DashLeads from "../components/DashLeads";
+import DashUser from "../components/DashUser";
 
 const Dashboard = () => {
   // Estado para controlar a aba ativa no painel administrativo
@@ -138,7 +142,7 @@ const Dashboard = () => {
                 }}
               >
                 <a style={{ pointerEvents: "none" }}>
-                  <ClipboardList size={18} /> Orçamentos
+                  <PiggyBank size={18} /> Orçamentos
                 </a>
               </button>
             </li>
@@ -156,7 +160,8 @@ const Dashboard = () => {
                 }}
               >
                 <a style={{ pointerEvents: "none" }}>
-                  <ClipboardList size={18} /> Galeria Vídeos
+                  <SquarePlay size={18} />
+                  Galeria Vídeos
                 </a>
               </button>
             </li>
@@ -176,6 +181,24 @@ const Dashboard = () => {
               >
                 <a style={{ pointerEvents: "none" }}>
                   <ClipboardList size={18} /> Trabalhos
+                </a>
+              </button>
+            </li>
+            <li
+              className={`dashboard-menu-item ${activeTab === "usuarios" ? "active" : ""}`}
+            >
+              <button
+                onClick={() => handleTabChange("usuarios")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  width: "100%",
+                  textAlign: "left",
+                  cursor: "pointer",
+                }}
+              >
+                <a style={{ pointerEvents: "none" }}>
+                  <User size={18} /> Usuários
                 </a>
               </button>
             </li>
@@ -292,6 +315,13 @@ const Dashboard = () => {
             {activeTab === "service" && (
               <section className="dashboard-data-section">
                 <DashServicos />
+              </section>
+            )}
+
+            {/* --- Usuários --- */}
+            {activeTab === "usuarios" && (
+              <section className="dashboard-data-section">
+                <DashUser />
               </section>
             )}
           </>

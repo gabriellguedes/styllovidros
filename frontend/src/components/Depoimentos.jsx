@@ -56,7 +56,6 @@ const DepoimentosHome = () => {
               <div className="testimonial-content">
                 <h4 className="testimonial-author">{d.nome_cliente}</h4>
                 <p className="testimonial-text">"{d.texto}"</p>
-                <span className="testimonial-city">{d.estrelas}</span>
               </div>
             </div>
           </SwiperSlide>

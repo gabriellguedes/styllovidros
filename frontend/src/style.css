@@ -231,7 +231,7 @@ body {
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 .testimonial-item-card {
-  display: flex;
+  display: block;
   align-items: center;
   padding: 20px;
   text-align: center;
@@ -1308,6 +1308,8 @@ body {
 
 /* Estilização padrão de inputs e selects do form */
 .dash-form input[type="text"],
+.dash-form input[type="email"],
+.dash-form input[type="password"],
 .dash-form select {
   width: 100%;
   padding: 12px 14px;
@@ -1433,6 +1435,100 @@ body {
 }
 
 /* ==========================================================================
+   ESTILIZAÇÃO DO COMPONENTE DASHUSER (GESTÃO DE USUÁRIOS)
+   ========================================================================= */
+
+/* Cabeçalhos e Títulos de Seção */
+.dash-section-header {
+  margin-bottom: 20px;
+}
+
+.dash-section-header h2 {
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.dash-section-header p {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+.dash-section-title {
+  font-size: 1.2rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+/* Customizações adicionais para as tabelas de Usuários */
+.table-cell-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 25px !important;
+}
+
+.icon-user-accent {
+  color: var(--accent-purple, #8a2be2);
+}
+
+.table-cell-email {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Badge de Nível de Permissão */
+.user-badge-staff {
+  background: rgba(138, 43, 226, 0.2);
+  color: #b97bfb;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  border: 1px solid rgba(138, 43, 226, 0.1);
+}
+
+/* Botão de Excluir Usuário */
+.btn-action-delete-user {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+}
+
+.btn-action-delete-user:hover {
+  background: rgba(255, 77, 77, 0.1);
+  transform: scale(1.05);
+}
+
+/* Mensagem de lista vazia */
+.table-empty-message {
+  text-align: center;
+  padding: 40px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.05);
+  margin-top: 15px;
+}
+
+/* ==========================================================================
                      RESPONSIVIDADE - TABLET
    ========================================================================== */
 
@@ -1533,8 +1629,8 @@ body {
   }
   /* Depoimentos*/
   .testimonial-avatar-wrapper {
-    width: 90px;
-    height: 90px;
+    width: 120px;
+    height: 120px;
   }
   /* FORMULARIO DE CONTATO */
   .contact-form {

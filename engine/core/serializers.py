@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Servico, Depoimento, Contato, Video
 
 class ServicoSerializer(serializers.ModelSerializer):
@@ -20,3 +21,23 @@ class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
         fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'password', 'is_staff']
+        extra_kwargs = {
+            'password': {'write_only': True}  # A senha nunca é retornada na API por segurança
+        }
+
+    def create(self, validated_data):
+        # Cria o usuário criptografando a senha corretamente no banco
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password']
+        )
+        # Define se ele será Administrador Master (is_staff)
+        user.is_staff = validated_data.get('is_staff', False)
+        user.save()
+        return user
