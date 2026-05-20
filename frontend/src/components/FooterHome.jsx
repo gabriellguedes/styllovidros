@@ -50,16 +50,27 @@ const FooterHome = () => {
     carregarLinksRodape();
   }, []);
 
-  // Função auxiliar para gerar o link correto do WhatsApp caso o usuário coloque só o número no input
+  // Função auxiliar atualizada para gerar o link do WhatsApp com mensagem pré-definida
   const formatarLinkWhatsapp = (linkOrNumber) => {
     if (!linkOrNumber) return "#";
-    // Se já for um link completo (contiver http), retorna ele mesmo
-    if (linkOrNumber.includes("http")) return linkOrNumber;
-    // Caso contrário, limpa os caracteres e gera o link wa.me
-    const numeroLimpo = linkOrNumber.replace(/\D/g, "");
-    return `https://wa.me/55${numeroLimpo}`;
-  };
 
+    const mensagemPadrao =
+      "Olá! Vi o contato de vocês através do site e gostaria de fazer um orçamento.";
+    const mensagemCodificada = encodeURIComponent(mensagemPadrao);
+
+    if (linkOrNumber.includes("http")) {
+      const caractereConexao = linkOrNumber.includes("?") ? "&" : "?";
+
+      if (linkOrNumber.includes("text=")) {
+        return linkOrNumber;
+      }
+      return `${linkOrNumber}${caractereConexao}text=${mensagemCodificada}`;
+    }
+
+    // Se o usuário digitou apenas o número de telefone bruto no painel (ex: 61987654321)
+    const numeroLimpo = linkOrNumber.replace(/\D/g, "");
+    return `https://wa.me/55${numeroLimpo}?text=${mensagemCodificada}`;
+  };
   return (
     <footer className="footer-main">
       <div className="footer-container">
@@ -73,7 +84,9 @@ const FooterHome = () => {
                   <Link to="/">Início</Link>
                 </li>
                 <li>
-                  <Link to="/avaliar">Avaliar</Link>
+                  <Link to="/avaliar" target="_blank" rel="noopener noreferrer">
+                    Avaliar
+                  </Link>
                 </li>
                 <li>
                   <Link to="/Contato">Contato</Link>
