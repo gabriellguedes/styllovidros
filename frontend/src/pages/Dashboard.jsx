@@ -12,6 +12,8 @@ import {
   Clock,
   SquarePlay,
   PiggyBank,
+  Settings,
+  ChevronDown,
 } from "lucide-react";
 import DashServicos from "../components/DashServicos";
 import DashDepoimentos from "../components/DashDepoimentos";
@@ -23,6 +25,9 @@ const Dashboard = () => {
   // Estado para controlar a aba ativa no painel administrativo
   const [activeTab, setActiveTab] = useState("resumo");
   const [loading, setLoading] = useState(false);
+
+  // ESTADO PARA CONTROLAR A ABERTURA DO DROPDOWN DE CONFIGURAÇÃO
+  const [configOpen, setConfigOpen] = useState(false);
 
   // Estados para armazenar os dados das métricas em tempo real
   const [qtdLeads, setQtdLeads] = useState(0);
@@ -73,6 +78,10 @@ const Dashboard = () => {
     }, 300);
   };
 
+  const toggleConfigDropdown = () => {
+    setConfigOpen(!configOpen);
+  };
+
   // 4. Efetuar o logout do sistema
   const handleLogout = () => {
     if (window.confirm("Deseja realmente sair do painel administrativo?")) {
@@ -99,13 +108,7 @@ const Dashboard = () => {
             >
               <button
                 onClick={() => handleTabChange("resumo")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  width: "100%",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
+                className="dash-btn-action"
               >
                 <a style={{ pointerEvents: "none" }}>
                   <BarChart3 size={18} /> Resumo
@@ -117,13 +120,7 @@ const Dashboard = () => {
             >
               <button
                 onClick={() => handleTabChange("depoimentos")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  width: "100%",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
+                className="dash-btn-action"
               >
                 <a style={{ pointerEvents: "none" }}>
                   <MessageSquare size={18} /> Depoimentos
@@ -135,99 +132,90 @@ const Dashboard = () => {
             >
               <button
                 onClick={() => handleTabChange("orcamentos")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  width: "100%",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
+                className="dash-btn-action"
               >
                 <a style={{ pointerEvents: "none" }}>
                   <PiggyBank size={18} /> Orçamentos
                 </a>
               </button>
             </li>
-            <li
-              className={`dashboard-menu-item ${activeTab === "video_gallery" ? "active" : ""}`}
-            >
-              <button
-                onClick={() => handleTabChange("video_gallery")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  width: "100%",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
-              >
-                <a style={{ pointerEvents: "none" }}>
-                  <SquarePlay size={18} />
-                  Galeria Vídeos
-                </a>
-              </button>
-            </li>
-            {/* Lista de Trabalhos Feitos*/}
-            <li
-              className={`dashboard-menu-item ${activeTab === "service" ? "active" : ""}`}
-            >
-              <button
-                onClick={() => handleTabChange("service")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  width: "100%",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
-              >
-                <a style={{ pointerEvents: "none" }}>
-                  <ClipboardList size={18} /> Trabalhos
-                </a>
-              </button>
-            </li>
-            <li
-              className={`dashboard-menu-item ${activeTab === "usuarios" ? "active" : ""}`}
-            >
-              <button
-                onClick={() => handleTabChange("usuarios")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  width: "100%",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
-              >
-                <a style={{ pointerEvents: "none" }}>
-                  <User size={18} /> Usuários
-                </a>
-              </button>
-            </li>
-            <li
-              className={`dashboard-menu-item ${activeTab === "redes" ? "active" : ""}`}
-            >
-              <button
-                onClick={() => handleTabChange("redes")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  width: "100%",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
-              >
-                <a style={{ pointerEvents: "none" }}>
-                  <Link2 size={18} /> Redes Sociais
-                </a>
-              </button>
-            </li>
           </ul>
         </div>
+        {/* --- MENU DROPDOWN DE CONFIGURAÇÕES --- */}
+        <div>
+          <div
+            className={`dashboard-menu-item dropdown-parent ${configOpen ? "open" : ""}`}
+          >
+            <button
+              type="button"
+              onClick={toggleConfigDropdown}
+              className="dropdown-trigger-btn"
+            >
+              <div className="trigger-left-content">
+                <Settings size={18} />
+                <span>Configurações</span>
+              </div>
+              <ChevronDown size={16} className="chevron-icon" />
+            </button>
 
-        <button className="btn-logout" onClick={handleLogout}>
-          <LogOut size={18} /> Sair do Sistema
-        </button>
+            {/* Submenu com animação Max-Height */}
+            <ul className="dashboard-submenu">
+              <li
+                className={`dashboard-menu-item ${activeTab === "video_gallery" ? "active" : ""}`}
+              >
+                <button
+                  onClick={() => handleTabChange("video_gallery")}
+                  className="dash-btn-action"
+                >
+                  <a style={{ pointerEvents: "none" }}>
+                    <SquarePlay size={18} />
+                    Galeria Vídeos
+                  </a>
+                </button>
+              </li>
+              {/* Lista de Trabalhos Feitos*/}
+              <li
+                className={`dashboard-menu-item ${activeTab === "service" ? "active" : ""}`}
+              >
+                <button
+                  onClick={() => handleTabChange("service")}
+                  className="dash-btn-action"
+                >
+                  <a style={{ pointerEvents: "none" }}>
+                    <ClipboardList size={18} /> Trabalhos
+                  </a>
+                </button>
+              </li>
+              <li
+                className={`dashboard-menu-item ${activeTab === "usuarios" ? "active" : ""}`}
+              >
+                <button
+                  onClick={() => handleTabChange("usuarios")}
+                  className="dash-btn-action"
+                >
+                  <a style={{ pointerEvents: "none" }}>
+                    <User size={18} /> Usuários
+                  </a>
+                </button>
+              </li>
+              <li
+                className={`dashboard-menu-item ${activeTab === "redes" ? "active" : ""}`}
+              >
+                <button
+                  onClick={() => handleTabChange("redes")}
+                  className="dash-btn-action"
+                >
+                  <a style={{ pointerEvents: "none" }}>
+                    <Link2 size={18} /> Redes Sociais
+                  </a>
+                </button>
+              </li>
+            </ul>
+          </div>
+          <button className="btn-logout" onClick={handleLogout}>
+            <LogOut size={18} /> Sair do Sistema
+          </button>
+        </div>
       </aside>
 
       {/* --- CONTEÚDO PRINCIPAL --- */}
@@ -273,18 +261,33 @@ const Dashboard = () => {
                       <h3>Avaliações Pendentes</h3>
                       <p>{depoimentosPendentes}</p>
                     </div>
-                    <div className="metric-icon">
-                      <MessageSquare size={22} />
-                    </div>
+                    <button
+                      onClick={() => handleTabChange("depoimentos")}
+                      className="metric-btn-action"
+                    >
+                      <a style={{ pointerEvents: "none" }}>
+                        <div className="metric-icon">
+                          <MessageSquare size={22} />
+                        </div>
+                      </a>
+                    </button>
                   </div>
+
                   <div className="metric-card">
                     <div className="metric-info">
                       <h3>Pedidos de Orçamento</h3>
                       <p>{qtdLeads}</p>
                     </div>
-                    <div className="metric-icon">
-                      <ClipboardList size={22} />
-                    </div>
+                    <button
+                      onClick={() => handleTabChange("orcamento")}
+                      className="metric-btn-action"
+                    >
+                      <a style={{ pointerEvents: "none" }}>
+                        <div className="metric-icon">
+                          <ClipboardList size={22} />
+                        </div>
+                      </a>
+                    </button>
                   </div>
                 </section>
 

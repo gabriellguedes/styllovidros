@@ -938,6 +938,88 @@ body {
   border-left: 4px solid var(--accent-purple);
 }
 
+/* Estrutura do disparador do Dropdown */
+.dropdown-trigger-btn {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100%;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: none;
+  border: none;
+  color: var(--white);
+  padding: 14px 18px;
+  border-radius: 8px;
+}
+
+.trigger-left-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Ícone de Seta com rotação CSS controlada por estado */
+.chevron-icon {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.dropdown-parent.open .chevron-icon {
+  transform: rotate(180deg);
+  color: #fff;
+}
+
+/* CONTAINER DO SUBMENU (Escondido por padrão usando transição de altura) */
+.dashboard-submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.25s ease-out;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Expande o container quando o item pai receber a classe .open */
+.dropdown-parent.open .dashboard-submenu {
+  max-height: 200px; /* Altura limite segura para comportar os 3 itens */
+  opacity: 1;
+  padding: 6px 0;
+}
+
+/* Itens Internos do Submenu (Recuados para Hierarquia Visual) */
+.submenu-item {
+  margin: 2px 8px;
+}
+
+.submenu-item button {
+  padding: 9px 12px 9px 24px !important; /* Maior recuo à esquerda */
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.submenu-item button:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+/* Destaque para o Submenu Selecionado / Ativo */
+.submenu-item.active-sub button {
+  background: rgba(138, 43, 226, 0.15) !important;
+  color: #b97bfb !important;
+  font-weight: 600;
+  border-left: 3px solid var(--accent-purple, #8a2be2);
+  border-radius: 0 4px 4px 0;
+}
+
 .btn-logout {
   display: flex;
   align-items: center;
@@ -980,6 +1062,13 @@ body {
 .btn-bth:hover {
   color: var(--accent-purple);
   border: 1px solid var(--accent-purple);
+}
+.dash-btn-action {
+  background: none;
+  border: none;
+  width: 100%;
+  textalign: left;
+  cursor: pointer;
 }
 
 /* --- ÁREA DE CONTEÚDO PRINCIPAL --- */
@@ -1042,13 +1131,21 @@ body {
 }
 
 .metric-icon {
-  background: rgba(138, 43, 226, 0.2);
-  color: var(--accent-purple);
   padding: 12px;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.metric-btn-action {
+  background: rgba(138, 43, 226, 0.2);
+  color: var(--accent-purple);
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+.metric-btn-action:hover {
+  color: var(--white);
 }
 
 /* --- TABELAS DE GERENCIAMENTO (Glassmorphism sutil) --- */

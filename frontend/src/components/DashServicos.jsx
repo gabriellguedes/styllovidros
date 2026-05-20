@@ -83,9 +83,13 @@ const DashServicos = () => {
             setNovoServico({ ...novoServico, categoria: e.target.value })
           }
         >
-          <option value="BOX">Box de Banheiro</option>
+          <option value="JANELAS">Janelas</option>
+          <option value="PORTAS">Portas</option>
+          <option value="GUARDA_CORPO">Guarda Corpo</option>
+          <option value="BOX">Box para Banheiros</option>
           <option value="SACADA">Sacada</option>
-          <option value="ESPELHO">Espelho</option>
+          <option value="ESPELHO">Espelhos</option>
+          <option value="Pergolado">Pergolado</option>
         </select>
         <input type="file" onChange={handleFileChange} required />
         <button type="submit" disabled={loading} className="btn-add">
