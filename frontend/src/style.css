@@ -1529,6 +1529,112 @@ body {
 }
 
 /* ==========================================================================
+   ESTILIZAÇÃO DO COMPONENTE DASHREDES (GERENCIAMENTO DE LINKS)
+   ========================================================================= */
+
+/* Bloco container do formulário */
+.networks-form-container {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+  width: 100%;
+}
+
+/* Grupo de rotulagem e input individual */
+.network-input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.network-input-box label {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Cores de destaque personalizadas para as marcas */
+.icon-instagram {
+  color: #e1306c;
+}
+
+.icon-facebook {
+  color: #1877f2;
+}
+
+.icon-whatsapp {
+  color: #25d366;
+}
+
+.icon-phone {
+  color: var(--accent-purple, #8a2be2);
+}
+
+/* Inputs de texto das URLs */
+.network-input-box input[type="text"] {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.network-input-box input[type="text"]:focus {
+  border-color: var(--accent-purple, #8a2be2);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.15);
+}
+
+/* Rodapé do form com o botão de salvamento */
+.networks-form-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 20px;
+}
+
+/* Botão de salvar alterações das redes */
+.btn-save-networks {
+  background: var(--accent-purple, #8a2be2);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+}
+
+.btn-save-networks:hover:not(:disabled) {
+  background: #7522c0;
+  transform: translateY(-1px);
+}
+
+.btn-save-networks:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
                      RESPONSIVIDADE - TABLET
    ========================================================================== */
 
@@ -1698,5 +1804,13 @@ body {
   }
   .btn-add {
     grid-column: span 1;
+  }
+  .networks-form-container {
+    padding: 15px;
+  }
+
+  .btn-save-networks {
+    width: 100%;
+    justify-content: center;
   }
 }

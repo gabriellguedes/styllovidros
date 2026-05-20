@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ServicoViewSet, DepoimentoViewSet, ContatoViewSet, VideoViewSet, UsuarioViewSet
+from .views import ServicoViewSet, RedesSociaisViewSet, DepoimentoViewSet, ContatoViewSet, VideoViewSet, UsuarioViewSet
 
 
 # O Router cria automaticamente as rotas GET, POST, PUT e DELETE
@@ -9,6 +9,7 @@ router.register(r'servicos', ServicoViewSet)
 router.register(r'depoimentos', DepoimentoViewSet)
 router.register(r'contatos', ContatoViewSet)
 router.register(r'videos', VideoViewSet)
+router.register(r'redes', RedesSociaisViewSet, basename='redes')
 router.register(r'usuarios', UsuarioViewSet, basename='usuarios')
 
 urlpatterns = [

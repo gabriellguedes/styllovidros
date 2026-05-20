@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
-from .models import Servico, Depoimento, Contato, Video
-from .serializers import ServicoSerializer, DepoimentoSerializer, ContatoSerializer, VideoSerializer, UserSerializer
+from .models import Servico, Depoimento, Contato, Video, RedesSociais
+from .serializers import ServicoSerializer, RedesSociaisSerializer ,DepoimentoSerializer, ContatoSerializer, VideoSerializer, UserSerializer, RedesSociais
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 
@@ -36,3 +36,14 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-id')
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+class RedesSociaisViewSet(viewsets.ModelViewSet):
+    queryset = RedesSociais.objects.all()
+    serializer_class = RedesSociaisSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # Pequena melhoria lógica: se o frontend pedir dados e o banco estiver vazio, 
+    # cria automaticamente o primeiro registro com campos vazios para evitar erros 404.
+    def list(self, request, *args, **kwargs):
+        if not RedesSociais.objects.exists():
+            RedesSociais.objects.create(instagram="", facebook="", whatsapp="", youtube="", telefone="")
+        return super().list(request, *args, **kwargs)

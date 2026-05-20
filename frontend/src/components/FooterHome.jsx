@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 import {
   Home,
   MessageSquare,
@@ -20,6 +21,45 @@ const FooterHome = () => {
     navigate("/");
     window.location.reload();
   };
+
+  // Estado para armazenar os links vindos do banco de dados
+  const [linksRedes, setLinksRedes] = useState({
+    instagram: "",
+    facebook: "",
+    whatsapp: "",
+    youtube: "",
+    telefone: "",
+  });
+
+  useEffect(() => {
+    const carregarLinksRodape = async () => {
+      try {
+        const res = await api.get("redes/");
+
+        // Trata o retorno caso venha como Array (padrão do Django ViewSet)
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setLinksRedes(res.data[0]);
+        } else if (res.data && !Array.isArray(res.data)) {
+          setLinksRedes(res.data);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar os links do rodapé:", err);
+      }
+    };
+
+    carregarLinksRodape();
+  }, []);
+
+  // Função auxiliar para gerar o link correto do WhatsApp caso o usuário coloque só o número no input
+  const formatarLinkWhatsapp = (linkOrNumber) => {
+    if (!linkOrNumber) return "#";
+    // Se já for um link completo (contiver http), retorna ele mesmo
+    if (linkOrNumber.includes("http")) return linkOrNumber;
+    // Caso contrário, limpa os caracteres e gera o link wa.me
+    const numeroLimpo = linkOrNumber.replace(/\D/g, "");
+    return `https://wa.me/55${numeroLimpo}`;
+  };
+
   return (
     <footer className="footer-main">
       <div className="footer-container">
@@ -79,18 +119,46 @@ const FooterHome = () => {
         <div className="footer-column">
           <h3>Siga-nos</h3>
           <div className="social-links">
-            <a href="#" target="_blank" rel="noreferrer">
-              <i className="fa-brands fa-instagram"></i>
-            </a>
-            <a href="#" target="_blank" rel="noreferrer">
-              <i className="fa-brands fa-facebook"></i>
-            </a>
-            <a href="#" target="_blank" rel="noreferrer">
-              <i className="fa-brands fa-youtube"></i>
-            </a>
-            <a href="#" target="_blank" rel="noreferrer">
-              <i className="fa-brands fa-whatsapp"></i>
-            </a>
+            {linksRedes.instagram && (
+              <a
+                href={linksRedes.instagram}
+                title="Ir para o Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="fa-brands fa-instagram"></i>
+              </a>
+            )}
+            {linksRedes.facebook && (
+              <a
+                href={linksRedes.facebook}
+                title="Ir para o Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="fa-brands fa-facebook"></i>
+              </a>
+            )}
+            {linksRedes.youtube && (
+              <a
+                href={linksRedes.youtube}
+                title="Ir para o YouTube"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="fa-brands fa-youtube"></i>
+              </a>
+            )}
+            {linksRedes.whatsapp && (
+              <a
+                href={formatarLinkWhatsapp(linksRedes.whatsapp)}
+                title="Fale Conosco no Whatsapp"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="fa-brands fa-whatsapp"></i>
+              </a>
+            )}
           </div>
         </div>
       </div>

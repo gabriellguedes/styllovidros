@@ -4,6 +4,7 @@ import Video from "../components/DashVideos";
 import api from "../api";
 import {
   User,
+  Link2,
   BarChart3,
   MessageSquare,
   ClipboardList,
@@ -16,6 +17,7 @@ import DashServicos from "../components/DashServicos";
 import DashDepoimentos from "../components/DashDepoimentos";
 import DashLeads from "../components/DashLeads";
 import DashUser from "../components/DashUser";
+import DashRedes from "../components/DashRedes";
 
 const Dashboard = () => {
   // Estado para controlar a aba ativa no painel administrativo
@@ -202,6 +204,24 @@ const Dashboard = () => {
                 </a>
               </button>
             </li>
+            <li
+              className={`dashboard-menu-item ${activeTab === "redes" ? "active" : ""}`}
+            >
+              <button
+                onClick={() => handleTabChange("redes")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  width: "100%",
+                  textAlign: "left",
+                  cursor: "pointer",
+                }}
+              >
+                <a style={{ pointerEvents: "none" }}>
+                  <Link2 size={18} /> Redes Sociais
+                </a>
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -322,6 +342,12 @@ const Dashboard = () => {
             {activeTab === "usuarios" && (
               <section className="dashboard-data-section">
                 <DashUser />
+              </section>
+            )}
+
+            {activeTab === "redes" && (
+              <section className="dashboard-data-section">
+                <DashRedes />
               </section>
             )}
           </>

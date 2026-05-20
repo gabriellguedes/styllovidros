@@ -44,3 +44,19 @@ class Video(models.Model):
 
     def __str__(self):
         return self.titulo    
+    
+
+
+class RedesSociais(models.Model):
+    instagram = models.URLField(max_length=255, blank=True, null=True)
+    facebook = models.URLField(max_length=255, blank=True, null=True)
+    youtube = models.URLField(max_length=255, blank=True, null=True)
+    whatsapp = models.URLField(max_length=255, blank=True, null=True)
+    telefone = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Rede Social"
+        verbose_name_plural = "Redes Sociais"
+
+    def __str__(self):
+        return "Configuração de Links do Rodapé"
