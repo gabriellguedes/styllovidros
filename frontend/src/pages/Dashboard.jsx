@@ -14,6 +14,7 @@ import {
   PiggyBank,
   Settings,
   ChevronDown,
+  FileText,
 } from "lucide-react";
 //My components
 import Video from "../components/DashVideos";
@@ -22,6 +23,7 @@ import DashDepoimentos from "../components/DashDepoimentos";
 import DashLeads from "../components/DashLeads";
 import DashUser from "../components/DashUser";
 import DashRedes from "../components/DashRedes";
+import DashAbout from "../components/DashAbout";
 
 const Dashboard = () => {
   // Estado para controlar a aba ativa no painel administrativo
@@ -212,6 +214,18 @@ const Dashboard = () => {
                   </a>
                 </button>
               </li>
+              <li
+                className={`dashboard-menu-item ${activeTab === "sobre" ? "active-sub" : ""}`}
+              >
+                <button
+                  onClick={() => handleTabChange("sobre")}
+                  className="dash-btn-action"
+                >
+                  <a style={{ pointerEvents: "none" }}>
+                    <FileText size={18} /> Sobre Nós
+                  </a>
+                </button>
+              </li>
             </ul>
           </div>
           <button className="btn-logout" onClick={handleLogout}>
@@ -353,6 +367,11 @@ const Dashboard = () => {
             {activeTab === "redes" && (
               <section className="dashboard-data-section">
                 <DashRedes />
+              </section>
+            )}
+            {activeTab === "sobre" && (
+              <section className="dashboard-data-section">
+                <DashAbout />
               </section>
             )}
           </>

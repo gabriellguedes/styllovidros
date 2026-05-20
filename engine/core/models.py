@@ -60,3 +60,14 @@ class RedesSociais(models.Model):
 
     def __str__(self):
         return "Configuração de Links do Rodapé"
+    
+class AboutUs(models.Model):
+    titulo_rodape = models.CharField(max_length=100, blank=True, null=True, default="STYLLO VIDROS")
+    descricao_rodape = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Configuração do Rodapé"
+        verbose_name_plural = "Configurações do Rodapé"
+
+    def __str__(self):
+        return "Configurações Gerais do Rodapé"

@@ -78,6 +78,31 @@ const FooterHome = () => {
       behavior: "smooth", // Transição suave
     });
   };
+
+  const [aboutUs, setAboutUs] = useState({
+    titulo_rodape: "",
+    descricao_rodape: "",
+  });
+
+  useEffect(() => {
+    const carregarAboutUs = async () => {
+      try {
+        const res = await api.get("aboutUs/");
+
+        // Trata o retorno caso venha como Array (padrão do Django ViewSet)
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setAboutUs(res.data[0]);
+        } else if (res.data && !Array.isArray(res.data)) {
+          setAboutUs(res.data);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar o conteúdo do Sobre Nós: ", err);
+      }
+    };
+
+    carregarAboutUs();
+  }, []);
+
   return (
     <footer className="footer-main">
       <div className="footer-container">
@@ -127,14 +152,9 @@ const FooterHome = () => {
 
         <div className="footer-column central">
           <h3>Sobre Nós</h3>
-          <p className="footer-about">
-            Com anos de experiência no mercado, a <strong>Styllo Vidros</strong>{" "}
-            é especialista em transformar ambientes através do vidro. Unimos
-            técnica, segurança e design para entregar projetos sob medida que
-            elevam o padrão da sua residência ou empresa. Nossa missão é a
-            transparência em cada detalhe e a satisfação total de nossos
-            clientes.
-          </p>
+          {aboutUs.descricao_rodape && (
+            <p className="footer-about">{aboutUs.descricao_rodape}</p>
+          )}
         </div>
 
         {/* Na coluna das Redes Sociais, os ícones agora estão maiores via CSS */}
