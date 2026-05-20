@@ -23,41 +23,15 @@ const Servicos = () => {
 
   return (
     <section className="section-services">
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "20px",
-          marginTop: "20px",
-        }}
-      >
+      <div>
         {servicos.map((item) => (
-          <div
-            className="material-card"
-            key={item.id}
-            style={{
-              borderRadius: "12px",
-              overflow: "hidden",
-              boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-              background: "#fff",
-            }}
-          >
+          <div className="material-card" key={item.id}>
             <img
               src={item.imagem} // URL vinda do Django
               alt={item.titulo}
-              style={{ width: "100%", height: "200px", objectFit: "cover" }}
             />
-            <div style={{ padding: "15px" }}>
-              <span
-                style={{
-                  fontSize: "12px",
-                  color: "#8A2BE2",
-                  fontWeight: "bold",
-                }}
-              >
-                {item.categoria}
-              </span>
-              <h3 style={{ margin: "5px 0" }}>{item.titulo}</h3>
+            <div>
+              <h4 title={item.categoria}>{item.titulo}</h4>
             </div>
           </div>
         ))}

@@ -71,6 +71,13 @@ const FooterHome = () => {
     const numeroLimpo = linkOrNumber.replace(/\D/g, "");
     return `https://wa.me/55${numeroLimpo}?text=${mensagemCodificada}`;
   };
+  const scrollToTop = (e) => {
+    // Se o usuário já estiver na Home ("/") apenas rola a tela para cima suavemente
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Transição suave
+    });
+  };
   return (
     <footer className="footer-main">
       <div className="footer-container">
@@ -78,19 +85,21 @@ const FooterHome = () => {
         <div className="footer-column">
           <h3 className="footer-column-h3-01">Painel</h3>
           <ul>
+            <li>
+              <Link to="/" onClick={scrollToTop}>
+                Início
+              </Link>
+            </li>
+            <li>
+              <Link to="/avaliar" target="_blank" rel="noopener noreferrer">
+                Avaliar
+              </Link>
+            </li>
+            <li>
+              <Link to="/Contato">Contato</Link>
+            </li>
             {isAuth ? (
               <>
-                <li>
-                  <Link to="/">Início</Link>
-                </li>
-                <li>
-                  <Link to="/avaliar" target="_blank" rel="noopener noreferrer">
-                    Avaliar
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/Contato">Contato</Link>
-                </li>
                 <li>
                   <Link to="/dashboard">Painel</Link>
                 </li>

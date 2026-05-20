@@ -33,17 +33,18 @@ const Home = () => {
       <main className="main-parallax-container">
         {/* Div que carrega a imagem de fundo fixa */}
         <div className="parallax-background"></div>
-
         {/* Seção do Carrossel de Vídeos (some ao scroll) */}
         <section className="hero-video-section responsive_view">
           <VideosHome />
         </section>
         <div className="main-layout content-over-parallax">
           {/* Coluna da Esquerda (Conteúdo Principal) */}
+
           <div className="content-column">
             {/* Bloco de Materiais/Serviços */}
+
             <section className="section-block">
-              <h2 className="section-header">Nossos Trabalhos</h2>
+              <h2 className="section-header">Nossos Produtos</h2>
               <ServicosHome />
             </section>
           </div>
@@ -55,13 +56,21 @@ const Home = () => {
               <DepoimentosHome />
             </section>
           </aside>
-          {/* Bloco de Orçamento */}
-          <div>
-            <section className="section-block">
-              <h2 className="section-header">Solicite um Orçamento</h2>
-              <ContatoForm />
+        </div>
+
+        {/* Bloco de Orçamento */}
+        <div className="main-layout">
+          <div className="content-column">
+            <section className="section-block desktop_view">
+              <VideosHome />
             </section>
           </div>
+          <aside className="testimonials-sidebar">
+            <section className="section-block">
+              <h2 className="section-header">Fale Conosco</h2>
+              <ContatoForm />
+            </section>
+          </aside>
         </div>
       </main>
       <FooterHome />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Video from "../components/DashVideos";
+
 import api from "../api";
 import {
   User,
@@ -15,6 +15,8 @@ import {
   Settings,
   ChevronDown,
 } from "lucide-react";
+//My components
+import Video from "../components/DashVideos";
 import DashServicos from "../components/DashServicos";
 import DashDepoimentos from "../components/DashDepoimentos";
 import DashLeads from "../components/DashLeads";
@@ -182,7 +184,7 @@ const Dashboard = () => {
                   className="dash-btn-action"
                 >
                   <a style={{ pointerEvents: "none" }}>
-                    <ClipboardList size={18} /> Trabalhos
+                    <ClipboardList size={18} /> Produtos
                   </a>
                 </button>
               </li>

@@ -85,7 +85,7 @@ const EnviarDepoimento = () => {
           </h2>
           <p>
             Conte como foi a sua experiência com os serviços da
-            <span className="name-testimonial">Styllo Vidros.</span>
+            <span className="name-testimonial"> Styllo Vidros.</span>
           </p>
         </div>
 

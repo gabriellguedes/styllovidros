@@ -203,7 +203,7 @@ body {
   padding: 30px;
   margin-bottom: 25px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-dark);
+  box-shadow: 0px 0px 5px var(--shadow-dark);
 }
 
 .section-header {
@@ -215,9 +215,41 @@ body {
 }
 /* --- 3.1 - Serviços  --- */
 .section-services {
-  padding: 40px 20px;
+  padding: 40px 0;
   max-width: 1200px;
   margin: 0 auto;
+}
+.section-services > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.material-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  color: #333;
+  text-align: center;
+  box-shadow: var(--shadow-dark);
+}
+.material-card div {
+  padding: 15px;
+}
+.material-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.material-card h4 {
+  padding: 15px;
+  color: var(--accent-purple);
+  margin: 0;
+}
+.material-card span {
+  font-size: 12px;
+  color: #8a2be2;
+  font-weight: bold;
 }
 /* ---  3.2 - DEPOIMENTOS (HEXAGONAL) --- */
 
@@ -452,7 +484,10 @@ body {
 .footer-column ul li a:hover {
   color: white;
 }
-
+.central p {
+  text-align: justify;
+  padding: 0 15px;
+}
 .social-links {
   display: flex;
   gap: 20px;
@@ -1668,7 +1703,9 @@ body {
 .icon-instagram {
   color: #e1306c;
 }
-
+.icon-youtube {
+  color: #c4302b;
+}
 .icon-facebook {
   color: #1877f2;
 }
@@ -1829,12 +1866,11 @@ body {
                         MAIN 
   ***************************************************/
   .main-layout {
-    padding: 40px 20px;
+    padding: 40px 10px;
   }
   /* */
   /* Serviços */
   .section-services {
-    padding: 0;
   }
   /* Depoimentos*/
   .testimonial-avatar-wrapper {
@@ -1873,6 +1909,9 @@ body {
 
   .testimonial-form-header h2 {
     font-size: 1.5rem;
+  }
+  .name-testimonial {
+    display: contents;
   }
   .login-card {
     padding: 30px 20px;
