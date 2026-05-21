@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import NavbarUser from "./NavbarUser";
 
 const HeaderHome = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,6 +32,15 @@ const HeaderHome = () => {
             <label>Excelência em Vidraçaria e Design</label>
           </div>
         </Link>
+      </section>
+      <section
+        className={`hero-brand-section menu-user ${isScrolled ? "scrolled" : ""}`}
+      >
+        <div
+          className={`container-navbar-user ${isScrolled ? "scrolled" : ""}`}
+        >
+          <NavbarUser />
+        </div>
       </section>
     </header>
   );

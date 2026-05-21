@@ -15,11 +15,11 @@ const Login = () => {
     try {
       // Chamada para o endpoint do Django
       const response = await api.post("login/", credentials);
-      toast.success("Bem-vindo, Styllo Vidros!");
+      toast.success(`Bem-vindo, ${credentials.username}!`);
       // Salvamos o token e o status
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("auth", "true");
-
+      localStorage.setItem("auth_user", credentials.username);
       navigate("/dashboard");
     } catch (error) {
       toast.error("Usuário ou senha inválidos!");

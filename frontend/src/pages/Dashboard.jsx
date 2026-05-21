@@ -24,6 +24,7 @@ import DashLeads from "../components/DashLeads";
 import DashUser from "../components/DashUser";
 import DashRedes from "../components/DashRedes";
 import DashAbout from "../components/DashAbout";
+import NavbarUser from "../components/NavbarUser";
 
 const Dashboard = () => {
   // Estado para controlar a aba ativa no painel administrativo
@@ -244,6 +245,8 @@ const Dashboard = () => {
               Styllo Vidros.
             </p>
           </div>
+
+          <NavbarUser activeTab={activeTab} handleTabChange={handleTabChange} />
         </div>
 
         {loading ? (

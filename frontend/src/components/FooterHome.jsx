@@ -2,14 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
-import {
-  Home,
-  MessageSquare,
-  LayoutDashboard,
-  Menu,
-  LogOut,
-  TextAlignCenter,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 
 const FooterHome = () => {
   const navigate = useNavigate();
@@ -108,7 +101,7 @@ const FooterHome = () => {
       <div className="footer-container">
         {/* Coluna 1: Navegação */}
         <div className="footer-column">
-          <h3 className="footer-column-h3-01">Painel</h3>
+          <h3 className="footer-column-h3-01">Menu</h3>
           <ul>
             <li>
               <Link to="/" onClick={scrollToTop}>
@@ -128,24 +121,9 @@ const FooterHome = () => {
                 <li>
                   <Link to="/dashboard">Painel</Link>
                 </li>
-                <li>
-                  <button
-                    onClick={handleLogout}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "yellow",
-                    }}
-                  >
-                    <LogOut size={18} /> Sair
-                  </button>
-                </li>
               </>
             ) : (
-              <li>
-                <Link to="/login">Entrar</Link>
-              </li>
+              <></>
             )}
           </ul>
         </div>
