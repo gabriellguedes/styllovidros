@@ -123,7 +123,9 @@ const FooterHome = () => {
                 </li>
               </>
             ) : (
-              <></>
+              <li>
+                <Link to="/login">Entrar</Link>
+              </li>
             )}
           </ul>
         </div>

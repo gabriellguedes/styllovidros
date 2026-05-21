@@ -13,6 +13,7 @@ import {
   SquarePlay,
   PiggyBank,
   Settings,
+  ArrowLeft,
   ChevronDown,
   FileText,
 } from "lucide-react";
@@ -229,8 +230,12 @@ const Dashboard = () => {
               </li>
             </ul>
           </div>
-          <button className="btn-logout" onClick={handleLogout}>
-            <LogOut size={18} /> Sair do Sistema
+
+          <button className="section-btn-bth">
+            <a href="/" className="btn-bth">
+              <ArrowLeft size={18} />
+              <span>Voltar para o site</span>
+            </a>
           </button>
         </div>
       </aside>
@@ -245,7 +250,6 @@ const Dashboard = () => {
               Styllo Vidros.
             </p>
           </div>
-
           <NavbarUser activeTab={activeTab} handleTabChange={handleTabChange} />
         </div>
 
@@ -323,11 +327,6 @@ const Dashboard = () => {
                       ? `Você possui ${depoimentosPendentes} depoimento(s) aguardando moderação antes de ser(em) exibido(s) publicamente.`
                       : "Tudo em dia! Não há novos depoimentos para aprovação neste momento."}
                   </p>
-                </section>
-                <section className="section-btn-bth">
-                  <a href="/" className="btn-bth">
-                    ← Voltar para o site
-                  </a>
                 </section>
               </div>
             )}

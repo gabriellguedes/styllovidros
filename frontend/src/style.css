@@ -1263,26 +1263,27 @@ body {
   background: rgba(255, 77, 77, 0.1);
 }
 .section-btn-bth {
-  padding-top: 10px;
-  display: flex;
-  justify-content: right;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+}
+.btn-bth span {
+  padding-left: 10px;
 }
 .btn-bth {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 25px;
   color: var(--white);
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 1rem;
   transition: color 0.3s ease;
-  border: 1px solid var(--white);
-  border-radius: 15px 15px;
-  padding: 10pt 20pt;
+  padding: 10pt 15pt;
+  display: flex;
+  align-items: center;
 }
-.btn-bth:hover {
-  color: var(--accent-purple);
-  border: 1px solid var(--accent-purple);
+.section-btn-bth:hover {
+  background: rgba(138, 43, 226, 0.15);
+  color: var(--white);
+  border-radius: 8px;
 }
 .dash-btn-action {
   background: none;

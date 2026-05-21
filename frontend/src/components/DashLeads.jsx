@@ -75,7 +75,7 @@ const DashLeads = () => {
                 </td>
                 <td style={{ padding: "12px" }}>
                   <a
-                    href={`https://wa.me/55${(lead.telefone || "").replace(/\D/g, "")}`}
+                    href={`https://wa.me/55${(lead.whatsapp || "").replace(/\D/g, "")}`}
                     target="_blank"
                     rel="noreferrer"
                     style={{
@@ -84,7 +84,7 @@ const DashLeads = () => {
                       fontWeight: "500",
                     }}
                   >
-                    {lead.telefone} (Chamar)
+                    {lead.whatsapp} (Chamar)
                   </a>
                 </td>
                 <td style={{ padding: "12px" }}>

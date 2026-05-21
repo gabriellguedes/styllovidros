@@ -13,7 +13,6 @@ class ServicoViewSet(viewsets.ModelViewSet):
 class DepoimentoViewSet(viewsets.ModelViewSet):
     queryset = Depoimento.objects.all().order_by('-data_envio')
     serializer_class = DepoimentoSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     # Endpoint extra para pegar apenas os aprovados (usar no Frontend Home)
     def get_queryset(self):
@@ -25,7 +24,6 @@ class DepoimentoViewSet(viewsets.ModelViewSet):
 class ContatoViewSet(viewsets.ModelViewSet):
     queryset = Contato.objects.all()
     serializer_class = ContatoSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all().order_by('-criado_em')

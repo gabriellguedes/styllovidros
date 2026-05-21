@@ -39,19 +39,19 @@ const ContatoForm = () => {
             onChange={handleChange}
             required
           />
-          {/*           <input
+          <input
             type="email"
             name="email"
             placeholder="E-mail"
             value={formData.email}
             onChange={handleChange}
             required
-          />*/}
+          />
 
           <input
             type="text"
             name="whatsapp"
-            placeholder="WhatsApp (DDD)"
+            placeholder="WhatsApp Ex: (62) 9 9123-4567"
             value={formData.whatsapp}
             onChange={handleChange}
             required
