@@ -276,7 +276,12 @@ body {
   object-fit: cover;
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
-
+.testimonial-icon-avatar {
+  color: var(--white);
+  width: 90px;
+  margin-top: 10px;
+  height: 90px;
+}
 .testimonial-text {
   font-size: 1.1rem;
   color: var(--white);

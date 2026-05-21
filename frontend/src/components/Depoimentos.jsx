@@ -50,7 +50,7 @@ const DepoimentosHome = () => {
                     }}
                   />
                 ) : (
-                  <UserCircle size={50} color="#8a2be2" />
+                  <UserCircle className="testimonial-icon-avatar" />
                 )}
               </div>
               <div className="testimonial-content">
