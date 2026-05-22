@@ -22,7 +22,7 @@ const DashUser = () => {
     email: "",
     password: "",
     is_staff: false,
-    is_active: true, // Define por padrão que novas contas entram ativas
+    is_active: true,
   });
   const [loading, setLoading] = useState(false);
 

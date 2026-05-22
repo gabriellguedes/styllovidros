@@ -15,11 +15,25 @@ const Login = () => {
     try {
       // Chamada para o endpoint do Django
       const response = await api.post("login/", credentials);
-      toast.success(`Bem-vindo, ${credentials.username}!`);
-      // Salvamos o token e o status
+
+      // Ajustado para usar o first_name que vem do banco de dados
+      toast.success(
+        `Bem-vindo, ${response.data.first_name || "Usuário"} ${response.data.last_name || " Lindo(a)"}!`,
+      );
+
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("auth", "true");
-      localStorage.setItem("auth_user", credentials.username);
+      const dadosDoUsuario = {
+        username: credentials.username,
+        first_name: response.data.first_name || "",
+        last_name: response.data.last_name || "",
+      };
+      // Guardamos tudo dentro de 'auth_user' convertendo o objeto para Texto (String)
+      localStorage.setItem("auth_user", JSON.stringify(dadosDoUsuario));
+      const statusAdmin =
+        response.data.is_staff !== undefined ? response.data.is_staff : false;
+      localStorage.setItem("is_admin", String(statusAdmin));
+
       navigate("/dashboard");
     } catch (error) {
       toast.error("Usuário ou senha inválidos!");

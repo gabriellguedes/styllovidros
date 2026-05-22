@@ -20,13 +20,37 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
-  // Recupera o nome do usuário logado (pode ser adaptado para o seu contexto/localStorage)
-  const [username, setUsername] = useState("Administrador");
+  // Estados separados para gerenciar a exibição amigável do perfil
+  const [exibirNome, setExibirNome] = useState("Usuário");
+  const [subTitulo, setSubTitulo] = useState("Conectado");
 
   useEffect(() => {
-    const storedAuth = localStorage.getItem("auth_user"); // ou como tiver salvo o nome
+    const storedAuth = localStorage.getItem("auth_user");
+
     if (storedAuth) {
-      setUsername(storedAuth);
+      try {
+        // Tenta converter o texto estruturado de volta para Objeto JavaScript
+        const usuarioObjeto = JSON.parse(storedAuth);
+
+        // Verifica se temos o primeiro nome cadastrado
+        if (usuarioObjeto.first_name) {
+          // Junta o First Name com o Last Name separados por um espaço normal
+          const nomeCompleto =
+            `${usuarioObjeto.first_name} ${usuarioObjeto.last_name || ""}`.trim();
+          setExibirNome(nomeCompleto);
+        } else {
+          // Fallback caso o objeto exista mas não tenha nomes salvos
+          setExibirNome(usuarioObjeto.username || "Usuário");
+        }
+
+        // No cabeçalho interno do dropdown, mostramos o username institucional (@gabriel.guedes)
+        setSubTitulo(`@${usuarioObjeto.username}`);
+      } catch (e) {
+        // Bloco de segurança: Se 'auth_user' for apenas o texto antigo (String simples),
+        // exibe o texto puro e evita que o React dê erro de tela branca.
+        setExibirNome(storedAuth);
+        setSubTitulo("Conectado");
+      }
     }
   }, []);
 
@@ -48,6 +72,7 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
     localStorage.removeItem("auth");
     localStorage.removeItem("token");
     localStorage.removeItem("auth_user");
+    localStorage.removeItem("is_admin");
     navigate("/");
     window.location.reload();
   };
@@ -62,13 +87,14 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
     }
     setIsOpen(false);
   };
+
   const isNoDashboard = location.pathname === "/dashboard";
 
   return (
     <>
       {isAuth ? (
         <div className="user-profile-menu-container" ref={menuRef}>
-          {/* Botão de Disparo (Gatilho) */}
+          {/* Botão de Gatilho Principal (Navbar) */}
           <button
             type="button"
             className={`user-profile-trigger ${isOpen ? "active" : ""}`}
@@ -77,7 +103,8 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
             <div className="avatar-circle">
               <User size={18} />
             </div>
-            <span className="user-profile-name">{username}</span>
+            {/* 🔥 AQUI: Agora exibe o Nome e Sobrenome unificados de forma elegante */}
+            <span className="user-profile-name">{exibirNome}</span>
             <ChevronDown
               size={14}
               className={`chevron-user-icon ${isOpen ? "rotate" : ""}`}
@@ -89,10 +116,12 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
             <ul className="user-profile-dropdown">
               <li className="dropdown-user-info-header">
                 <span>Conectado como</span>
-                <strong>{username}</strong>
+                {/* Mostra o Username com arroba dentro do menu, mantendo o padrão do sistema */}
+                <strong>{subTitulo}</strong>
               </li>
 
               <hr className="dropdown-divider" />
+
               <li className={isNoDashboard ? "disabled-dropdown-item" : ""}>
                 <button
                   type="button"
@@ -103,7 +132,9 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
                   Painel Administrativo
                 </button>
               </li>
+
               <hr className="dropdown-divider" />
+
               <li>
                 <button
                   type="button"

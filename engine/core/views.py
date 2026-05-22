@@ -4,7 +4,27 @@ from .models import Servico, Depoimento, Contato, Video, RedesSociais, AboutUs
 from .serializers import ServicoSerializer, AboutUsSerializer, RedesSociaisSerializer ,DepoimentoSerializer, ContatoSerializer, VideoSerializer, UserSerializer, RedesSociais
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        
+        # É AQUI que enviamos os dados para o React
+        return Response({
+            'token': token.key,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'is_staff': user.is_staff  # Retorna True ou False
+        })
+    
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all().order_by('-criado_em')
     serializer_class = ServicoSerializer
