@@ -21,27 +21,35 @@ const HeaderHome = () => {
 
   return (
     <header className={`hero-banner ${isScrolled ? "scrolled" : ""}`}>
-      {/* Seção da Logo e Títulos */}
-      <section className={`hero-brand-section ${isScrolled ? "scrolled" : ""}`}>
-        <Link to="/" className="hero-logo-link">
-          <img className="nav_logo" src="/logo.png" alt="Logo Styllo Vidros" />
-          <div className="hero-text-container">
-            <h1>
-              STYLLO <span>VIDROS</span>
-            </h1>
-            <label>Excelência em Vidraçaria e Design</label>
-          </div>
-        </Link>
-      </section>
-      <section
-        className={`hero-brand-section menu-user ${isScrolled ? "scrolled" : ""}`}
-      >
-        <div
-          className={`container-navbar-user ${isScrolled ? "scrolled" : ""}`}
+      <div className={`hero-banner-container ${isScrolled ? "scrolled" : ""}`}>
+        {/* Seção da Logo e Títulos */}
+        <section
+          className={`hero-brand-section ${isScrolled ? "scrolled" : ""}`}
         >
-          <NavbarUser />
-        </div>
-      </section>
+          <Link to="/" className="hero-logo-link">
+            <img
+              className="nav_logo"
+              src="/logo.png"
+              alt="Logo Styllo Vidros"
+            />
+            <div className="hero-text-container">
+              <h1>
+                STYLLO <span>VIDROS</span>
+              </h1>
+              <label>Excelência em Vidraçaria e Design</label>
+            </div>
+          </Link>
+        </section>
+        <section
+          className={`hero-brand-section menu-user ${isScrolled ? "scrolled" : ""}`}
+        >
+          <div
+            className={`container-navbar-user ${isScrolled ? "scrolled" : ""}`}
+          >
+            <NavbarUser />
+          </div>
+        </section>
+      </div>
     </header>
   );
 };

@@ -1,10 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { User, LogOut, Key, Settings, ChevronDown } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import {
+  User,
+  LogOut,
+  Key,
+  Settings,
+  ChevronDown,
+  MonitorCog,
+  LayoutDashboard,
+} from "lucide-react";
 import api from "../api";
 
 const NavbarUser = ({ activeTab, handleTabChange }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isAuth = localStorage.getItem("auth") === "true";
 
   const [isOpen, setIsOpen] = useState(false);
@@ -52,6 +62,7 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
     }
     setIsOpen(false);
   };
+  const isNoDashboard = location.pathname === "/dashboard";
 
   return (
     <>
@@ -82,7 +93,17 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
               </li>
 
               <hr className="dropdown-divider" />
-
+              <li className={isNoDashboard ? "disabled-dropdown-item" : ""}>
+                <button
+                  type="button"
+                  onClick={() => !isNoDashboard && navigate("/dashboard")}
+                  disabled={isNoDashboard}
+                >
+                  <LayoutDashboard size={16} />
+                  Painel Administrativo
+                </button>
+              </li>
+              <hr className="dropdown-divider" />
               <li>
                 <button
                   type="button"

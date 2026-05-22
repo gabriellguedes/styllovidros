@@ -50,18 +50,27 @@ body {
   width: 100%;
   min-height: 300px; /* Altura inicial */
   background: var(--primary-dark);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: 1000;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0 5%;
+  display: flex;
+  justify-content: center;
 }
-
+.hero-banner-container {
+  max-width: 1300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+.hero-banner-container.scrolled {
+  padding: 15px 0;
+  justify-content: space-between;
+}
 /* Estado reduzido quando o utilizador faz scroll */
 .hero-banner.scrolled {
+  display: block;
   min-height: 85px;
-  justify-content: space-between;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
@@ -224,6 +233,7 @@ body {
   padding: 10px 16px;
   display: flex;
   flex-direction: column;
+  text-align: center;
 }
 
 .dropdown-user-info-header span {
@@ -276,7 +286,20 @@ body {
 .btn-dropdown-logout:hover {
   background: rgba(255, 77, 77, 0.08) !important;
 }
+/* Estilo para itens desativados no menu de perfil */
+.disabled-dropdown-item {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none; /* Impede qualquer evento de clique no HTML */
+}
 
+.disabled-dropdown-item button {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.disabled-dropdown-item button:hover {
+  background: none !important; /* Remove o efeito de hover */
+}
 /* Animação suave de entrada */
 @keyframes dropdownFadeIn {
   from {
@@ -622,7 +645,7 @@ body {
 }
 
 .footer-container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -2128,11 +2151,6 @@ body {
   .hero-text-container label {
     font-size: 0.7rem;
   }
-  .hero-banner.scrolled {
-    height: 70px;
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-  }
   .hero-banner.scrolled .hero-text-container h1 {
     font-size: 1.2rem;
     width: 100%;
@@ -2140,6 +2158,9 @@ body {
   }
   .hero-banner.scrolled .hero-text-container label {
     display: none;
+  }
+  .hero-banner-container.scrolled {
+    padding: 0;
   }
   .menu-user {
     display: none;
