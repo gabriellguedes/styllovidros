@@ -1653,6 +1653,17 @@ body {
   gap: 15px;
   align-items: center;
 }
+.dash-form-column {
+  padding: 25px;
+}
+.dash-form-column input {
+  margin-bottom: 15px;
+}
+.dash-form-column select {
+  margin-bottom: 25px;
+}
+.dash-form-column label {
+}
 
 /* Estilização padrão de inputs e selects do form */
 .dash-form input[type="text"],
@@ -1669,7 +1680,11 @@ body {
   transition: all 0.3s ease;
   outline: none;
 }
-
+.dash-form-column input[placeholder*="Username"][readonly] {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #a5a5a5 !important;
+  cursor: not-allowed;
+}
 .dash-form input[type="text"]:focus,
 .dash-form select:focus {
   border-color: var(--accent-purple, #8a2be2);
@@ -1785,7 +1800,30 @@ body {
 /* ==========================================================================
    ESTILIZAÇÃO DO COMPONENTE DASHUSER (GESTÃO DE USUÁRIOS)
    ========================================================================= */
+.dashboard-table input[type="text"],
+.dashboard-table input[type="email"],
+.dashboard-table input[type="password"],
+.dashboard-table select {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+.dashboard-table input[type="text"]:focus,
+.dashboard-table select:focus {
+  border-color: var(--accent-purple, #8a2be2);
+  box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+}
 
+.dashboard-table select option {
+  background: #1e1e24; /* Fundo escuro para as opções do select */
+  color: #fff;
+}
 /* Cabeçalhos e Títulos de Seção */
 .dash-section-header {
   margin-bottom: 20px;
@@ -1811,11 +1849,17 @@ body {
 }
 
 /* Customizações adicionais para as tabelas de Usuários */
-.table-cell-user {
+.table-cell-name {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 25px !important;
+}
+
+.table-cell-user {
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .icon-user-accent {

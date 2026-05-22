@@ -39,7 +39,7 @@ class AboutUsSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'is_staff']
+        fields = ['id', 'first_name', 'last_name', 'is_active', 'username', 'email', 'password', 'is_staff']
         extra_kwargs = {
             'password': {'write_only': True}  # A senha nunca é retornada na API por segurança
         }
