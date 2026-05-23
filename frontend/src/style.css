@@ -414,16 +414,84 @@ body {
   padding-bottom: 5px;
 }
 /* --- 3.1 - Serviços  --- */
-.section-services {
+.section-services-container {
+  background-color: rgba(45, 0, 77, 0.45); /* Roxo translúcido */
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 0px 5px var(--shadow-dark);
+  margin-top: 50px;
+}
+.section-services-content {
   padding: 40px 0;
   max-width: 1200px;
   margin: 0 auto;
 }
 .section-services > div {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
 }
+
+/* ==========================================================================
+          Bloqueio de Crescimento Horizontal e Vertical do Carrossel
+   ========================================================================== */
+
+/* Seção geral que abriga o portfólio */
+.section-services {
+  width: 100%;
+  max-width: 100vw;
+  overflow: hidden; /* Impede que qualquer coisa escape para os lados da tela */
+  padding: 60px 0;
+}
+
+/* O Container principal do Carrossel - Ele manda na largura máxima */
+.services-container-wrapper {
+  width: 100%;
+  max-width: 1200px; /* Limite de largura em telas grandes */
+  margin: 0 auto;
+  padding: 20px 40px; /* Espaço para as setas não cobrirem os cards */
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Força o Swiper a respeitar a largura da div pai em vez de expandir infinitamente */
+.services-swiper {
+  width: 100%;
+  max-width: 100%;
+  padding-bottom: 50px !important; /* Espaço para as bolinhas de paginação */
+}
+
+/* Trava todos os cards para terem exatamente o mesmo tamanho e proporção */
+.services-swiper .swiper-slide {
+  height: auto;
+  display: flex;
+  box-sizing: border-box;
+}
+
+/* Estilização e tamanho fixo dos Cards */
+.services-swiper .material-card {
+  width: 100% !important; /* Obriga o card a ocupar apenas o espaço do slide alocado */
+  height: 420px; /* Altura vertical perfeitamente travada */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius, 12px);
+  box-sizing: border-box;
+}
+
+/* Imagem travada e sem distorção */
+.services-swiper .material-card img {
+  width: 100%;
+  height: 320px; /* Altura fixa para a foto */
+  object-fit: cover; /* Recorta proporcionalmente */
+  object-position: center;
+}
+
 .material-card {
   background: var(--white);
   border-radius: var(--radius);
@@ -443,7 +511,8 @@ body {
 
 .material-card h4 {
   padding: 15px;
-  color: var(--accent-purple);
+  color: var(--white);
+  text-shadow: 0 0 15px var(--primary-dark);
   margin: 0;
 }
 .material-card span {
@@ -2245,7 +2314,24 @@ body {
   }
   /* */
   /* Serviços */
+  .section-services-container {
+    margin-top: 0;
+  }
   .section-services {
+  }
+  .section-services > div {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  .services-container-wrapper {
+    padding: 20px 15px; /* Reduz o recuo lateral no mobile */
+  }
+
+  .services-swiper .material-card {
+    height: 360px; /* Card ligeiramente menor no telemóvel */
+  }
+
+  .services-swiper .material-card img {
+    height: 270px; /* Foto menor no telemóvel */
   }
   /* Depoimentos*/
   .testimonial-avatar-wrapper {

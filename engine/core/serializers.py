@@ -1,11 +1,20 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Servico, Depoimento, Contato, Video, RedesSociais, AboutUs
+from .models import Servico, Categoria,Depoimento, Contato, Video, RedesSociais, AboutUs
+
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = ['id', 'nome', 'slug']
+
 
 class ServicoSerializer(serializers.ModelSerializer):
+    categoria_detalhes = CategoriaSerializer(source='categoria', read_only=True)
+    categoria = serializers.PrimaryKeyRelatedField(queryset=Categoria.objects.all())
+
     class Meta:
         model = Servico
-        fields = '__all__'
+        fields = ['id', 'titulo', 'categoria', 'categoria_detalhes', 'imagem', 'criado_em']
 
 class DepoimentoSerializer(serializers.ModelSerializer):
     class Meta:

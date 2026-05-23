@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
-from .models import Servico, Depoimento, Contato, Video, RedesSociais, AboutUs
-from .serializers import ServicoSerializer, AboutUsSerializer, RedesSociaisSerializer ,DepoimentoSerializer, ContatoSerializer, VideoSerializer, UserSerializer, RedesSociais
+from .models import Servico, Categoria, Depoimento, Contato, Video, RedesSociais, AboutUs
+from .serializers import ServicoSerializer, CategoriaSerializer, AboutUsSerializer, RedesSociaisSerializer ,DepoimentoSerializer, ContatoSerializer, VideoSerializer, UserSerializer, RedesSociais
 from rest_framework import permissions
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -24,7 +24,18 @@ class CustomAuthToken(ObtainAuthToken):
             'last_name': user.last_name,
             'is_staff': user.is_staff  # Retorna True ou False
         })
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all().order_by('nome')
+    serializer_class = CategoriaSerializer
     
+    # Define as permissões: Qualquer um pode ver (GET), mas apenas usuários
+    # autenticados/administradores podem cadastrar, editar ou apagar.
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [IsAuthenticatedOrReadOnly]
+        else:
+            permission_classes = [IsAdminUser] # Apenas admin gerencia
+        return [permission() for permission in permission_classes]   
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all().order_by('-criado_em')
     serializer_class = ServicoSerializer

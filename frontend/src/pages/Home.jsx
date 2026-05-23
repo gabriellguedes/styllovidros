@@ -37,15 +37,20 @@ const Home = () => {
         <section className="hero-video-section responsive_view">
           <VideosHome />
         </section>
+        <div className="section-services-container">
+          <section className="section-services-content">
+            <h2 className="section-header">Nossos Produtos</h2>
+            <ServicosHome />
+          </section>
+        </div>
         <div className="main-layout content-over-parallax">
           {/* Coluna da Esquerda (Conteúdo Principal) */}
 
           <div className="content-column">
             {/* Bloco de Materiais/Serviços */}
 
-            <section className="section-block">
-              <h2 className="section-header">Nossos Produtos</h2>
-              <ServicosHome />
+            <section className="section-block desktop_view">
+              <VideosHome />
             </section>
           </div>
 
@@ -60,11 +65,7 @@ const Home = () => {
 
         {/* Bloco de Orçamento */}
         <div className="main-layout">
-          <div className="content-column">
-            <section className="section-block desktop_view">
-              <VideosHome />
-            </section>
-          </div>
+          <div className="content-column"></div>
           <aside className="testimonials-sidebar">
             <section className="section-block">
               <h2 className="section-header">Fale Conosco</h2>

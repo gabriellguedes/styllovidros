@@ -54,7 +54,7 @@ const DashDepoimentos = () => {
     <div className="dash-section">
       <div style={{ marginBottom: "20px" }}>
         <h2 style={{ color: "#fff", marginBottom: "5px" }}>
-          Gerir Depoimentos dos Clientes
+          Gerir Avaliações dos Clientes
         </h2>
         <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.9rem" }}>
           Modere as avaliações que aparecem no carrossel de feedback da Styllo

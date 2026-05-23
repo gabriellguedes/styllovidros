@@ -5,21 +5,11 @@ import toast from "react-hot-toast";
 
 const DashServicos = () => {
   const [servicos, setServicos] = useState([]);
-
-  // 1. ESTADO INICIAL COM AS CATEGORIAS PADRÃO DO SISTEMA
-  const [categorias, setCategorias] = useState([
-    { valor: "BOX", label: "Box para Banheiros" },
-    { valor: "JANELAS", label: "Janelas" },
-    { valor: "PORTAS", label: "Portas" },
-    { valor: "GUARDA_CORPO", label: "Guarda Corpo" },
-    { valor: "SACADA", label: "Sacada" },
-    { valor: "ESPELHO", label: "Espelhos" },
-    { valor: "PERGOLADO", label: "Pergolado" },
-  ]);
+  const [categorias, setCategorias] = useState([]); // Agora começa vazio e vem da API
 
   const [novoServico, setNovoServico] = useState({
     titulo: "",
-    categoria: "BOX",
+    categoria: "", // Vai armazenar o ID numérico da categoria selecionada
     imagem: null,
   });
 
@@ -28,45 +18,35 @@ const DashServicos = () => {
   const [novaCategoriaTexto, setNovaCategoriaTexto] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Categorias nativas protegidas contra exclusão acidental
-  const categoriasProtegidas = [
-    "BOX",
-    "JANELAS",
-    "PORTAS",
-    "GUARDA_CORPO",
-    "SACADA",
-    "ESPELHO",
-    "PERGOLADO",
-  ];
+  // Carrega as categorias salvas no Banco de Dados
+  const fetchCategorias = async () => {
+    try {
+      const res = await api.get("categorias/");
+      setCategorias(res.data);
 
+      // Se houver categorias e o formulário estiver sem nenhuma selecionada, define a primeira
+      if (res.data.length > 0 && !novoServico.categoria) {
+        setNovoServico((prev) => ({ ...prev, categoria: res.data[0].id }));
+      }
+    } catch (err) {
+      console.error("Erro ao carregar categorias:", err);
+      toast.error("Não foi possível carregar as categorias.");
+    }
+  };
+
+  // Carrega a listagem de serviços cadastrados
   const fetchServicos = async () => {
     try {
       const res = await api.get("servicos/");
       setServicos(res.data);
-
-      if (Array.isArray(res.data)) {
-        res.data.forEach((servico) => {
-          if (servico.categoria) {
-            setCategorias((prev) => {
-              const existe = prev.some((c) => c.valor === servico.categoria);
-              if (!existe) {
-                // Se não existir, adiciona o valor cru retornado pelo banco como nova opção
-                return [
-                  ...prev,
-                  { valor: servico.categoria, label: servico.categoria },
-                ];
-              }
-              return prev;
-            });
-          }
-        });
-      }
     } catch (err) {
       console.error("Erro ao carregar serviços:", err);
     }
   };
 
+  // Roda uma única vez ao abrir a tela
   useEffect(() => {
+    fetchCategorias();
     fetchServicos();
   }, []);
 
@@ -74,95 +54,98 @@ const DashServicos = () => {
     setNovoServico({ ...novoServico, imagem: e.target.files[0] });
   };
 
-  // 2. MONITORAMENTO DO SELECT DE CATEGORIAS
+  // Monitora a troca de seleção do select principal
   const handleCategoriaChange = (e) => {
     const valorSelecionado = e.target.value;
 
     if (valorSelecionado === "ADICIONAR_NOVA") {
       setMostrarCriarCategoria(true);
-      setNovoServico({ ...novoServico, categoria: "" });
     } else {
       setMostrarCriarCategoria(false);
-      setNovoServico({ ...novoServico, categoria: valorSelecionado });
+      setNovoServico({ ...novoServico, categoria: Number(valorSelecionado) });
     }
   };
 
-  // 3. FUNÇÃO PARA INSERIR UMA NOVA CATEGORIA NA LISTA DO SELECT
-  const handleAdicionarCategoriaLista = (e) => {
+  // 🔥 INTEGRAÇÃO API: Cadastra uma nova categoria no Banco de Dados (POST)
+  const handleAdicionarCategoriaAPI = async (e) => {
     e.preventDefault();
     if (!novaCategoriaTexto.trim()) return;
 
-    // Normaliza para letras maiúsculas substituindo espaços múltiplos por underline (padrão ENUM)
-    const valorFormatado = novaCategoriaTexto
-      .trim()
-      .toUpperCase()
-      .replace(/\s+/g, "_");
-    const labelFormatado = novaCategoriaTexto.trim();
+    const nomeFormatado = novaCategoriaTexto.trim().toUpperCase();
 
-    // Validação se a categoria já existe
-    const jaExiste = categorias.some((c) => c.valor === valorFormatado);
+    // Validação local rápida para evitar requisição redundante
+    const jaExiste = categorias.some((c) => c.nome === nomeFormatado);
     if (jaExiste) {
-      toast.error("Esta categoria já existe na lista!");
+      toast.error("Esta categoria já existe no sistema!");
       return;
     }
 
-    // Atualiza a lista de opções do select
-    const novaOpcao = { valor: valorFormatado, label: labelFormatado };
-    setCategorias([...categorias, novaOpcao]);
+    const toastId = toast.loading("Salvando nova categoria...");
+    try {
+      // Envia para o endpoint do Django
+      const res = await api.post("categorias/", { nome: nomeFormatado });
 
-    // Deixa a nova categoria criada já selecionada no formulário principal
-    setNovoServico({ ...novoServico, categoria: valorFormatado });
-    setNovaCategoriaTexto("");
-    setMostrarCriarCategoria(false);
-    toast.success(`Categoria "${labelFormatado}" adicionada!`);
+      toast.success(`Categoria "${nomeFormatado}" salva com sucesso!`, {
+        id: toastId,
+      });
+      setNovaCategoriaTexto("");
+      setMostrarCriarCategoria(false);
+
+      // Atualiza a lista local com a resposta contendo o ID gerado pelo Django
+      setCategorias([...categorias, res.data]);
+      // Deixa a nova categoria selecionada por padrão
+      setNovoServico({ ...novoServico, categoria: res.data.id });
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao cadastrar categoria no banco.", { id: toastId });
+    }
   };
 
-  // 4. FUNÇÃO PARA REMOVER UMA CATEGORIA PERSONALIZADA DA LISTA
-  const handleRemoverCategoria = (categoriaValor) => {
-    // 1ª Barreira de Proteção: Não permite apagar as categorias base do sistema
-    if (categoriasProtegidas.includes(categoriaValor)) {
-      toast.error(
-        "Esta categoria é padrão do sistema e não pode ser removida.",
-      );
-      return;
-    }
-
-    // 2ª Barreira de Proteção: Verifica se tem algum serviço ativo usando essa categoria na tela
-    const possuiServico = servicos.some((s) => s.categoria === categoriaValor);
+  // 🔥 INTEGRAÇÃO API: Remove uma categoria do Banco de Dados (DELETE)
+  const handleRemoverCategoriaAPI = async (categoriaId, categoriaNome) => {
+    // Validação de segurança: Impede apagar caso algum serviço cadastrado na tela dependa dela
+    const possuiServico = servicos.some((s) => s.categoria === categoriaId);
     if (possuiServico) {
       toast.error(
-        "Não é possível remover! Existem serviços cadastrados nesta categoria.",
+        "Não é possível remover! Existem serviços ativos vinculados a esta categoria.",
       );
       return;
     }
 
     if (
       window.confirm(
-        "Deseja realmente remover esta categoria da lista do menu?",
+        `Deseja realmente excluir permanentemente a categoria "${categoriaNome}"?`,
       )
     ) {
-      // Filtra tirando a categoria correspondente do estado
-      const listaAtualizada = categorias.filter(
-        (c) => c.valor !== categoriaValor,
-      );
-      setCategorias(listaAtualizada);
+      const toastId = toast.loading("Excluindo do sistema...");
+      try {
+        await api.delete(`categorias/${categoriaId}/`);
+        toast.success("Categoria removida!", { id: toastId });
 
-      // Reseta o select de volta para a primeira opção válida
-      setNovoServico({
-        ...novoServico,
-        categoria: listaAtualizada[0]?.valor || "",
-      });
-      toast.success("Categoria removida com sucesso!");
+        // Remove da lista do estado do React
+        const listaAtualizada = categorias.filter((c) => c.id !== categoriaId);
+        setCategorias(listaAtualizada);
+
+        // Reseta o formulário para a primeira categoria restante
+        setNovoServico({
+          ...novoServico,
+          categoria: listaAtualizada[0]?.id || "",
+        });
+      } catch (err) {
+        console.error(err);
+        toast.error("Erro ao excluir. Verifique se existem dependências.", {
+          id: toastId,
+        });
+      }
     }
   };
 
+  // Salva o Serviço Completo
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!novoServico.categoria) {
-      toast.error(
-        "Por favor, selecione ou insira uma categoria válida antes de salvar.",
-      );
+      toast.error("Por favor, selecione uma categoria válida antes de salvar.");
       return;
     }
 
@@ -172,7 +155,7 @@ const DashServicos = () => {
     try {
       const formData = new FormData();
       formData.append("titulo", novoServico.titulo);
-      formData.append("categoria", novoServico.categoria);
+      formData.append("categoria", novoServico.categoria); // Envia o ID numérico correto
       formData.append("imagem", novoServico.imagem);
 
       await api.post("servicos/", formData, {
@@ -180,12 +163,17 @@ const DashServicos = () => {
       });
 
       toast.success("Serviço cadastrado!", { id: t });
-      // Reseta o formulário mantendo a primeira categoria da lista selecionada por padrão
+
+      // Limpa o formulário mantendo a categoria anterior ativa
       setNovoServico({
         titulo: "",
-        categoria: categorias[0]?.valor || "BOX",
+        categoria: novoServico.categoria,
         imagem: null,
       });
+
+      // Reseta o input do arquivo fisicamente (limpa a seleção anterior)
+      document.getElementById("file-input-servico").value = "";
+
       fetchServicos();
     } catch (err) {
       toast.error("Erro ao enviar serviço.", { id: t });
@@ -223,7 +211,7 @@ const DashServicos = () => {
           required
         />
 
-        {/* SELECT MAPEADO DO ESTADO DE CATEGORIAS */}
+        {/* SELECT DINÂMICO MAPEADO DO BANCO DE DADOS */}
         <select
           value={
             mostrarCriarCategoria ? "ADICIONAR_NOVA" : novoServico.categoria
@@ -232,8 +220,8 @@ const DashServicos = () => {
           required
         >
           {categorias.map((cat) => (
-            <option key={cat.valor} value={cat.valor}>
-              {cat.label}
+            <option key={cat.id} value={cat.id}>
+              {cat.nome}
             </option>
           ))}
           <option
@@ -244,7 +232,7 @@ const DashServicos = () => {
           </option>
         </select>
 
-        {/* ZONA CONDICIONAL DE GERENCIAMENTO DE CATEGORIAS */}
+        {/* CONTROLE DE GERENCIAMENTO DE CATEGORIAS */}
         {mostrarCriarCategoria && (
           <div
             className="category-manager-box"
@@ -256,7 +244,6 @@ const DashServicos = () => {
               marginTop: "-5px",
             }}
           >
-            {/* Campo para criar nova */}
             <div style={{ display: "flex", gap: "10px", width: "100%" }}>
               <input
                 type="text"
@@ -267,7 +254,7 @@ const DashServicos = () => {
               />
               <button
                 type="button"
-                onClick={handleAdicionarCategoriaLista}
+                onClick={handleAdicionarCategoriaAPI}
                 className="btn-add-inline"
                 style={{
                   padding: "0 15px",
@@ -279,13 +266,13 @@ const DashServicos = () => {
                   display: "flex",
                   alignItems: "center",
                 }}
-                title="Salvar nova categoria"
+                title="Salvar na API"
               >
                 <FolderPlus size={18} />
               </button>
             </div>
 
-            {/* Painel secundário para listagem e remoção das categorias existentes */}
+            {/* Listagem das categorias vindas da API com botão de exclusão real */}
             <div
               className="custom-categories-list"
               style={{
@@ -306,11 +293,11 @@ const DashServicos = () => {
                   fontWeight: "500",
                 }}
               >
-                Categorias Atuais (Clique na lixeira para remover):
+                Categorias Atuais no Banco de Dados:
               </span>
               {categorias.map((cat) => (
                 <div
-                  key={cat.valor}
+                  key={cat.id}
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -321,46 +308,52 @@ const DashServicos = () => {
                   }}
                 >
                   <span style={{ color: "rgba(255,255,255,0.75)" }}>
-                    {cat.label}
+                    {cat.nome}
                   </span>
 
-                  {/* Renderiza a lixeira apenas para categorias customizadas (as padrão ficam bloqueadas) */}
-                  {!categoriasProtegidas.includes(cat.valor) && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoverCategoria(cat.valor)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "#ff4d4d",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "2px",
-                      }}
-                      title={`Excluir categoria ${cat.label}`}
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoverCategoriaAPI(cat.id, cat.nome)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#ff4d4d",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "2px",
+                    }}
+                    title={`Excluir permanentemente ${cat.nome}`}
+                  >
+                    <Trash2 size={14} />
+                  </button>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <input type="file" onChange={handleFileChange} required />
+        <input
+          id="file-input-servico"
+          type="file"
+          onChange={handleFileChange}
+          required
+        />
 
         <button type="submit" disabled={loading} className="btn-add">
           {loading ? "Processando..." : "Salvar Serviço"}
         </button>
       </form>
 
+      {/* LISTAGEM DE SERVIÇOS CADASTRADOS */}
       <div className="dash-list">
         {servicos.map((s) => (
           <div key={s.id} className="dash-item">
             <span>
-              {s.titulo} ({s.categoria})
+              {s.titulo} —{" "}
+              <strong style={{ color: "var(--accent-purple)" }}>
+                {s.categoria_detalhes?.nome || "Sem Categoria"}
+              </strong>
             </span>
             <button onClick={() => deleteServico(s.id)} className="btn-del">
               <Trash2 size={16} />

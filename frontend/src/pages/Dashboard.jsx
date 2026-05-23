@@ -120,7 +120,7 @@ const Dashboard = () => {
                 className="dash-btn-action"
               >
                 <a style={{ pointerEvents: "none" }}>
-                  <MessageSquare size={18} /> Depoimentos
+                  <MessageSquare size={18} /> Avaliações
                 </a>
               </button>
             </li>
@@ -132,7 +132,7 @@ const Dashboard = () => {
                 className="dash-btn-action"
               >
                 <a style={{ pointerEvents: "none" }}>
-                  <PiggyBank size={18} /> Orçamentos
+                  <PiggyBank size={18} /> Mensagens
                 </a>
               </button>
             </li>
@@ -146,7 +146,7 @@ const Dashboard = () => {
                 className="dash-btn-action"
               >
                 <a style={{ pointerEvents: "none" }}>
-                  <SquarePlay size={18} /> Galeria Vídeos
+                  <SquarePlay size={18} /> Galeria de Vídeos
                 </a>
               </button>
             </li>
@@ -160,7 +160,7 @@ const Dashboard = () => {
                 className="dash-btn-action"
               >
                 <a style={{ pointerEvents: "none" }}>
-                  <ClipboardList size={18} /> Produtos
+                  <ClipboardList size={18} /> Produtos e Seviços
                 </a>
               </button>
             </li>

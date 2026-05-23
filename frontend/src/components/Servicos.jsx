@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import { Camera } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight } from "lucide-react";
+
+// Importa os componentes e módulos do Swiper
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+
+// Importa os estilos obrigatórios do Swiper
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const Servicos = () => {
   const [servicos, setServicos] = useState([]);
@@ -23,18 +32,58 @@ const Servicos = () => {
 
   return (
     <section className="section-services">
-      <div>
-        {servicos.map((item) => (
-          <div className="material-card" key={item.id}>
-            <img
-              src={item.imagem} // URL vinda do Django
-              alt={item.titulo}
-            />
-            <div>
-              <h4 title={item.categoria}>{item.titulo}</h4>
-            </div>
-          </div>
-        ))}
+      <div className="services-container-wrapper">
+        {servicos.length > 0 ? (
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay]}
+            spaceBetween={25} // Espaço entre os cards (em px)
+            slidesPerView={1} // Quantidade padrão no mobile
+            autoplay={{
+              delay: 3500,
+              disableOnInteraction: false,
+            }}
+            pagination={{
+              clickable: true,
+              dynamicBullets: true,
+            }}
+            navigation={true}
+            // Responsividade: define quantos itens mostrar baseado na largura da tela
+            breakpoints={{
+              640: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+              },
+              1024: {
+                slidesPerView: 3,
+                spaceBetween: 25,
+              },
+              1440: {
+                slidesPerView: 4,
+                spaceBetween: 25,
+              },
+            }}
+            className="services-swiper"
+          >
+            {servicos.map((item) => (
+              <SwiperSlide key={item.id}>
+                <div className="material-card">
+                  <img
+                    src={item.imagem} // URL vinda do Django
+                    alt={item.titulo}
+                  />
+                  <div>
+                    {/* Exibe o nome dinâmico da categoria ou fallback caso não exista */}
+                    <h4 title={item.categoria_detalhes?.nome || "Serviço"}>
+                      {item.titulo}
+                    </h4>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <p className="text-center">Nenhum serviço disponível no momento.</p>
+        )}
       </div>
     </section>
   );
