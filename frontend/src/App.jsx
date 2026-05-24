@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import EnviarDepoimento from "./pages/EnviarDepoimento";
 import Dashboard from "./pages/Dashboard";
 import ContatoForm from "./components/ContatoForm";
+import Portfolio from "./pages/Portfolio";
 import "./style.css";
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           <Route path="/avaliar" element={<EnviarDepoimento />} />
           <Route path="/login" element={<Login />} />
           <Route path="/Contato" element={<ContatoForm />} />
+          <Route path="/portfolio" element={<Portfolio />} />
 
           <Route
             path="/dashboard"

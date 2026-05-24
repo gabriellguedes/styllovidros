@@ -14,6 +14,7 @@ import {
   Settings,
   ArrowLeft,
   ChevronDown,
+  Images,
   FileText,
 } from "lucide-react";
 //My components
@@ -25,6 +26,7 @@ import DashUser from "../components/DashUser";
 import DashRedes from "../components/DashRedes";
 import DashAbout from "../components/DashAbout";
 import NavbarUser from "../components/NavbarUser";
+import DashPortifolio from "../components/DashPortifolio";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("resumo");
@@ -161,6 +163,18 @@ const Dashboard = () => {
               >
                 <a style={{ pointerEvents: "none" }}>
                   <ClipboardList size={18} /> Produtos e Seviços
+                </a>
+              </button>
+            </li>
+            <li
+              className={`dashboard-menu-item ${activeTab === "portifolio" ? "active" : ""}`}
+            >
+              <button
+                className="dash-btn-action"
+                onClick={() => setActiveTab("portifolio")}
+              >
+                <a style={{ pointerEvents: "none" }}>
+                  <Images size={18} /> Gerenciar Portfólio
                 </a>
               </button>
             </li>
@@ -389,6 +403,12 @@ const Dashboard = () => {
                   Acesso Restrito a Administradores.
                 </div>
               ))}
+            {/* --- SEÇÃO: NOVO PORTFÓLIO EM ÁLBUNS --- */}
+            {activeTab === "portifolio" && (
+              <section className="dashboard-data-section">
+                <DashPortifolio />
+              </section>
+            )}
           </>
         )}
       </main>

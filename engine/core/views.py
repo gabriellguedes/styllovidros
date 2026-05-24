@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
-from .models import Servico, Categoria, Depoimento, Contato, Video, RedesSociais, AboutUs
-from .serializers import ServicoSerializer, CategoriaSerializer, AboutUsSerializer, RedesSociaisSerializer ,DepoimentoSerializer, ContatoSerializer, VideoSerializer, UserSerializer, RedesSociais
+from .models import Servico, AlbumFoto, Album, Categoria, Depoimento, Contato, Video, RedesSociais, AboutUs
+from .serializers import ServicoSerializer, AlbumFotoSerializer,AlbumSerializer, CategoriaSerializer, AboutUsSerializer, RedesSociaisSerializer ,DepoimentoSerializer, ContatoSerializer, VideoSerializer, UserSerializer, RedesSociais
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -89,3 +89,14 @@ class AboutUsViewSet(viewsets.ModelViewSet):
                 descricao_rodape="Com anos de experiência no mercado, a Styllo Vidros é especialista em transformar ambientes através do vidro. Unimos técnica, segurança e design para entregar projetos sob medida que elevam o padrão da sua residência ou empresa. Nossa missão é a transparência em cada detalhe e a satisfação total de nossos clientes." 
             )
         return super().list(request, *args, **kwargs)
+
+class AlbumViewSet(viewsets.ModelViewSet):
+    queryset = Album.objects.all().order_by('-criado_em')
+    serializer_class = AlbumSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class AlbumFotoViewSet(viewsets.ModelViewSet):
+    queryset = AlbumFoto.objects.all()
+    serializer_class = AlbumFotoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]

@@ -114,7 +114,10 @@ const FooterHome = () => {
               </Link>
             </li>
             <li>
-              <Link to="/Contato">Contato</Link>
+              <Link to="/portfolio">Portfólio</Link>
+            </li>
+            <li>
+              <Link to="/Contato">Contatos</Link>
             </li>
             {isAuth ? (
               <>

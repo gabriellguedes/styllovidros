@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Servico, Categoria,Depoimento, Contato, Video, RedesSociais, AboutUs
+from .models import Servico, Album, AlbumFoto, Categoria,Depoimento, Contato, Video, RedesSociais, AboutUs
+
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,3 +65,30 @@ class UserSerializer(serializers.ModelSerializer):
         user.is_staff = validated_data.get('is_staff', False)
         user.save()
         return user
+    
+class AlbumFotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AlbumFoto
+        fields = ['id', 'imagem', 'criado_em']
+
+
+class AlbumSerializer(serializers.ModelSerializer):
+    # Traz as fotos pertencentes ao álbum automaticamente (GET)
+    fotos = AlbumFotoSerializer(many=True, read_only=True)
+    categoria_detalhes = CategoriaSerializer(source='categoria', read_only=True)
+    
+    # Renderiza os dados da capa de forma amigável
+    capa_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Album
+        fields = ['id', 'titulo', 'descricao', 'categoria', 'categoria_detalhes', 'capa', 'capa_url', 'fotos']
+
+    def get_capa_url(self, obj):
+        if obj.capa:
+            return obj.capa.imagem.url
+        # Se o usuário não escolheu uma capa, pega a primeira foto do álbum como padrão (Fallback)
+        primeira_foto = obj.fotos.first()
+        if primeira_foto:
+            return primeira_foto.imagem.url
+        return None
