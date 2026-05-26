@@ -1710,6 +1710,25 @@ body {
   gap: 10px;
   margin-bottom: 5px;
 }
+/* --- FORMULÁRIO DE CADASTRO - DASHBOARD PORTFÓLIO --- */
+.dash-section form[name="form-new-album"] {
+  display: block;
+}
+
+.dash-section form[name="form-new-album"] input[type="text"],
+.dash-section form[name="form-new-album"] select,
+.dash-section form[name="form-new-album"] textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  outline: none;
+  margin-bottom: 15px;
+}
 
 /* --- FORMULÁRIO DE CADASTRO --- */
 .dash-form {
@@ -1722,6 +1741,7 @@ body {
   gap: 15px;
   align-items: center;
 }
+
 .dash-form-column {
   padding: 25px;
 }
@@ -1738,6 +1758,7 @@ body {
 .dash-form input[type="text"],
 .dash-form input[type="email"],
 .dash-form input[type="password"],
+.dash-form textarea,
 .dash-form select {
   width: 100%;
   padding: 12px 14px;
@@ -2677,6 +2698,110 @@ body {
   background: rgba(255, 255, 255, 0.01);
   border: 1px dashed rgba(255, 255, 255, 0.05);
   border-radius: 8px;
+}
+
+.portfolio-edit-modal-content form[name="form-edit-album"] {
+  grid-template-columns: none;
+}
+
+/* Botão de Editar no Topo da Gestão */
+.btn-edit-album-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(138, 43, 226, 0.1);
+  border: 1px solid var(--accent-purple);
+  color: var(--white);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-edit-album-top:hover {
+  background: var(--accent-purple);
+}
+
+/* MODAL DE EDIÇÃO */
+.portfolio-edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.portfolio-edit-modal-content {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 10px;
+}
+
+.modal-header h3 {
+  color: var(--accent-purple);
+  margin: 0;
+}
+.modal-header button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-save {
+  background: var(--accent-purple);
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.portfolio-edit-modal-content label {
+  display: block;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 5px;
+  margin-top: 15px;
 }
 
 /* ==========================================================================
