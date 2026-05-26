@@ -96,35 +96,53 @@ const DashPortifolio = () => {
   // Subir Múltiplas Fotos para o Álbum Selecionado (POST em lote)
   const handleUploadFotos = async (e) => {
     const arquivos = Array.from(e.target.files);
-    if (arquivos.length === 0 || !albumSelecionado) return;
 
-    // Validação opcional recomendada de limite de fotos por envio
+    // 1. Validação de segurança: verifica se há um álbum ativo selecionado
+    if (!albumSelecionado || !albumSelecionado.id) {
+      toast.error("Nenhum álbum selecionado ou ativo para receber as fotos.");
+      return;
+    }
+
+    if (arquivos.length === 0) return;
+
     if (albumSelecionado.fotos.length + arquivos.length > 10) {
       toast.error("Limite máximo sugerido de fotos excedido para este álbum.");
       return;
     }
 
-    const tid = toast.loading(`Enviando ${arquivos.length} foto(s)...`);
+    // 🔥 O SEGREDO DA CORREÇÃO: Extraímos e isolamos o ID como String ANTES do loop.
+    // Isso impede que o laço perca a referência do ID durante as iterações assíncronas.
+    const albumIdValido = String(albumSelecionado.id);
+
+    const tid = toast.loading(`A enviar ${arquivos.length} foto(s)...`);
 
     try {
-      // O Django REST Framework gerencia melhor requisições individuais em lote paralelas
       const promessas = arquivos.map((file) => {
         const formData = new FormData();
-        formData.append("album", albumSelecionado.id);
+
+        // Usamos a constante isolada que tem a garantia de conter o ID correto
+        formData.append("album", albumIdValido);
         formData.append("imagem", file);
+
         return api.post("album-fotos/", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       });
 
+      // Aguarda todos os uploads terminarem em paralelo
       await Promise.all(promessas);
       toast.success("Fotos adicionadas ao álbum!", { id: tid });
 
-      // Limpa visualmente o input de arquivo
+      // Limpa visualmente o input de ficheiros
       document.getElementById("multiple-file-input").value = "";
+
+      // Atualiza o ecrã com as novas fotos
       recarregarAlbumAtivo(albumSelecionado.id);
     } catch (err) {
-      toast.error("Falha no upload de algumas fotos.", { id: tid });
+      console.error("Erro detalhado do Django:", err.response?.data || err);
+      toast.error("Falha no upload de algumas fotos. Verifica o painel.", {
+        id: tid,
+      });
     }
   };
 

@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -99,4 +100,5 @@ class AlbumViewSet(viewsets.ModelViewSet):
 class AlbumFotoViewSet(viewsets.ModelViewSet):
     queryset = AlbumFoto.objects.all()
     serializer_class = AlbumFotoSerializer
+    parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticatedOrReadOnly]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Servico, Depoimento, Contato, Video
+from .models import Servico, Depoimento, Contato, Video, Album, AlbumFoto
 
 @admin.register(Servico)
 class ServicoAdmin(admin.ModelAdmin):
@@ -25,3 +25,13 @@ class ContatoAdmin(admin.ModelAdmin):
 class VideoAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'url_video', 'criado_em')
     search_fields = ('titulo',)
+
+@admin.register(Album)
+class AlbumAdmin(admin.ModelAdmin):
+    list_display=('titulo', 'descricao', 'categoria', 'criado_em')
+    search_fields=('titulo',)
+
+@admin.register(AlbumFoto)
+class AlbumFotoAdmin(admin.ModelAdmin):
+    list_display=('id', 'album', 'imagem', 'criado_em')
+    search_fields=('id',)

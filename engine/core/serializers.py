@@ -67,9 +67,10 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
 class AlbumFotoSerializer(serializers.ModelSerializer):
+    album = serializers.PrimaryKeyRelatedField(queryset=Album.objects.all())
     class Meta:
         model = AlbumFoto
-        fields = ['id', 'imagem', 'criado_em']
+        fields = ['id', 'album', 'imagem', 'criado_em']
 
 
 class AlbumSerializer(serializers.ModelSerializer):
