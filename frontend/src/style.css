@@ -8,6 +8,7 @@
   --accent-purple: #8a2be2; /* Roxo vibrante (Destaques) */
   --text-white: #ffffff;
   --text-muted: #d1d1d1;
+  --text-gray: #a1a1a1;
   --white: #ffffff;
   --shadow-dark: 0 8px 30px rgba(0, 0, 0, 0.5);
   --radius: 15px;
@@ -359,7 +360,7 @@ body {
 /* --- EFEITO PARALLAX --- */
 .main-parallax-container {
   position: relative;
-  margin-top: 300px; /* Espaço igual à altura do header inicial */
+  margin-top: 340px; /* Espaço igual à altura do header inicial */
 }
 
 .parallax-background {
@@ -387,7 +388,7 @@ body {
   gap: 25px;
   max-width: 1300px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 40px 0;
   min-width: 0; /* Previne que o Swiper quebre o layout */
 }
 
@@ -415,13 +416,15 @@ body {
 }
 /* --- 3.1 - Serviços  --- */
 .section-services-container {
-  background-color: rgba(45, 0, 77, 0.45); /* Roxo translúcido */
+  background-color: rgba(45, 0, 77, 0.75); /* Roxo translúcido */
   backdrop-filter: blur(10px);
-  padding: 30px;
+  padding: 0 30px;
   margin-bottom: 25px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0px 0px 5px var(--shadow-dark);
-  margin-top: 50px;
+  margin: 0 auto;
+  max-width: 1300px;
+  border-radius: var(--radius);
 }
 .section-services-content {
   padding: 40px 0;
@@ -2232,7 +2235,7 @@ body {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 120px 20px 60px 20px; /* Recuo superior para não sumir atrás do header fixo */
+  padding: 60px 20px; /* Recuo superior para não sumir atrás do header fixo */
   box-sizing: border-box;
 }
 
@@ -2246,6 +2249,7 @@ body {
   font-weight: 700;
   color: var(--text-white);
   margin-bottom: 10px;
+  text-shadow: 1px 1px 5px var(--text-gray);
 }
 
 .portfolio-header-section h1 span {
@@ -2846,6 +2850,9 @@ body {
   /************************************************** 
                         HEADER
   ***************************************************/
+  .section-header {
+    font-size: 1.7rem;
+  }
   .hero-brand-section {
     padding: 40px 0;
   }
@@ -2914,20 +2921,21 @@ body {
                         MAIN 
   ***************************************************/
   .main-layout {
-    padding: 40px 10px;
+    padding: 10px;
   }
   /* */
   /* Serviços */
   .section-services-container {
-    margin-top: 0;
+    margin: 30px 10px 0;
   }
   .section-services {
+    padding: 20px 0;
   }
   .section-services > div {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
   .services-container-wrapper {
-    padding: 20px 15px; /* Reduz o recuo lateral no mobile */
+    padding: 20px 0; /* Reduz o recuo lateral no mobile */
   }
 
   .services-swiper .material-card {
@@ -3032,7 +3040,7 @@ body {
           ESTILIZAÇÃO DA PÁGINA PORTFÓLIO
 ***************************************************/
   .portfolio-page-wrapper {
-    padding-top: 100px;
+    padding-top: 25px;
   }
   .lightbox-info-panel {
     flex-direction: column;

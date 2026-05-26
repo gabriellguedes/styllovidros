@@ -39,7 +39,7 @@ const Servicos = () => {
             spaceBetween={25} // Espaço entre os cards (em px)
             slidesPerView={1} // Quantidade padrão no mobile
             autoplay={{
-              delay: 3500,
+              delay: 350000,
               disableOnInteraction: false,
             }}
             pagination={{
