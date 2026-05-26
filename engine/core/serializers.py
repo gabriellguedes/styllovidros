@@ -74,11 +74,8 @@ class AlbumFotoSerializer(serializers.ModelSerializer):
 
 
 class AlbumSerializer(serializers.ModelSerializer):
-    # Traz as fotos pertencentes ao álbum automaticamente (GET)
     fotos = AlbumFotoSerializer(many=True, read_only=True)
     categoria_detalhes = CategoriaSerializer(source='categoria', read_only=True)
-    
-    # Renderiza os dados da capa de forma amigável
     capa_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -86,10 +83,20 @@ class AlbumSerializer(serializers.ModelSerializer):
         fields = ['id', 'titulo', 'descricao', 'categoria', 'categoria_detalhes', 'capa', 'capa_url', 'fotos']
 
     def get_capa_url(self, obj):
+        # Captura o contexto da requisição HTTP atual
+        request = self.context.get('request')
+        
+        url_relativa = None
         if obj.capa:
-            return obj.capa.imagem.url
-        # Se o usuário não escolheu uma capa, pega a primeira foto do álbum como padrão (Fallback)
-        primeira_foto = obj.fotos.first()
-        if primeira_foto:
-            return primeira_foto.imagem.url
-        return None
+            url_relativa = obj.capa.imagem.url
+        else:
+            # Fallback: pega a primeira foto se não houver capa definida
+            primeira_foto = obj.fotos.first()
+            if primeira_foto:
+                url_relativa = primeira_foto.imagem.url
+
+        # Se encontrou a imagem e o request existe, reconstrói a URL ABSOLUTA automaticamente
+        if url_relativa and request is not None:
+            return request.build_absolute_uri(url_relativa)
+            
+        return url_relativa
