@@ -19,6 +19,13 @@ const HeaderHome = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const scrollToTop = (e) => {
+    // Se o usuário já estiver na Home ("/") apenas rola a tela para cima suavemente
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Transição suave
+    });
+  };
   return (
     <header className={`hero-banner ${isScrolled ? "scrolled" : ""}`}>
       <div className={`hero-banner-container ${isScrolled ? "scrolled" : ""}`}>
@@ -26,7 +33,7 @@ const HeaderHome = () => {
         <section
           className={`hero-brand-section ${isScrolled ? "scrolled" : ""}`}
         >
-          <Link to="/" className="hero-logo-link">
+          <Link onClick={scrollToTop} className="hero-logo-link">
             <img
               className="nav_logo"
               src="/logo.png"

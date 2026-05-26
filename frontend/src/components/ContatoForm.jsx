@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import api from "../api";
 import { Send, Phone } from "lucide-react";
+import { PatternFormat } from "react-number-format";
 
 const ContatoForm = () => {
   const [formData, setFormData] = useState({
@@ -48,14 +49,18 @@ const ContatoForm = () => {
             required
           />
 
-          <input
-            type="text"
-            name="whatsapp"
+          <PatternFormat
+            format="(##) # ####-####"
+            mask="X"
             placeholder="WhatsApp Ex: (62) 9 9123-4567"
             value={formData.whatsapp}
-            onChange={handleChange}
+            onValueChange={(values) => {
+              const { value } = values;
+              setFormData({ ...formData, whatsapp: value });
+            }}
             required
           />
+
           <textarea
             name="mensagem"
             placeholder="Como podemos te ajudar?"
