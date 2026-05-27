@@ -80,7 +80,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = ['id', 'titulo', 'descricao', 'categoria', 'categoria_detalhes', 'capa', 'capa_url', 'fotos']
+        fields = ['id', 'titulo', 'descricao', 'categoria', 'categoria_detalhes', 'capa', 'capa_url', 'fotos', 'criado_em']
 
     def get_capa_url(self, obj):
         # Captura o contexto da requisição HTTP atual

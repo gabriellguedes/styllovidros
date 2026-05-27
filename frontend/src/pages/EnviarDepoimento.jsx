@@ -1,72 +1,126 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Camera, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  Camera,
+  ArrowLeft,
+  CheckCircle2,
+  AlertCircle,
+  Star,
+  X,
+} from "lucide-react";
+import Cropper from "react-easy-crop"; // 🔥 Importa o recortador de imagem
 import api from "../api";
 import toast from "react-hot-toast";
 
 const EnviarDepoimento = () => {
-  // Estados para os campos do formulário
   const [nome, setNome] = useState("");
-  const [regiao, setRegiao] = useState("");
+  const [avaliacao, setAvaliacao] = useState(5);
+  const [hoverAvaliacao, setHoverAvaliacao] = useState(0);
   const [mensagem, setMensagem] = useState("");
-  const [foto, setFoto] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
 
-  // Estados de controle de envio
+  // Estados da imagem e corte
+  const [fotoOriginalUrl, setFotoOriginalUrl] = useState(null); // Armazena a imagem crua carregada
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [isCropping, setIsCropping] = useState(false); // Controla a exibição do modal de corte
+
+  // Estados finais para envio
+  const [fotoFinalBlob, setFotoFinalBlob] = useState(null); // O arquivo final cortado
+  const [previewUrl, setPreviewUrl] = useState(""); // URL para mostrar no formulário
+
   const [enviando, setEnviando] = useState(false);
-  const [statusEnvio, setStatusEnvio] = useState(null); // 'sucesso' ou 'erro'
+  const [statusEnvio, setStatusEnvio] = useState(null);
 
-  // Gerencia a seleção da foto e cria a pré-visualização
+  // 1. Detecta a escolha do arquivo original
   const handleFotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFoto(file);
       const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+      setFotoOriginalUrl(url);
+      setIsCropping(true); // Abre o modal de ajuste automaticamente
     }
   };
 
-  // Envio do formulário
+  // 2. Salva os pixels da área recortada enquanto o usuário mexe na imagem
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  // 3. Função auxiliar para desenhar o corte num Canvas e gerar o arquivo final
+  const gerarImagemCortada = async () => {
+    try {
+      const image = new Image();
+      image.src = fotoOriginalUrl;
+      await new Promise((resolve) => (image.onload = resolve));
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // Define o tamanho final baseado no corte feito pelo usuário
+      canvas.width = croppedAreaPixels.width;
+      canvas.height = croppedAreaPixels.height;
+
+      ctx.drawImage(
+        image,
+        croppedAreaPixels.x,
+        croppedAreaPixels.y,
+        croppedAreaPixels.width,
+        croppedAreaPixels.height,
+        0,
+        0,
+        croppedAreaPixels.width,
+        croppedAreaPixels.height,
+      );
+
+      // Converte o canvas para um Blob binário (formato de arquivo de imagem)
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        setFotoFinalBlob(blob);
+        const finalUrl = URL.createObjectURL(blob);
+        setPreviewUrl(finalUrl); // Atualiza o preview no formulário
+        setIsCropping(false); // Fecha o modal de corte
+      }, "image/jpeg");
+    } catch (e) {
+      console.error("Erro ao cortar a imagem:", e);
+      toast.error("Erro ao processar o ajuste da imagem.");
+    }
+  };
+
+  // 4. Envio dos dados para o Backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     setEnviando(true);
     setStatusEnvio(null);
 
-    // Criamos um loading toast que será atualizado no fim da requisição
     const toastId = toast.loading("Enviando o seu depoimento...");
-
-    // Como há um arquivo de imagem, usamos obrigatoriamente FormData
     const formData = new FormData();
-    formData.append("nome_cliente", nome); // Verifique se o seu backend espera 'nome_cliente' ou 'nome'
-    formData.append("regiao", regiao); // Verifique se o backend usa 'regiao' ou 'texto' etc.
-    formData.append("texto", mensagem); // Geralmente mapeado como 'texto' nos depoimentos
+    formData.append("nome_cliente", nome);
+    formData.append("avaliacao", avaliacao);
+    formData.append("texto", mensagem);
 
-    if (foto) {
-      formData.append("foto_cliente", foto); // Verifique se o seu backend espera 'foto_cliente' ou 'imagem'
+    if (fotoFinalBlob) {
+      // Enviamos o blob recortado simulando um arquivo chamado 'avatar.jpg'
+      formData.append("foto_cliente", fotoFinalBlob, "avatar.jpg");
     }
 
     try {
-      // Faz a requisição POST para a sua rota de depoimentos
       await api.post("depoimentos/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // Atualiza o Toast para Sucesso
       toast.success("Depoimento enviado para moderação!", { id: toastId });
       setStatusEnvio("sucesso");
 
-      // Limpa o formulário após o sucesso
+      // Reseta todos os campos
       setNome("");
-      setRegiao("");
+      setAvaliacao(5);
       setMensagem("");
-      setFoto(null);
+      setFotoFinalBlob(null);
       setPreviewUrl("");
+      setFotoOriginalUrl(null);
     } catch (error) {
-      console.error("Erro ao enviar depoimento:", error);
-
-      // Atualiza o Toast para Erro
+      console.error(error);
       toast.error("Houve um problema ao salvar seu depoimento.", {
         id: toastId,
       });
@@ -84,12 +138,11 @@ const EnviarDepoimento = () => {
             Sua <span>Opinião</span> importa!
           </h2>
           <p>
-            Conte como foi a sua experiência com os serviços da
-            <span className="name-testimonial"> Styllo Vidros.</span>
+            Conte como foi a sua experiência com os serviços da{" "}
+            <span className="name-testimonial">Styllo Vidros.</span>
           </p>
         </div>
 
-        {/* Mensagens de Feedback Visuais integradas na página */}
         {statusEnvio === "sucesso" && (
           <div
             className="form-message-success"
@@ -101,9 +154,8 @@ const EnviarDepoimento = () => {
               gap: "10px",
             }}
           >
-            <CheckCircle2 color="#25d366" />
-            Depoimento enviado com sucesso! Obrigado por fazer parte da nossa
-            história.
+            <CheckCircle2 color="#25d366" /> Depoimento enviado com sucesso!
+            Obrigado por fazer parte da nossa história.
           </div>
         )}
 
@@ -118,13 +170,12 @@ const EnviarDepoimento = () => {
               gap: "10px",
             }}
           >
-            <AlertCircle color="#ff4d4d" />
-            Houve um erro ao enviar seu depoimento. Tente novamente.
+            <AlertCircle color="#ff4d4d" /> Houve um erro ao enviar seu
+            depoimento. Tente novamente.
           </div>
         )}
 
         <form className="testimonial-form" onSubmit={handleSubmit}>
-          {/* Campo Nome */}
           <div className="testimonial-input-group">
             <label htmlFor="nome">Seu Nome</label>
             <input
@@ -138,34 +189,78 @@ const EnviarDepoimento = () => {
             />
           </div>
 
-          {/* Campo Cidade/Região */}
           <div className="testimonial-input-group">
-            <label htmlFor="regiao">Sua Cidade / Região</label>
-            <input
-              id="regiao"
-              type="text"
-              placeholder="Ex: Vicente Pires - DF"
-              value={regiao}
-              onChange={(e) => setRegiao(e.target.value)}
-              required
-              disabled={enviando}
-            />
+            <label>Sua Nota para o Serviço</label>
+            <div
+              className="stars-rating-container"
+              style={{
+                display: "flex",
+                gap: "6px",
+                marginTop: "4px",
+                marginBottom: "4px",
+              }}
+            >
+              {[1, 2, 3, 4, 5].map((estrela) => {
+                const ativa = estrela <= (hoverAvaliacao || avaliacao);
+                return (
+                  <button
+                    key={estrela}
+                    type="button"
+                    disabled={enviando}
+                    onClick={() => setAvaliacao(estrela)}
+                    onMouseEnter={() => setHoverAvaliacao(estrela)}
+                    onMouseLeave={() => setHoverAvaliacao(0)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: enviando ? "default" : "pointer",
+                      padding: "4px",
+                      transition: "transform 0.1s ease",
+                      transform:
+                        estrela <= hoverAvaliacao ? "scale(1.15)" : "scale(1)",
+                    }}
+                  >
+                    <Star
+                      size={28}
+                      fill={ativa ? "var(--accent-purple)" : "none"}
+                      color={ativa ? "var(--accent-purple)" : "#666"}
+                    />
+                  </button>
+                );
+              })}
+            </div>
           </div>
-
-          {/* Campo Mensagem */}
           <div className="testimonial-input-group">
-            <label htmlFor="mensagem">Sua Mensagem</label>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <label htmlFor="mensagem">Sua Mensagem</label>
+              {/* 🔥 Contador de caracteres dinâmico */}
+              <span
+                style={{
+                  fontSize: "0.8rem",
+                  color: mensagem.length >= 150 ? "#ff4d4d" : "var(--white)",
+                }}
+              >
+                {160 - mensagem.length} caracteres restantes
+              </span>
+            </div>
+
             <textarea
               id="mensagem"
               placeholder="Conte os detalhes do seu projeto (Box, Espelho, Cortina de Vidro...)"
               value={mensagem}
               onChange={(e) => setMensagem(e.target.value)}
+              maxLength={160} // 🔥 Limita nativamente a digitação no teclado em 160 letras
               required
               disabled={enviando}
+              rows={4}
             ></textarea>
           </div>
-
-          {/* Upload de Foto com Preview Dinâmico */}
           <div className="testimonial-input-group">
             <label>Sua Foto (Opcional)</label>
 
@@ -183,7 +278,7 @@ const EnviarDepoimento = () => {
                 >
                   <img
                     src={previewUrl}
-                    alt="Preview do avatar"
+                    alt="Preview cortado"
                     className="testimonial-img"
                   />
                 </div>
@@ -193,8 +288,8 @@ const EnviarDepoimento = () => {
             <div className="file-input-wrapper">
               <label htmlFor="user-photo" className="file-input-label">
                 <Camera size={18} />
-                {foto
-                  ? "Alterar foto selecionada"
+                {fotoFinalBlob
+                  ? "Alterar foto ajustada"
                   : "Escolher uma foto de perfil"}
               </label>
               <input
@@ -203,11 +298,11 @@ const EnviarDepoimento = () => {
                 accept="image/*"
                 onChange={handleFotoChange}
                 disabled={enviando}
+                onClick={(e) => (e.target.value = null)}
               />
             </div>
           </div>
 
-          {/* Botão de Envio Dinâmico */}
           <button
             type="submit"
             className="btn-send-testimonial"
@@ -221,6 +316,69 @@ const EnviarDepoimento = () => {
           <ArrowLeft size={16} /> Voltar para a página inicial
         </Link>
       </div>
+
+      {/* 🔥 MODAL DE AJUSTE/CORTE DE IMAGEM */}
+      {isCropping && fotoOriginalUrl && (
+        <div className="crop-modal-overlay">
+          <div className="crop-modal-content">
+            <div className="crop-modal-header">
+              <h3>Ajuste sua Foto</h3>
+              <button
+                type="button"
+                onClick={() => setIsCropping(false)}
+                className="close-crop-btn"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Container do Recortador */}
+            <div className="crop-container-wrapper">
+              <Cropper
+                image={fotoOriginalUrl}
+                crop={crop}
+                zoom={zoom}
+                aspect={1} // Força proporção quadrada (1:1)
+                cropShape="round" // Desenha uma guia circular amigável na tela
+                showGrid={false}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+                onZoomChange={setZoom}
+              />
+            </div>
+
+            {/* Controle de Zoom */}
+            <div className="crop-controls-slider">
+              <span>Zoom</span>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+              />
+            </div>
+
+            <div className="crop-modal-actions">
+              <button
+                type="button"
+                className="btn-crop-cancel"
+                onClick={() => setIsCropping(false)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn-crop-apply"
+                onClick={gerarImagemCortada}
+              >
+                Confirmar Ajuste
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

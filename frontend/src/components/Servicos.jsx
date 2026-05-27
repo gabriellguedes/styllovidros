@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import { Camera, ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // Importa os componentes e módulos do Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -14,6 +14,7 @@ import "swiper/css/pagination";
 const Servicos = () => {
   const [servicos, setServicos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -28,6 +29,14 @@ const Servicos = () => {
       });
   }, []);
 
+  const handleCardClick = (categoriaId) => {
+    if (categoriaId) {
+      navigate("/portfolio", { state: { categoriaFiltroId: categoriaId } });
+    } else {
+      navigate("/portfolio");
+    }
+  };
+
   if (loading) return <p className="text-center">Carregando portfólio...</p>;
 
   return (
@@ -39,7 +48,7 @@ const Servicos = () => {
             spaceBetween={25} // Espaço entre os cards (em px)
             slidesPerView={1} // Quantidade padrão no mobile
             autoplay={{
-              delay: 350000,
+              delay: 3500,
               disableOnInteraction: false,
             }}
             pagination={{
@@ -66,7 +75,14 @@ const Servicos = () => {
           >
             {servicos.map((item) => (
               <SwiperSlide key={item.id}>
-                <div className="material-card">
+                <div
+                  className="material-card"
+                  key={item.id}
+                  onClick={() =>
+                    handleCardClick(item.categoria_id || item.categoria)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
                   <img
                     src={item.imagem} // URL vinda do Django
                     alt={item.titulo}

@@ -33,7 +33,7 @@ const HeaderHome = () => {
         <section
           className={`hero-brand-section ${isScrolled ? "scrolled" : ""}`}
         >
-          <Link onClick={scrollToTop} className="hero-logo-link">
+          <Link to="/" onClick={scrollToTop} className="hero-logo-link">
             <img
               className="nav_logo"
               src="/logo.png"

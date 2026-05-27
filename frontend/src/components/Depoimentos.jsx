@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../api";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Pagination } from "swiper/modules";
-import { UserCircle } from "lucide-react";
+import { UserCircle, Star } from "lucide-react";
 
 // Importar estilos necessários do Swiper
 import "swiper/css";
@@ -29,13 +29,14 @@ const DepoimentosHome = () => {
         fadeEffect={{ crossFade: true }}
         slidesPerView={1} // No efeito Fade, o padrão ideal é 1 para suavidade
         loop={true}
-        autoplay={{ delay: 4000, disableOnInteraction: false }}
+        autoplay={{ delay: 4000000, disableOnInteraction: false }}
         pagination={{ clickable: true }}
         className="testimonial-swiper"
       >
         {depoimentos.map((d) => (
           <SwiperSlide key={d.id}>
             <div className="testimonial-item-card">
+              <div className="testimonial-background"></div>
               <div className="testimonial-avatar-wrapper">
                 {d.foto_cliente ? (
                   <img
@@ -54,8 +55,27 @@ const DepoimentosHome = () => {
                 )}
               </div>
               <div className="testimonial-content">
-                <h4 className="testimonial-author">{d.nome_cliente}</h4>
+                <label className="testimonial-author">{d.nome_cliente}</label>
                 <p className="testimonial-text">"{d.texto}"</p>
+                <div className="testimonial-stars-display">
+                  {[1, 2, 3, 4, 5].map((index) => (
+                    <Star
+                      key={index}
+                      size={18}
+                      // Se o índice for menor ou igual à nota salva (d.avaliacao), a estrela fica preenchida de roxo
+                      fill={
+                        index <= (d.avaliacao || 5)
+                          ? "var(--accent-purple)"
+                          : "none"
+                      }
+                      color={
+                        index <= (d.avaliacao || 5)
+                          ? "var(--accent-purple)"
+                          : "#444"
+                      }
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </SwiperSlide>

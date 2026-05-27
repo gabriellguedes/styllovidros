@@ -40,6 +40,10 @@ const Home = () => {
         <div className="section-services-container">
           <section className="section-services-content">
             <h2 className="section-header">Nossos Produtos</h2>
+            <p>
+              Confira nossa variedade de produtos em vidraçaria. Não encontrou o
+              que procura? Entre em contato conosco e teremos prazer em ajudar!
+            </p>
             <ServicosHome />
           </section>
         </div>
