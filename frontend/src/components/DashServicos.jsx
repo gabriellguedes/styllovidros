@@ -24,9 +24,10 @@ const DashServicos = () => {
       const res = await api.get("categorias/");
       setCategorias(res.data);
 
-      // Se houver categorias e o formulário estiver sem nenhuma selecionada, define a primeira
       if (res.data.length > 0 && !novoServico.categoria) {
         setNovoServico((prev) => ({ ...prev, categoria: res.data[0].id }));
+      } else if (res.data.length === 0) {
+        setNovoServico((prev) => ({ ...prev, categoria: "" }));
       }
     } catch (err) {
       console.error("Erro ao carregar categorias:", err);
@@ -219,11 +220,18 @@ const DashServicos = () => {
           onChange={handleCategoriaChange}
           required
         >
+          <option value="" disabled hidden>
+            {categorias.length === 0
+              ? "Nenhuma categoria cadastrada"
+              : "Selecione uma Categoria"}
+          </option>
+
           {categorias.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.nome}
             </option>
           ))}
+
           <option
             value="ADICIONAR_NOVA"
             style={{ fontWeight: "bold", color: "#8a2be2" }}

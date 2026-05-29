@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  /*baseURL: "https://nonsequent-enrique-patentably.ngrok-free.dev",*/
-  baseURL: "http://192.168.100.7:8000/api/",
+  /*baseURL: "http://localhost:8000/api/",*/
+  baseURL: "https://styllo-vidros-api.onrender.com/api/",
 });
 
 api.interceptors.request.use((config) => {
