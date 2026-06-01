@@ -143,6 +143,14 @@ CORS_ALLOW_ALL_ORIGINS = True
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Se o seu Django for versão 4.2 ou superior, use este formato no final do arquivo:
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 # Permite que o site use frames do mesmo domínio
 X_FRAME_OPTIONS = 'SAMEORIGIN'
