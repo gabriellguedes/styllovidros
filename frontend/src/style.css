@@ -437,7 +437,21 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
 }
-
+.section-services-text-main {
+  font-size: 1.5rem;
+}
+.section-services-text {
+  font-size: 1rem;
+}
+.section-services-text > a {
+  text-decoration: none;
+  font-weight: bolder;
+  color: var(--accent-purple);
+}
+.section-services-text > a:hover {
+  color: var(--text-muted);
+  text-shadow: 0 0 10px var(--accent-purple);
+}
 /* ==========================================================================
           Bloqueio de Crescimento Horizontal e Vertical do Carrossel
    ========================================================================== */
@@ -2990,6 +3004,109 @@ body {
   margin-bottom: 5px;
   margin-top: 15px;
 }
+/**************************************************
+    BANNER SOLUÇÕES ESPECIAIS
+***************************************************/
+/* Container externo para gerenciar os espaçamentos na página */
+.special-solutions-container {
+  width: 100%;
+  max-width: 1300px; /* Alinha com os limites do restante do site */
+  margin: 30px auto;
+  padding: 0 10px;
+}
+
+/* O card do banner propriamente dito */
+.special-solutions-banner {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 140px; /* Altura compacta ideal para mobile e desktop */
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center 35%; /* Foca na área central dos vidros azuis */
+  text-decoration: none;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* 🔥 Efeito de Degradê (Fundo Roxo profundo sumindo para o vidro transparente) */
+.banner-overlay-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Degradê linear puxando a cor da marca da esquerda para a direita */
+  background: linear-gradient(
+    90deg,
+    rgba(34, 11, 54, 0.95) 0%,
+    rgba(59, 23, 91, 0.8) 45%,
+    rgba(138, 43, 226, 0.2) 100%
+  );
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Alinhamento dos textos e do ícone */
+.banner-content-wrapper {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+}
+
+.banner-text-side {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.banner-title {
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.banner-subtitle {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Círculo com ícone indicador de ação */
+.banner-action-circle {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+/* 🎯 Efeitos Interativos ao Passar o Mouse (Hover) */
+.special-solutions-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(138, 43, 226, 0.25);
+}
+
+.special-solutions-banner:hover .banner-action-circle {
+  background: var(--accent-purple, #8a2be2);
+  border-color: var(--accent-purple, #8a2be2);
+  transform: scale(1.05);
+}
 
 /* ==========================================================================
                      RESPONSIVIDADE - TABLET
@@ -3116,6 +3233,12 @@ body {
   .section-services-content {
     padding: 20px 0 0 0;
   }
+  .section-services-text {
+    margin-top: 10px;
+  }
+  .section-services-text > a {
+    display: block;
+  }
   .section-block {
     background: rgb(0, 0, 55, 0.15);
     border-radius: 0;
@@ -3164,6 +3287,32 @@ body {
   .btn-submit-form {
     padding: 12px 24px;
     width: 100%; /* Botão ocupa tudo no mobile */
+  }
+
+  .special-solutions-container {
+    padding: 0 15px;
+    margin: 20px auto;
+  }
+
+  .special-solutions-banner {
+    height: 110px; /* Um pouco menor no celular para manter a proporção */
+  }
+
+  .banner-content-wrapper {
+    padding: 0 20px;
+  }
+
+  .banner-title {
+    font-size: 1.3rem;
+  }
+
+  .banner-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .banner-action-circle {
+    width: 36px;
+    height: 36px;
   }
   /************************************************** 
                         FOOTER 

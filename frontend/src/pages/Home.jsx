@@ -8,6 +8,7 @@ import VideosHome from "../components/VideoGallery";
 import ContatoForm from "../components/ContatoForm";
 import HeaderHome from "../components/HeaderHome";
 import FooterHome from "../components/FooterHome";
+import BannerSolucoes from "../components/BannerSolucoes";
 
 const Home = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,9 +41,12 @@ const Home = () => {
         <div className="section-services-container">
           <section className="section-services-content">
             <h2 className="section-header">Nossos Produtos</h2>
-            <p>
-              Confira nossa variedade de produtos em vidraçaria. Não encontrou o
-              que procura? Entre em contato conosco e teremos prazer em ajudar!
+            <p className="section-services-text-main">
+              Confira nossa variedade de produtos em vidraçaria.
+            </p>
+            <p className="section-services-text">
+              Não encontrou o que procura?
+              <Link to="/portfolio"> Entre em contato conosco</Link>
             </p>
             <ServicosHome />
           </section>
@@ -66,6 +70,8 @@ const Home = () => {
             </section>
           </aside>
         </div>
+
+        <BannerSolucoes />
 
         {/* Bloco de Orçamento */}
         <div className="main-layout">

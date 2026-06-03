@@ -29,7 +29,7 @@ const DepoimentosHome = () => {
         fadeEffect={{ crossFade: true }}
         slidesPerView={1} // No efeito Fade, o padrão ideal é 1 para suavidade
         loop={true}
-        autoplay={{ delay: 4000000, disableOnInteraction: false }}
+        autoplay={{ delay: 4000, disableOnInteraction: false }}
         pagination={{ clickable: true }}
         className="testimonial-swiper"
       >
