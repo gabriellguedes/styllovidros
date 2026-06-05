@@ -34,54 +34,42 @@ const Home = () => {
       <main className="main-parallax-container">
         {/* Div que carrega a imagem de fundo fixa */}
         <div className="parallax-background"></div>
-        {/* Seção do Carrossel de Vídeos (some ao scroll) */}
-        <section className="hero-video-section responsive_view">
-          <VideosHome />
-        </section>
+
         <div className="section-services-container">
           <section className="section-services-content">
             <h2 className="section-header">Nossos Produtos</h2>
             <p className="section-services-text-main">
-              Confira nossa variedade de produtos em vidraçaria.
+              Confira nossa variedade de produtos.
             </p>
+            <ServicosHome />
             <p className="section-services-text">
               Não encontrou o que procura?
               <Link to="/portfolio"> Entre em contato conosco</Link>
             </p>
-            <ServicosHome />
           </section>
         </div>
-        <div className="main-layout content-over-parallax">
-          {/* Coluna da Esquerda (Conteúdo Principal) */}
-
-          <div className="content-column">
-            {/* Bloco de Materiais/Serviços */}
-
-            <section className="section-block desktop_view">
-              <VideosHome />
-            </section>
-          </div>
-
-          {/* Coluna da Direita (Depoimentos - Sidebar) */}
-          <aside className="testimonials-sidebar">
-            <section className="section-block">
-              <h2 className="section-header">Opiniões dos Clientes</h2>
-              <DepoimentosHome />
-            </section>
-          </aside>
-        </div>
-
         <BannerSolucoes />
-
-        {/* Bloco de Orçamento */}
-        <div className="main-layout">
-          <div className="content-column"></div>
-          <aside className="testimonials-sidebar">
+        <div className="main-layout content-over-parallax">
+          <div className="content-column desktop_view">
             <section className="section-block">
               <h2 className="section-header">Fale Conosco</h2>
               <ContatoForm />
             </section>
+          </div>
+
+          <aside className="testimonials-sidebar">
+            <section className="section-block">
+              <h2 className="section-header">Opinião dos Clientes</h2>
+              <DepoimentosHome />
+            </section>
           </aside>
+
+          <div className="content-column responsive_view">
+            <section className="section-block">
+              <h2 className="section-header">Fale Conosco</h2>
+              <ContatoForm />
+            </section>
+          </div>
         </div>
       </main>
       <FooterHome />

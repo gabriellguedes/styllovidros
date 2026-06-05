@@ -399,7 +399,7 @@ body {
   overflow: hidden; /* Garante que nada saia do limite do bloco */
 }
 .section-block {
-  background-color: rgba(45, 0, 77, 0.75); /* Roxo translúcido */
+  background-color: rgba(45, 0, 77, 0.25); /* Roxo translúcido */
   backdrop-filter: blur(10px); /* Efeito de vidro focado */
   border-radius: var(--radius);
   padding: 30px;
@@ -417,7 +417,7 @@ body {
 }
 /* --- 3.1 - Serviços  --- */
 .section-services-container {
-  background-color: rgba(45, 0, 77, 0.75); /* Roxo translúcido */
+  background-color: rgba(45, 0, 77, 0.25); /* Roxo translúcido */
   backdrop-filter: blur(10px);
   padding: 0 30px;
   margin-bottom: 25px;
@@ -444,13 +444,15 @@ body {
   font-size: 1rem;
 }
 .section-services-text > a {
+  display: block;
   text-decoration: none;
   font-weight: bolder;
   color: var(--accent-purple);
 }
 .section-services-text > a:hover {
-  color: var(--text-muted);
-  text-shadow: 0 0 10px var(--accent-purple);
+  color: var(--accent-purple);
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+  transform: translateY(-3px);
 }
 /* ==========================================================================
           Bloqueio de Crescimento Horizontal e Vertical do Carrossel
@@ -482,6 +484,13 @@ body {
 }
 
 /* Trava todos os cards para terem exatamente o mesmo tamanho e proporção */
+.swiper {
+  min-height: 490px;
+  padding: 20px 20px 0 20px !important;
+}
+.swiper-pagination-bullet-active {
+  background: var(--swiper-pagination-color, var(--accent-purple)) !important;
+}
 .services-swiper .swiper-slide {
   height: auto;
   display: flex;
@@ -500,6 +509,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius, 25px);
   box-sizing: border-box;
+}
+
+.services-swiper .material-card:hover {
+  border-radius: var(--radius, 25px);
+  transform: scale(1.1);
 }
 
 /* Imagem travada e sem distorção */
@@ -754,7 +768,6 @@ body {
 .footer-main {
   background-color: rgba(20, 0, 35, 0.95);
   padding: 60px 0 0;
-  margin-top: 50px;
 }
 
 .footer-container {
@@ -785,24 +798,36 @@ body {
 }
 
 /* Footer NAV - Primeira coluna*/
-.footer-column ul {
+.footer-menu {
   list-style: none;
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-menu-item {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  padding: 5px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
 
-.footer-column ul li {
-  margin-bottom: 10px;
-  text-align: left;
-}
 .footer-icon-menu {
 }
-.footer-column ul li a {
+.footer-menu-item a {
   color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 15px;
   text-decoration: none;
   transition: color 0.3s;
 }
 
-.footer-column ul li a:hover {
+.footer-menu-item:hover {
+  transform: translateY(-3px);
   color: var(--white);
   text-shadow: 1px 1px 5px var(--accent-purple);
 }
@@ -3121,7 +3146,8 @@ body {
     text-align: center;
   }
   .social-links {
-    justify-content: center;
+    justify-content: left;
+    padding: 0 50px;
   }
   .dash-form {
     grid-template-columns: 1fr 1fr;
@@ -3151,7 +3177,7 @@ body {
                         HEADER
   ***************************************************/
   .section-header {
-    font-size: 1.7rem;
+    font-size: 1.3rem;
   }
   .hero-brand-section {
     padding: 40px 0;
@@ -3232,9 +3258,14 @@ body {
 
   .section-services-content {
     padding: 20px 0 0 0;
+    min-height: 85vh;
   }
   .section-services-text {
-    margin-top: 10px;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+  }
+  .section-services-text-main {
+    font-size: 0.9rem;
   }
   .section-services-text > a {
     display: block;
@@ -3242,6 +3273,7 @@ body {
   .section-block {
     background: rgb(0, 0, 55, 0.15);
     border-radius: 0;
+    min-height: 85vh;
   }
   .section-services {
     padding: 20px 0;
@@ -3249,24 +3281,35 @@ body {
   .section-services > div {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
+  .swiper {
+    min-height: 450px;
+    padding: 0 !important;
+  }
+  .services-swiper .material-card:hover {
+    transform: scale(1);
+  }
   .services-container-wrapper {
     padding: 20px 0; /* Reduz o recuo lateral no mobile */
+    margin-bottom: 20px;
   }
   .material-card h4 {
     text-shadow: 0 0 15px var(--accent-purple);
   }
+  .material-card div {
+    margin-top: 10px;
+  }
   .services-swiper .material-card {
-    height: 360px; /* Card ligeiramente menor no telemóvel */
+    height: 420px; /* Card ligeiramente menor no telemóvel */
+    justify-content: normal;
   }
 
   .services-swiper .material-card img {
-    height: 270px; /* Foto menor no telemóvel */
+    height: 310px; /* Foto menor no telemóvel */
   }
   .services-swiper {
     padding-bottom: 0 !important;
   }
   .swiper-pagination {
-    display: none;
   }
   /* Depoimentos*/
   .testimonial-avatar-wrapper {
@@ -3319,12 +3362,18 @@ body {
   ***************************************************/
   /* Coluna 01 - Nav */
   .footer-column-h3-01 {
-    text-align: center !important;
+    padding: 0 50px;
   }
-  .footer-column ul li {
-    text-align: center;
+  .footer-menu {
+    padding: 0 50px;
   }
-
+  .footer-menu-item {
+    align-items: center;
+  }
+  .footer-column h3 {
+    padding: 0 50px;
+    text-align: left;
+  }
   .testimonial-form-card {
     padding: 30px 20px;
   }
@@ -3387,6 +3436,10 @@ body {
   .btn-save-about {
     width: 100%;
     justify-content: center;
+  }
+  .central p {
+    text-align: left;
+    padding: 0 50px;
   }
   /**************************************************
           ESTILIZAÇÃO DA PÁGINA PORTFÓLIO

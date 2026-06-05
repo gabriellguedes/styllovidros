@@ -2,7 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
-import { LogOut } from "lucide-react";
+import {
+  LogOut,
+  Images,
+  LayoutDashboard,
+  House,
+  Phone,
+  Menu,
+  BookCheck,
+  SquareArrowRightEnter,
+} from "lucide-react";
 
 const FooterHome = () => {
   const navigate = useNavigate();
@@ -102,32 +111,40 @@ const FooterHome = () => {
         {/* Coluna 1: Navegação */}
         <div className="footer-column">
           <h3 className="footer-column-h3-01">Menu</h3>
-          <ul>
-            <li>
+          <ul className="footer-menu">
+            <li className="footer-menu-item">
               <Link to="/" onClick={scrollToTop}>
-                Início
+                <House size={16} /> Início
               </Link>
             </li>
-            <li>
+            <li className="footer-menu-item">
               <Link to="/avaliar" target="_blank" rel="noopener noreferrer">
-                Avaliar
+                <BookCheck size={16} /> Avaliar
               </Link>
             </li>
-            <li>
-              <Link to="/portfolio">Portfólio</Link>
+            <li className="footer-menu-item">
+              <Link to="/portfolio">
+                <Images size={16} /> Portfólio
+              </Link>
             </li>
-            <li>
-              <Link to="/Contato">Contatos</Link>
+            <li className="footer-menu-item">
+              <Link to="/Contato">
+                <Phone size={16} /> Contatos
+              </Link>
             </li>
             {isAuth ? (
               <>
-                <li>
-                  <Link to="/dashboard">Painel</Link>
+                <li className="footer-menu-item">
+                  <Link to="/dashboard">
+                    <LayoutDashboard size={16} /> Painel Administrativo
+                  </Link>
                 </li>
               </>
             ) : (
-              <li>
-                <Link to="/login">Entrar</Link>
+              <li className="footer-menu-item">
+                <Link to="/login">
+                  <SquareArrowRightEnter size={16} /> Entrar
+                </Link>
               </li>
             )}
           </ul>
