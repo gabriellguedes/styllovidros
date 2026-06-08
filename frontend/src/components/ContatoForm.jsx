@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
-import { Send, AlertCircle } from "lucide-react";
+import {
+  Send,
+  AlertCircle,
+  User,
+  Phone as PhoneIcon,
+  MessageSquare,
+} from "lucide-react";
 import { PatternFormat } from "react-number-format";
 
 const ContatoForm = () => {
@@ -8,12 +14,11 @@ const ContatoForm = () => {
   const [formData, setFormData] = useState({
     nome: "",
     whatsapp: "",
-    categoria: "", // Substituiu o e-mail
+    categoria: "",
     mensagem: "",
   });
-  const [status, setStatus] = useState(null); // 'success' ou 'error'
+  const [status, setStatus] = useState(null);
 
-  // Carrega as categorias para o cliente escolher o tipo de serviço
   useEffect(() => {
     api
       .get("categorias/")
@@ -33,20 +38,16 @@ const ContatoForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // 1. Salva no banco de dados da sua API do Render
       await api.post("contatos/", {
         nome: formData.nome,
         whatsapp: formData.whatsapp,
-        servico:
-          categorias.find((c) => c.id === Number(formData.categoria))?.nome ||
-          "Geral",
+        servico: Number(formData.categoria),
         mensagem: formData.mensagem,
       });
 
       setStatus("success");
 
-      // 2. 🔥 PONTO EXTRA: Envio Automático para o seu WhatsApp
-      const seuNumeroWhatsApp = "5561998432367"; // Insira aqui o seu número com DDD (ex: 55 + DDD + Número)
+      const seuNumeroWhatsApp = "5561992987278";
       const nomeCategoria =
         categorias.find((c) => c.id === Number(formData.categoria))?.nome ||
         "Geral";
@@ -59,13 +60,11 @@ const ContatoForm = () => {
           `📝 *Detalhes/Região:* ${formData.mensagem}`,
       );
 
-      // Abre o WhatsApp com a mensagem montada
       window.open(
         `https://wa.me/${seuNumeroWhatsApp}?text=${textoWhatsApp}`,
         "_blank",
       );
 
-      // Reseta o formulário
       setFormData({
         nome: "",
         whatsapp: "",
@@ -79,20 +78,24 @@ const ContatoForm = () => {
   };
 
   return (
-    <section className="section-container">
-      <div className="contact-card">
-        <form onSubmit={handleSubmit} className="contact-form">
-          {/* Nome */}
+    <div className="styllo-contact-card">
+      <form onSubmit={handleSubmit} className="styllo-contact-form">
+        {/* Input Nome */}
+        <div className="styllo-input-group">
+          <User size={18} className="styllo-input-icon" />
           <input
             type="text"
             name="nome"
-            placeholder="Seu Name"
+            placeholder="Seu Nome"
             value={formData.nome}
             onChange={handleChange}
             required
           />
+        </div>
 
-          {/* WhatsApp formatado */}
+        {/* Input WhatsApp */}
+        <div className="styllo-input-group">
+          <PhoneIcon size={18} className="styllo-input-icon" />
           <PatternFormat
             format="(##) # ####-####"
             mask="X"
@@ -104,22 +107,15 @@ const ContatoForm = () => {
             }}
             required
           />
+        </div>
 
-          {/* Seletor de Categoria / Tipo de Serviço */}
+        {/* Select Categoria */}
+        <div className="styllo-input-group">
           <select
             name="categoria"
             value={formData.categoria}
             onChange={handleChange}
             required
-            style={{
-              width: "100%",
-              padding: "12px",
-              borderRadius: "6px",
-              background: "#1a1a1a",
-              color: "#fff",
-              border: "1px solid rgba(255,255,255,0.1)",
-              marginBottom: "15px",
-            }}
           >
             <option value="" disabled>
               Selecione o que deseja orçar
@@ -130,41 +126,24 @@ const ContatoForm = () => {
               </option>
             ))}
           </select>
+        </div>
 
-          {/* 🔥 Texto informativo sobre a localização/região */}
-          <div
-            className="info-box-region"
-            style={{
-              display: "flex",
-              alignItems: "start",
-              gap: "8px",
-              background: "rgba(138, 43, 226, 0.15)",
-              padding: "10px 12px",
-              borderRadius: "6px",
-              marginBottom: "10px",
-              border: "1px solid rgba(138, 43, 226, 0.3)",
-            }}
-          >
-            <AlertCircle
-              size={16}
-              color="#8a2be2"
-              style={{ marginTop: "2px", flexShrink: 0 }}
-            />
-            <p
-              style={{
-                fontSize: "0.82rem",
-                color: "rgba(255,255,255,0.85)",
-                margin: 0,
-                lineHeight: "1.3",
-              }}
-            >
-              <strong>Atenção:</strong> Por favor, informe a{" "}
-              <strong>sua cidade ou região</strong> na descrição abaixo. O valor
-              do orçamento varia de acordo com o local da instalação.
-            </p>
-          </div>
+        {/* Banner Informativo */}
+        <div className="styllo-info-box">
+          <AlertCircle size={18} className="styllo-info-icon" />
+          <p>
+            <strong>Atenção:</strong> Por favor, informe a{" "}
+            <strong>sua cidade ou região</strong> na descrição abaixo. O valor
+            varia de acordo com o local de instalação.
+          </p>
+        </div>
 
-          {/* Mensagem / Descrição */}
+        {/* Textarea Mensagem */}
+        <div className="styllo-input-group textarea-group">
+          <MessageSquare
+            size={18}
+            className="styllo-input-icon textarea-icon"
+          />
           <textarea
             name="mensagem"
             placeholder="Descreva detalhes do projeto e a cidade onde será feito o trabalho..."
@@ -172,24 +151,25 @@ const ContatoForm = () => {
             onChange={handleChange}
             required
           ></textarea>
+        </div>
 
-          <button type="submit" className="btn-submit-form">
-            <Send size={18} /> Enviar e Abrir no WhatsApp
-          </button>
+        {/* Botão Enviar */}
+        <button type="submit" className="styllo-btn-submit">
+          <Send size={18} /> Enviar mensagem
+        </button>
 
-          {status === "success" && (
-            <p className="msg-success">
-              Mensagem registrada com sucesso! Direcionando para o WhatsApp...
-            </p>
-          )}
-          {status === "error" && (
-            <p className="msg-error">
-              Ocorreu um erro ao salvar os dados. Tente novamente.
-            </p>
-          )}
-        </form>
-      </div>
-    </section>
+        {status === "success" && (
+          <p className="styllo-status-msg success">
+            ✓ Mensagem registrada! Direcionando ao WhatsApp...
+          </p>
+        )}
+        {status === "error" && (
+          <p className="styllo-status-msg error">
+            ✕ Erro ao salvar dados. Tente novamente ou use o ícone flutuante.
+          </p>
+        )}
+      </form>
+    </div>
   );
 };
 
