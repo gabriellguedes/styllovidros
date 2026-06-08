@@ -38,6 +38,7 @@ class Depoimento(models.Model):
     
 class Contato(models.Model):
     nome = models.CharField(max_length=150)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='contatos')
     email = models.EmailField()
     whatsapp = models.CharField(max_length=20)
     mensagem = models.TextField()

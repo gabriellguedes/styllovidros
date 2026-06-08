@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import { Mail, Phone, Calendar, Trash2 } from "lucide-react";
+import { Phone, Trash2, CheckSquare, Square } from "lucide-react";
 import toast from "react-hot-toast";
 
 const DashLeads = () => {
@@ -9,7 +9,12 @@ const DashLeads = () => {
   const fetchLeads = async () => {
     try {
       const res = await api.get("contatos/");
-      setLeads(res.data);
+      // Inicializa cada lead com uma propriedade local 'lido' caso a API ainda não envie
+      const dadosTratados = res.data.map((lead) => ({
+        ...lead,
+        lido: lead.lido || false,
+      }));
+      setLeads(dadosTratados);
     } catch (err) {
       console.error("Erro ao buscar contatos:", err);
     }
@@ -19,14 +24,36 @@ const DashLeads = () => {
     fetchLeads();
   }, []);
 
+  // Alterna o estado de Lido/Não Lido
+  const toggleLido = async (id, statusAtual) => {
+    try {
+      // Se a sua API Django aceitar atualizações parciais:
+      // await api.patch(`contatos/${id}/`, { lido: !statusAtual });
+
+      // Atualização imediata no estado visual do React
+      setLeads(
+        leads.map((lead) =>
+          lead.id === id ? { ...lead, lido: !statusAtual } : lead,
+        ),
+      );
+
+      if (!statusAtual) {
+        toast.success("Mensagem marcada como lida!");
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar status da mensagem:", err);
+    }
+  };
+
   const deleteLead = async (id) => {
     if (window.confirm("Tem a certeza que deseja excluir esta mensagem?")) {
+      const toastId = toast.loading("Removendo...");
       try {
         await api.delete(`contatos/${id}/`);
-        toast.success("Mensagem removida com sucesso!");
+        toast.success("Mensagem removida com sucesso!", { id: toastId });
         fetchLeads();
       } catch (err) {
-        toast.error("Erro ao remover mensagem.");
+        toast.error("Erro ao remover mensagem.", { id: toastId });
       }
     }
   };
@@ -38,8 +65,8 @@ const DashLeads = () => {
           Mensagens e Orçamentos Recebidos
         </h2>
         <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.9rem" }}>
-          Abaixo estão os contatos enviados pelos clientes através do formulário
-          do site.
+          Gerencie os pedidos enviados via formulário. Mensagens esmaecidas
+          indicam que já foram lidas.
         </p>
       </div>
 
@@ -53,26 +80,79 @@ const DashLeads = () => {
               style={{
                 textAlign: "left",
                 borderBottom: "2px solid rgba(255,255,255,0.1)",
+                background: "rgba(255,255,255,0.02)",
               }}
             >
+              <th
+                style={{
+                  padding: "12px 8px",
+                  width: "60px",
+                  textAlign: "center",
+                }}
+              >
+                Status
+              </th>
               <th style={{ padding: "12px" }}>ID</th>
               <th style={{ padding: "12px" }}>Nome do Cliente</th>
               <th style={{ padding: "12px" }}>Contato WhatsApp</th>
-              <th style={{ padding: "12px" }}>Tipo de Serviço</th>
-              <th style={{ padding: "12px" }}>Mensagem / Detalhes</th>
-              <th style={{ padding: "12px" }}>Ações</th>
+              <th style={{ padding: "12px" }}>Categoria de Interesse</th>
+              <th style={{ padding: "12px" }}>Mensagem / Detalhes (Região)</th>
+              <th style={{ padding: "12px", textAlign: "center" }}>Ações</th>
             </tr>
           </thead>
           <tbody>
             {leads.map((lead) => (
               <tr
                 key={lead.id}
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+                style={{
+                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                  background: lead.lido ? "rgba(0, 0, 0, 0.15)" : "transparent",
+                  opacity: lead.lido ? 0.55 : 1, // Esmaece os já lidos para organizar a visão
+                  transition: "all 0.2s ease",
+                }}
               >
-                <td style={{ padding: "12px" }}>#{lead.id}</td>
-                <td style={{ padding: "12px" }}>
-                  <strong>{lead.nome || lead.cliente}</strong>
+                {/* Checkbox Interativo de Lido */}
+                <td style={{ padding: "12px 8px", textAlign: "center" }}>
+                  <button
+                    type="button"
+                    onClick={() => toggleLido(lead.id, lead.lido)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: lead.lido
+                        ? "var(--accent-purple, #8a2be2)"
+                        : "rgba(255,255,255,0.3)",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    title={
+                      lead.lido ? "Marcar como Não Lido" : "Marcar como Lido"
+                    }
+                  >
+                    {lead.lido ? (
+                      <CheckSquare size={19} />
+                    ) : (
+                      <Square size={19} />
+                    )}
+                  </button>
                 </td>
+
+                <td style={{ padding: "12px", color: "rgba(255,255,255,0.5)" }}>
+                  #{lead.id}
+                </td>
+
+                <td style={{ padding: "12px" }}>
+                  <strong
+                    style={{
+                      textDecoration: lead.lido ? "line-through" : "none",
+                    }}
+                  >
+                    {lead.nome || lead.cliente}
+                  </strong>
+                </td>
+
                 <td style={{ padding: "12px" }}>
                   <a
                     href={`https://wa.me/55${(lead.whatsapp || "").replace(/\D/g, "")}`}
@@ -82,42 +162,59 @@ const DashLeads = () => {
                       color: "#25d366",
                       textDecoration: "none",
                       fontWeight: "500",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
                     }}
                   >
-                    {lead.whatsapp} (Chamar)
+                    <Phone size={14} /> {lead.whatsapp}
                   </a>
                 </td>
+
                 <td style={{ padding: "12px" }}>
                   <span
                     style={{
-                      background: "rgba(138, 43, 226, 0.2)",
+                      background: lead.lido
+                        ? "rgba(255,255,255,0.05)"
+                        : "rgba(138, 43, 226, 0.2)",
+                      border: lead.lido
+                        ? "1px solid rgba(255,255,255,0.1)"
+                        : "1px solid rgba(138, 43, 226, 0.3)",
                       padding: "4px 10px",
                       borderRadius: "20px",
                       fontSize: "0.85rem",
+                      color: lead.lido ? "rgba(255,255,255,0.5)" : "#fff",
                     }}
                   >
                     {lead.servico || "Geral"}
                   </span>
                 </td>
+
                 <td
                   style={{
                     padding: "12px",
                     fontSize: "0.9rem",
-                    color: "rgba(255,255,255,0.7)",
+                    color: lead.lido
+                      ? "rgba(255,255,255,0.4)"
+                      : "rgba(255,255,255,0.85)",
+                    maxWidth: "350px",
+                    wordBreak: "break-word",
                   }}
                 >
-                  {lead.mensagem || "Sem mensagem informada."}
+                  {lead.mensagem || "Sem detalhes informados."}
                 </td>
-                <td style={{ padding: "12px" }}>
+
+                <td style={{ padding: "12px", textAlign: "center" }}>
                   <button
                     className="btn-action-delete"
-                    title="Remover Registro"
+                    title="Excluir Permanentemente"
                     onClick={() => deleteLead(lead.id)}
                     style={{
                       background: "none",
                       border: "none",
                       color: "#ff4d4d",
                       cursor: "pointer",
+                      padding: "4px",
                     }}
                   >
                     <Trash2 size={16} />
