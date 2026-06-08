@@ -14,12 +14,13 @@ class DepoimentoAdmin(admin.ModelAdmin):
     list_filter = ('estrelas', 'exibir_no_site')
     search_fields = ('nome_cliente', 'texto')
 
+
 @admin.register(Contato)
 class ContatoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'email', 'whatsapp', 'mensagem', 'data_envio', 'lido')
-    list_editable = ('lido',)
-    list_filter = ('lido', 'data_envio')
-    search_fields = ('nome', 'email', 'whatsapp')
+    list_display = ('id', 'nome', 'whatsapp', 'servico', 'lido', 'criado_em')
+    list_filter = ('lido', 'criado_em', 'servico')
+    search_fields = ('nome', 'whatsapp', 'mensagem')
+    ordering = ('-criado_em',)
 
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
