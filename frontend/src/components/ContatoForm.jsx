@@ -46,7 +46,7 @@ const ContatoForm = () => {
       setStatus("success");
 
       // 2. 🔥 PONTO EXTRA: Envio Automático para o seu WhatsApp
-      const seuNumeroWhatsApp = "5561992987278"; // Insira aqui o seu número com DDD (ex: 55 + DDD + Número)
+      const seuNumeroWhatsApp = "5561998432367"; // Insira aqui o seu número com DDD (ex: 55 + DDD + Número)
       const nomeCategoria =
         categorias.find((c) => c.id === Number(formData.categoria))?.nome ||
         "Geral";

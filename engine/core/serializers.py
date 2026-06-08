@@ -25,7 +25,7 @@ class DepoimentoSerializer(serializers.ModelSerializer):
 class ContatoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contato
-        fields = '__all__'
+        fields = ['id', 'nome', 'whatsapp', 'servico', 'mensagem', 'lido', 'criado_em']
 
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:
