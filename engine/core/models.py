@@ -35,18 +35,24 @@ class Depoimento(models.Model):
     data_envio = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.nome_cliente
-    
+ 
 class Contato(models.Model):
     nome = models.CharField(max_length=150)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='contatos')
-    email = models.EmailField()
-    whatsapp = models.CharField(max_length=20)
+    whatsapp = models.CharField(max_length=25)
+    
+    servico = models.CharField(max_length=100, default="Geral", blank=True, null=True)
+    
     mensagem = models.TextField()
-    data_envio = models.DateTimeField(auto_now_add=True)
+    
     lido = models.BooleanField(default=False)
+    
+    criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Contato de {self.nome}"
+        return f"{self.nome} - {self.servico}"
+    
+    class Meta:
+        ordering = ['-criado_em'] # Organiza para as mensagens mais novas aparecerem primeiro 
     
 class Video(models.Model):
     titulo = models.CharField(max_length=150)

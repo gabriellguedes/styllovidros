@@ -23,14 +23,12 @@ class CustomAuthToken(ObtainAuthToken):
             'username': user.username,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'is_staff': user.is_staff  # Retorna True ou False
+            'is_staff': user.is_staff  
         })
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all().order_by('nome')
     serializer_class = CategoriaSerializer
     
-    # Define as permissões: Qualquer um pode ver (GET), mas apenas usuários
-    # autenticados/administradores podem cadastrar, editar ou apagar.
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             permission_classes = [IsAuthenticatedOrReadOnly]
@@ -46,7 +44,6 @@ class DepoimentoViewSet(viewsets.ModelViewSet):
     queryset = Depoimento.objects.all().order_by('-data_envio')
     serializer_class = DepoimentoSerializer
 
-    # Endpoint extra para pegar apenas os aprovados (usar no Frontend Home)
     def get_queryset(self):
         approved_only = self.request.query_params.get('approved')
         if approved_only:
@@ -71,8 +68,7 @@ class RedesSociaisViewSet(viewsets.ModelViewSet):
     queryset = RedesSociais.objects.all()
     serializer_class = RedesSociaisSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    # Pequena melhoria lógica: se o frontend pedir dados e o banco estiver vazio, 
-    # cria automaticamente o primeiro registro com campos vazios para evitar erros 404.
+
     def list(self, request, *args, **kwargs):
         if not RedesSociais.objects.exists():
             RedesSociais.objects.create(instagram="", facebook="", whatsapp="", youtube="", telefone="")
@@ -83,7 +79,6 @@ class AboutUsViewSet(viewsets.ModelViewSet):
     serializer_class = AboutUsSerializer
 
     def list(self, request, *args, **kwargs):
-        # Garante que um registo inicial padrão exista se o banco de dados estiver limpo
         if not AboutUs.objects.exists():
             AboutUs.objects.create(
                 titulo_rodape="STYLLO VIDROS",
