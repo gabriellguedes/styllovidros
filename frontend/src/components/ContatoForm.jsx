@@ -117,7 +117,7 @@ const ContatoForm = () => {
             onChange={handleChange}
             required
           >
-            <option value="" disabled>
+            <option value="" disabled hidden>
               Selecione o que deseja orçar
             </option>
             {categorias.map((cat) => (

@@ -110,7 +110,7 @@ const FooterHome = () => {
       <div className="footer-container">
         {/* Coluna 1: Navegação */}
         <div className="footer-column">
-          <h3 className="footer-column-h3-01">Menu</h3>
+          <h3>Menu</h3>
           <ul className="footer-menu">
             <li className="footer-menu-item">
               <Link to="/" onClick={scrollToTop}>
@@ -159,7 +159,7 @@ const FooterHome = () => {
 
         {/* Na coluna das Redes Sociais, os ícones agora estão maiores via CSS */}
         <div className="footer-column">
-          <h3>Siga-nos</h3>
+          {/*<h3>Siga-nos</h3>*/}
           <div className="social-links">
             {linksRedes.instagram && (
               <a

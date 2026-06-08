@@ -971,10 +971,6 @@ body {
   margin-bottom: 20px;
   text-align: center;
 }
-.footer-column-h3-01 {
-  text-align: left !important;
-}
-
 /* Footer NAV - Primeira coluna*/
 .footer-menu {
   list-style: none;
@@ -3324,8 +3320,8 @@ body {
     text-align: center;
   }
   .social-links {
-    justify-content: left;
-    padding: 0 50px;
+    justify-content: center;
+    padding: 0 25px;
   }
   .dash-form {
     grid-template-columns: 1fr 1fr;
@@ -3451,7 +3447,7 @@ body {
   .section-block {
     background: rgb(0, 0, 55, 0.15);
     border-radius: 0;
-    min-height: 85vh;
+    min-height: 65vh;
   }
   .section-services {
     padding: 20px 0;
@@ -3541,17 +3537,15 @@ body {
                         FOOTER 
   ***************************************************/
   /* Coluna 01 - Nav */
-  .footer-column-h3-01 {
-    padding: 0 50px;
-  }
+
   .footer-menu {
-    padding: 0 50px;
+    padding: 0 20px;
   }
   .footer-menu-item {
-    align-items: center;
+    width: 100%;
   }
   .footer-column h3 {
-    padding: 0 50px;
+    padding: 0 20px;
     text-align: left;
   }
   .testimonial-form-card {
@@ -3619,7 +3613,7 @@ body {
   }
   .central p {
     text-align: left;
-    padding: 0 50px;
+    padding: 0 20px;
   }
   /**************************************************
           ESTILIZAÇÃO DA PÁGINA PORTFÓLIO
