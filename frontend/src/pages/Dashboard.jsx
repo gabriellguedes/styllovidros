@@ -16,8 +16,10 @@ import {
   ChevronDown,
   Images,
   FileText,
+  Menu,
+  X,
 } from "lucide-react";
-//My components
+// My components
 import Video from "../components/DashVideos";
 import DashServicos from "../components/DashServicos";
 import DashDepoimentos from "../components/DashDepoimentos";
@@ -27,11 +29,15 @@ import DashRedes from "../components/DashRedes";
 import DashAbout from "../components/DashAbout";
 import NavbarUser from "../components/NavbarUser";
 import DashPortifolio from "../components/DashPortifolio";
+import ChangePassword from "../components/ChangePassword";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("resumo");
   const [loading, setLoading] = useState(false);
   const [configOpen, setConfigOpen] = useState(false);
+
+  // Estado para controlar a visibilidade do menu no Mobile
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Estados para armazenar os dados das métricas em tempo real
   const [qtdLeads, setQtdLeads] = useState(0);
@@ -64,7 +70,7 @@ const Dashboard = () => {
 
       const resDepoimentos = await api.get("depoimentos/");
       const pendentes = resDepoimentos.data.filter(
-        (d) => !d.exibir_no_site,
+        (d) => !d.exibir_no_site
       ).length;
       setDepoimentosPendentes(pendentes);
     } catch (err) {
@@ -72,10 +78,11 @@ const Dashboard = () => {
     }
   };
 
-  // 3. Função para gerenciar a troca de abas com efeito suave de carregamento
+  // 3. Função para gerenciar a troca de abas com fechamento automático no mobile
   const handleTabChange = (tabId) => {
     setLoading(true);
     setActiveTab(tabId);
+    setMenuOpen(false); // Fecha o menu responsivo ao selecionar uma aba
 
     if (tabId === "resumo") {
       fetchMetrics();
@@ -86,21 +93,62 @@ const Dashboard = () => {
     }, 300);
   };
 
-  const toggleConfigDropdown = () => {
+  const toggleConfigDropdown = (e) => {
+    e.stopPropagation();
     setConfigOpen(!configOpen);
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
   };
 
   return (
     <div className="dashboard-container">
+      {/* Overlay transparente para fechar o menu no mobile ao clicar fora */}
+      {menuOpen && (
+        <div
+          className="dashboard-sidebar-overlay"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+
       {/* --- SIDEBAR LATERAL --- */}
-      <aside className="dashboard-sidebar">
+      <aside className={`dashboard-sidebar ${menuOpen ? "open" : ""}`}>
         <div>
-          <div className="dashboard-brand">
-            <h2>
-              STYLLO <span>PAINEL</span>
-              <hr className="dropdown-divider"></hr>
-            </h2>
+          {/* Topo do Menu - Clicável para abrir/fechar */}
+          <div
+            className="dashboard-brand"
+            onClick={toggleMenu}
+            style={{ cursor: "pointer" }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+               <button
+                className="dashboard-mobile-toggle-btn"
+                aria-label="Alternar Menu"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#fff",
+                  cursor: "pointer",
+                }}
+              >
+                {menuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+              <h2>
+
+                STYLLO <span>PAINEL</span>
+              </h2>
+             
+            </div>
           </div>
+                <hr className="dropdown-divider" />
           <ul className="dashboard-menu">
             <li
               className={`dashboard-menu-item ${activeTab === "resumo" ? "active" : ""}`}
@@ -139,7 +187,7 @@ const Dashboard = () => {
               </button>
             </li>
 
-            {/* Galeria de Vídeos (Acessível por todos) */}
+            {/* Galeria de Vídeos */}
             <li
               className={`dashboard-menu-item ${activeTab === "video_gallery" ? "active" : ""}`}
             >
@@ -153,7 +201,7 @@ const Dashboard = () => {
               </button>
             </li>
 
-            {/* Lista de Produtos/Serviços (Acessível por todos) */}
+            {/* Produtos e Serviços */}
             <li
               className={`dashboard-menu-item ${activeTab === "service" ? "active" : ""}`}
             >
@@ -166,12 +214,14 @@ const Dashboard = () => {
                 </a>
               </button>
             </li>
+
+            {/* Gerenciar Portfólio */}
             <li
               className={`dashboard-menu-item ${activeTab === "portifolio" ? "active" : ""}`}
             >
               <button
                 className="dash-btn-action"
-                onClick={() => setActiveTab("portifolio")}
+                onClick={() => handleTabChange("portifolio")}
               >
                 <a style={{ pointerEvents: "none" }}>
                   <Images size={18} /> Gerenciar Portfólio
@@ -181,9 +231,9 @@ const Dashboard = () => {
           </ul>
         </div>
 
-        {/* --- MENU DROPDOWN DE CONFIGURAÇÕES --- */}
+        {/* --- MENU DROPDOWN DE CONFIGURAÇÕES E SAÍDA --- */}
         <div>
-          {/* 🔒 ITENS EXCLUSIVOS PARA ADMINISTRADORES COBERTO PELO FILTRO */}
+          {/* 🔒 ITENS EXCLUSIVOS PARA ADMINISTRADORES */}
           {isAdmin && (
             <div
               className={`dashboard-menu-item dropdown-parent ${configOpen ? "open" : ""}`}
@@ -200,7 +250,7 @@ const Dashboard = () => {
                 <ChevronDown size={16} className="chevron-icon" />
               </button>
 
-              {/* Submenu com controle refinado por item */}
+              {/* Submenu de Configurações */}
               <ul className="dashboard-submenu">
                 <li
                   className={`dashboard-menu-item ${activeTab === "usuarios" ? "active" : ""}`}
@@ -261,7 +311,10 @@ const Dashboard = () => {
               Styllo Vidros.
             </p>
           </div>
-          <NavbarUser activeTab={activeTab} handleTabChange={handleTabChange} />
+          <NavbarUser
+            activeTab={activeTab}
+            handleTabChange={handleTabChange}
+          />
         </div>
 
         {loading ? (
@@ -370,6 +423,13 @@ const Dashboard = () => {
               </section>
             )}
 
+            {/* --- VISÃO: MEU PERFIL --- */}
+            {activeTab === "change_password" && (
+              <section className="dashboard-data-section">
+                <ChangePassword />
+              </section>
+            )}
+
             {/* --- TRAVA DE SEGURANÇA EXCLUSIVA NO CONTEÚDO DA TELA PRINCIPAL --- */}
             {activeTab === "usuarios" &&
               (isAdmin ? (
@@ -403,7 +463,8 @@ const Dashboard = () => {
                   Acesso Restrito a Administradores.
                 </div>
               ))}
-            {/* --- SEÇÃO: NOVO PORTFÓLIO EM ÁLBUNS --- */}
+
+            {/* --- SEÇÃO: PORTFÓLIO EM ÁLBUNS --- */}
             {activeTab === "portifolio" && (
               <section className="dashboard-data-section">
                 <DashPortifolio />

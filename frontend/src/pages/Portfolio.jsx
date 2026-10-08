@@ -22,6 +22,10 @@ const Portifolio = () => {
   const [albumAtivo, setAlbumAtivo] = useState(null);
   const [fotoIndexAtiva, setFotoIndexAtiva] = useState(0);
 
+  // Estados para controlar o gesto de swipe (touch) no celular
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
   const location = useLocation(); // 🔥 Captura o estado passado pelo navigate da página anterior
 
   useEffect(() => {
@@ -47,6 +51,16 @@ const Portifolio = () => {
       });
   }, [location]);
 
+  // 🔥 Seleciona a categoria e centraliza o botão na barra de rolagem horizontal
+  const handleSelectCategoria = (e, catId) => {
+    setCategoriaAtiva(catId);
+    e.currentTarget.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  };
+
   // 🔥 FILTRAGEM DINÂMICA: Filtra a lista de álbuns no frontend com base no botão ou serviço selecionado
   const albunsFiltrados =
     categoriaAtiva === "TODOS"
@@ -71,18 +85,43 @@ const Portifolio = () => {
 
   // Navegação do Modal (Foto Anterior)
   const handleFotoAnterior = (e) => {
-    e.stopPropagation(); // Impede fechar o modal
+    if (e) e.stopPropagation(); // Impede fechar o modal
     setFotoIndexAtiva((prev) =>
-      prev === 0 ? albumAtivo.fotos.length - 1 : prev - 1,
+      prev === 0 ? albumAtivo.fotos.length - 1 : prev - 1
     );
   };
 
   // Navegação do Modal (Próxima Foto)
   const handleProximaFoto = (e) => {
-    e.stopPropagation(); // Impede fechar o modal
+    if (e) e.stopPropagation(); // Impede fechar o modal
     setFotoIndexAtiva((prev) =>
-      prev === albumAtivo.fotos.length - 1 ? 0 : prev + 1,
+      prev === albumAtivo.fotos.length - 1 ? 0 : prev + 1
     );
+  };
+
+  // --- LÓGICA DO GESTO DE ARRASTAR (SWIPE) NO CELULAR ---
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+    setTouchEnd(0);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const minSwipeDistance = 50; // Distância mínima percorrida pelo dedo (em px)
+
+    if (distance > minSwipeDistance) {
+      // Deslizou para a esquerda -> Próxima foto
+      handleProximaFoto();
+    } else if (distance < -minSwipeDistance) {
+      // Deslizou para a direita -> Foto anterior
+      handleFotoAnterior();
+    }
   };
 
   if (loading) {
@@ -110,11 +149,11 @@ const Portifolio = () => {
             </p>
           </header>
 
-          {/* 🔥 BARRA DE FILTROS DINÂMICA (Renderiza botões para alternar as categorias) */}
+          {/* 🔥 BARRA DE FILTROS DINÂMICA (Uma única linha horizontal deslizável) */}
           <div className="portfolio-filter-bar">
             <button
               className={`filter-btn ${categoriaAtiva === "TODOS" ? "active" : ""}`}
-              onClick={() => setCategoriaAtiva("TODOS")}
+              onClick={(e) => handleSelectCategoria(e, "TODOS")}
             >
               Todos os Projetos
             </button>
@@ -122,9 +161,13 @@ const Portifolio = () => {
             {categorias.map((cat) => (
               <button
                 key={cat.id || cat.valor}
-                className={`filter-btn ${String(categoriaAtiva) === String(cat.id || cat.valor) ? "active" : ""}`}
+                className={`filter-btn ${
+                  String(categoriaAtiva) === String(cat.id || cat.valor)
+                    ? "active"
+                    : ""
+                }`}
                 // Se o backend usar o ID na FK usa cat.id, se for texto estático usa cat.valor
-                onClick={() => setCategoriaAtiva(cat.id || cat.valor)}
+                onClick={(e) => handleSelectCategoria(e, cat.id || cat.valor)}
               >
                 {cat.nome || cat.label}
               </button>
@@ -166,7 +209,7 @@ const Portifolio = () => {
                       <span>
                         {album.criado_em && !isNaN(Date.parse(album.criado_em))
                           ? new Date(album.criado_em).toLocaleDateString(
-                              "pt-BR",
+                              "pt-BR"
                             )
                           : "Recente"}
                       </span>
@@ -199,8 +242,13 @@ const Portifolio = () => {
                 className="lightbox-content-box"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Área Principal da Imagem */}
-                <div className="lightbox-image-viewer">
+                {/* Área Principal da Imagem com suporte a gestos Touch */}
+                <div
+                  className="lightbox-image-viewer"
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
                   {albumAtivo.fotos.length > 1 && (
                     <button
                       className="nav-arrow-btn prev"
@@ -214,6 +262,11 @@ const Portifolio = () => {
                     src={albumAtivo.fotos[fotoIndexAtiva]?.imagem}
                     alt={`Foto ${fotoIndexAtiva + 1} do álbum ${albumAtivo.titulo}`}
                     className="lightbox-main-img"
+                    style={{
+                      touchAction: "pan-y",
+                      userSelect: "none",
+                      WebkitUserDrag: "none",
+                    }}
                   />
 
                   {albumAtivo.fotos.length > 1 && (

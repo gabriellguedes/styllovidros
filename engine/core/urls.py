@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ServicoViewSet, AlbumViewSet, AlbumFotoViewSet, CategoriaViewSet, AboutUsViewSet, RedesSociaisViewSet, DepoimentoViewSet, ContatoViewSet, VideoViewSet, UsuarioViewSet
+from .views import ServicoViewSet, AlbumViewSet, AlbumFotoViewSet, CategoriaViewSet, AboutUsViewSet, RedesSociaisViewSet, DepoimentoViewSet, ContatoViewSet, VideoViewSet, UsuarioViewSet, ChangePasswordView, CustomAuthToken
 
 
 # O Router cria automaticamente as rotas GET, POST, PUT e DELETE
@@ -17,4 +17,9 @@ router.register(r'albuns', AlbumViewSet)
 router.register(r'album-fotos', AlbumFotoViewSet)
 urlpatterns = [
     path('', include(router.urls)),
+    path(
+        'change-password/',
+        ChangePasswordView.as_view(),
+        name='change_password',
+    ),
 ]

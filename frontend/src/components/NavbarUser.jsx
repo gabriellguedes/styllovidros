@@ -148,12 +148,13 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
               <li>
                 <button
                   type="button"
-                  onClick={() => handleMenuClick("usuarios")}
+                  onClick={() => handleMenuClick("change_password")}
                 >
                   <Key size={16} />
                   Alterar Senha
                 </button>
               </li>
+              
 
               <hr className="dropdown-divider" />
 

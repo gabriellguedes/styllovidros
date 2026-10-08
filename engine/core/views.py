@@ -2,7 +2,8 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 from .models import Servico, AlbumFoto, Album, Categoria, Depoimento, Contato, Video, RedesSociais, AboutUs
 from .serializers import ServicoSerializer, AlbumFotoSerializer,AlbumSerializer, CategoriaSerializer, AboutUsSerializer, RedesSociaisSerializer ,DepoimentoSerializer, ContatoSerializer, VideoSerializer, UserSerializer, RedesSociais
-from rest_framework import permissions
+from rest_framework import permissions, status
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -97,3 +98,30 @@ class AlbumFotoViewSet(viewsets.ModelViewSet):
     serializer_class = AlbumFotoSerializer
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+class ChangePasswordView(APIView):
+  permission_classes = [IsAuthenticated]
+
+  def post(self, request):
+    user = request.user
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+
+    if not old_password or not new_password:
+      return Response(
+          {'error': 'Informe a senha atual e a nova senha.'},
+          status=status.HTTP_400_BAD_REQUEST,
+      )
+
+    if not user.check_password(old_password):
+      return Response(
+          {'error': 'A senha atual está incorreta.'},
+          status=status.HTTP_400_BAD_REQUEST,
+      )
+
+    user.set_password(new_password)
+    user.save()
+
+    return Response(
+        {'detail': 'Senha alterada com sucesso!'}, status=status.HTTP_200_OK
+    )

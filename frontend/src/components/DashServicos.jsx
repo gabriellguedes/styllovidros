@@ -201,7 +201,7 @@ const DashServicos = () => {
         <Plus size={20} /> Adicionar Novo Serviço
       </h3>
 
-      <form onSubmit={handleSubmit} className="dash-form">
+      <form onSubmit={handleSubmit} className="dash-form" name="form-new-service">
         <input
           type="text"
           placeholder="Título do Trabalho"
