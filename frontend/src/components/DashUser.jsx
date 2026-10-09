@@ -10,6 +10,7 @@ import {
   Check,
   UserCheck,
   UserX,
+  X,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -87,7 +88,7 @@ const DashUser = () => {
     }));
   };
 
-  // Handlers para a edição na tabela
+  // Handlers para a edição inline
   const handleEditFirstNameChange = (e) => {
     const valor = e.target.value;
     setDadosEditados((prev) => ({
@@ -139,7 +140,7 @@ const DashUser = () => {
   const handleDeleteUsuario = async (id, username) => {
     if (
       window.confirm(
-        `Tem a certeza que deseja remover o acesso de "${username}" definitivamente?`,
+        `Tem a certeza que deseja remover o acesso de "${username}" definitivamente?`
       )
     ) {
       try {
@@ -152,7 +153,7 @@ const DashUser = () => {
     }
   };
 
-  // NOVA FUNÇÃO: Alterna rapidamente o status Ativo/Inativo na API (PATCH)
+  // Alterna rapidamente o status Ativo/Inativo na API (PATCH)
   const handleToggleStatus = async (user) => {
     const novoStatus = !user.is_active;
     const mensagem = novoStatus
@@ -162,11 +163,10 @@ const DashUser = () => {
     if (window.confirm(mensagem)) {
       const toastId = toast.loading("Atualizando status da conta...");
       try {
-        // Envia apenas a mudança de status para o endpoint correspondente
         await api.patch(`usuarios/${user.id}/`, { is_active: novoStatus });
         toast.success(
           novoStatus ? "Conta ativada!" : "Conta desativada/suspensa!",
-          { id: toastId },
+          { id: toastId }
         );
         fetchUsuarios();
       } catch (err) {
@@ -176,7 +176,7 @@ const DashUser = () => {
     }
   };
 
-  // Ativa o modo de edição na linha da tabela
+  // Ativa o modo de edição na linha da tabela ou card
   const iniciarEdicao = (user) => {
     setEditandoId(user.id);
     setDadosEditados({
@@ -185,7 +185,7 @@ const DashUser = () => {
       username: user.username,
       email: user.email,
       is_staff: user.is_staff,
-      is_active: user.is_active, // Mapeia o status atual para edição
+      is_active: user.is_active,
     });
   };
 
@@ -284,8 +284,8 @@ const DashUser = () => {
         </div>
       </form>
 
-      {/* --- LISTAGEM EM TABELA --- */}
-      <div className="dash-table-container">
+      {/* --- VISUALIZAÇÃO DESKTOP: TABELA --- */}
+      <div className="dash-table-container desktop-only-view">
         <table className="dashboard-table">
           <thead>
             <tr>
@@ -293,7 +293,7 @@ const DashUser = () => {
               <th>Usuário</th>
               <th>E-mail</th>
               <th>Nível de Acesso</th>
-              <th>Status</th> {/* NOVA COLUNA */}
+              <th>Status</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -389,7 +389,7 @@ const DashUser = () => {
                   )}
                 </td>
 
-                {/* NOVA COLUNA: STATUS DA CONTA */}
+                {/* Coluna de Status da Conta */}
                 <td>
                   {editandoId === user.id ? (
                     <select
@@ -416,7 +416,11 @@ const DashUser = () => {
                           ? "rgba(37, 211, 102, 0.1)"
                           : "rgba(255, 77, 77, 0.1)",
                         color: user.is_active ? "#25d366" : "#ff4d4d",
-                        border: `1px solid ${user.is_active ? "rgba(37, 211, 102, 0.2)" : "rgba(255, 77, 77, 0.2)"}`,
+                        border: `1px solid ${
+                          user.is_active
+                            ? "rgba(37, 211, 102, 0.2)"
+                            : "rgba(255, 77, 77, 0.2)"
+                        }`,
                       }}
                     >
                       {user.is_active ? "Ativo" : "Inativo"}
@@ -434,18 +438,32 @@ const DashUser = () => {
                     }}
                   >
                     {editandoId === user.id ? (
-                      <button
-                        onClick={() => handleSalvarEdicao(user.id)}
-                        title="Salvar Alterações"
-                        style={{
-                          color: "#25d366",
-                          background: "none",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <Check size={18} />
-                      </button>
+                      <>
+                        <button
+                          onClick={() => handleSalvarEdicao(user.id)}
+                          title="Salvar Alterações"
+                          style={{
+                            color: "#25d366",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <Check size={18} />
+                        </button>
+                        <button
+                          onClick={() => setEditandoId(null)}
+                          title="Cancelar Edição"
+                          style={{
+                            color: "#ff4d4d",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <X size={18} />
+                        </button>
+                      </>
                     ) : (
                       <>
                         <button
@@ -461,7 +479,6 @@ const DashUser = () => {
                           <Edit2 size={16} />
                         </button>
 
-                        {/* NOVO BOTÃO DE ALTERNÂNCIA DE STATUS RÁPIDO */}
                         <button
                           type="button"
                           onClick={() => handleToggleStatus(user)}
@@ -501,6 +518,201 @@ const DashUser = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* --- VISUALIZAÇÃO MOBILE: CARDS (Estilo Portfólio) --- */}
+      <div className="dash-cards-container-mobile mobile-only-view">
+        {usuarios.map((user) => (
+          <div
+            key={user.id}
+            className={`dash-mobile-card ${!user.is_active ? "is-read" : ""}`}
+          >
+            {/* Topo do Card: Ações + ID */}
+            <div className="dash-card-header">
+              <span className="dash-card-id">ID: #{user.id}</span>
+              <div className="dash-card-actions">
+                {editandoId === user.id ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleSalvarEdicao(user.id)}
+                      className="btn-card-action btn-publish"
+                      title="Salvar"
+                    >
+                      <Check size={16} /> Salvar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditandoId(null)}
+                      className="btn-card-action btn-delete"
+                      title="Cancelar"
+                    >
+                      <X size={16} />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => iniciarEdicao(user)}
+                      className="btn-card-action"
+                      style={{ color: "#ffb74d", borderColor: "rgba(255,183,77,0.3)" }}
+                      title="Editar"
+                    >
+                      <Edit2 size={15} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggleStatus(user)}
+                      className={`btn-card-action ${user.is_active ? "btn-hide" : "btn-publish"}`}
+                      title={user.is_active ? "Desativar" : "Ativar"}
+                    >
+                      {user.is_active ? <UserX size={15} /> : <UserCheck size={15} />}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteUsuario(user.id, user.username)}
+                      className="btn-card-action btn-delete"
+                      title="Remover"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Corpo do Card: Informações */}
+            <div className="dash-card-body">
+              {editandoId === user.id ? (
+                /* Formulário de Edição Inline no Mobile */
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <div style={{ display: "flex", gap: "5px" }}>
+                    <input
+                      type="text"
+                      className="edit-inline-input"
+                      value={dadosEditados.first_name}
+                      onChange={handleEditFirstNameChange}
+                      placeholder="Nome"
+                      style={{ width: "100%" }}
+                    />
+                    <input
+                      type="text"
+                      className="edit-inline-input"
+                      value={dadosEditados.last_name}
+                      onChange={handleEditLastNameChange}
+                      placeholder="Sobrenome"
+                      style={{ width: "100%" }}
+                    />
+                  </div>
+
+                  <input
+                    type="email"
+                    className="edit-inline-input"
+                    value={dadosEditados.email}
+                    onChange={(e) =>
+                      setDadosEditados({
+                        ...dadosEditados,
+                        email: e.target.value,
+                      })
+                    }
+                    placeholder="E-mail"
+                  />
+
+                  <select
+                    className="edit-inline-input"
+                    value={dadosEditados.is_staff}
+                    onChange={(e) =>
+                      setDadosEditados({
+                        ...dadosEditados,
+                        is_staff: e.target.value === "true",
+                      })
+                    }
+                  >
+                    <option value="false">Staff / Editor</option>
+                    <option value="true">Administrador Master</option>
+                  </select>
+
+                  <select
+                    className="edit-inline-input"
+                    value={dadosEditados.is_active}
+                    onChange={(e) =>
+                      setDadosEditados({
+                        ...dadosEditados,
+                        is_active: e.target.value === "true",
+                      })
+                    }
+                  >
+                    <option value="true">Ativo</option>
+                    <option value="false">Inativo / Bloqueado</option>
+                  </select>
+                </div>
+              ) : (
+                /* Exibição Normal dos Dados */
+                <>
+                  <div className="dash-card-title-row">
+                    <h3>
+                      {user.first_name} {user.last_name}
+                    </h3>
+                    <span
+                      style={{
+                        padding: "2px 8px",
+                        borderRadius: "12px",
+                        fontSize: "0.7rem",
+                        fontWeight: "600",
+                        background: user.is_active
+                          ? "rgba(37, 211, 102, 0.15)"
+                          : "rgba(255, 77, 77, 0.15)",
+                        color: user.is_active ? "#25d366" : "#ff4d4d",
+                        border: `1px solid ${
+                          user.is_active
+                            ? "rgba(37, 211, 102, 0.3)"
+                            : "rgba(255, 77, 77, 0.3)"
+                        }`,
+                      }}
+                    >
+                      {user.is_active ? "Ativo" : "Inativo"}
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: "0.85rem",
+                      color: "rgba(255,255,255,0.5)",
+                      margin: "2px 0",
+                    }}
+                  >
+                    @{user.username}
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      fontSize: "0.85rem",
+                      color: "rgba(255,255,255,0.8)",
+                    }}
+                  >
+                    <Mail size={14} />
+                    <span>{user.email}</span>
+                  </div>
+
+                  <div style={{ marginTop: "4px" }}>
+                    <span className="user-badge-staff">
+                      <Shield size={12} />{" "}
+                      {user.is_staff
+                        ? "Administrador Master"
+                        : "Staff / Editor"}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
 
       {usuarios.length === 0 && (

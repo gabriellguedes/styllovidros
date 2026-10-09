@@ -7,7 +7,6 @@ import {
   BarChart3,
   MessageSquare,
   ClipboardList,
-  LogOut,
   Clock,
   SquarePlay,
   PiggyBank,
@@ -17,6 +16,7 @@ import {
   Images,
   FileText,
   Menu,
+  LogOut,
   X,
 } from "lucide-react";
 // My components
@@ -48,21 +48,19 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  // 1. Proteção de Rota e Verificação de Nível de Acesso
+  // Proteção de Rota e Verificação de Nível de Acesso
   useEffect(() => {
     const isAuth = localStorage.getItem("auth") === "true";
     if (!isAuth) {
       navigate("/");
     } else {
       fetchMetrics();
-
-      // Captura o nível de privilégio salvo no login
       const adminStatus = localStorage.getItem("is_admin");
       setIsAdmin(adminStatus === "true");
     }
   }, [navigate]);
 
-  // 2. Função para buscar os totais das tabelas e alimentar os Cards de Resumo
+  // Função para buscar os totais das tabelas
   const fetchMetrics = async () => {
     try {
       const resContatos = await api.get("contatos/");
@@ -78,11 +76,11 @@ const Dashboard = () => {
     }
   };
 
-  // 3. Função para gerenciar a troca de abas com fechamento automático no mobile
-  const handleTabChange = (tabId) => {
+  // Função para gerenciar a troca de abas no mobile e desktop
+  const handleSelectTab = (tabId) => {
     setLoading(true);
     setActiveTab(tabId);
-    setMenuOpen(false); // Fecha o menu responsivo ao selecionar uma aba
+    setMenuOpen(false); // Fecha o menu no celular após a seleção
 
     if (tabId === "resumo") {
       fetchMetrics();
@@ -95,213 +93,184 @@ const Dashboard = () => {
 
   const toggleConfigDropdown = (e) => {
     e.stopPropagation();
-    setConfigOpen(!configOpen);
+    setConfigOpen((prev) => !prev);
   };
 
   const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+    setMenuOpen((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth");
+    localStorage.removeItem("token");
+    localStorage.removeItem("auth_user");
+    localStorage.removeItem("is_admin");
+    navigate("/");
+    window.location.reload();
   };
 
   return (
     <div className="dashboard-container">
-      {/* Overlay transparente para fechar o menu no mobile ao clicar fora */}
-      {menuOpen && (
-        <div
-          className="dashboard-sidebar-overlay"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
-
-      {/* --- SIDEBAR LATERAL --- */}
+      {/* --- SIDEBAR LATERAL / MENU PAINEL --- */}
       <aside className={`dashboard-sidebar ${menuOpen ? "open" : ""}`}>
-        <div>
-          {/* Topo do Menu - Clicável para abrir/fechar */}
-          <div
-            className="dashboard-brand"
-            onClick={toggleMenu}
-            style={{ cursor: "pointer" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
+        {/* Cabeçalho Fixo do Sidebar */}
+        <div className="dashboard-brand">
+          <div className="dashboard-brand-header">
+            <button
+              type="button"
+              className="dashboard-mobile-toggle-btn"
+              onClick={toggleMenu}
+              aria-label="Alternar Menu"
             >
-               <button
-                className="dashboard-mobile-toggle-btn"
-                aria-label="Alternar Menu"
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#fff",
-                  cursor: "pointer",
-                }}
-              >
-                {menuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-              <h2>
-
-                STYLLO <span>PAINEL</span>
-              </h2>
-             
-            </div>
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <h2 onClick={toggleMenu} className="brand-title">
+              STYLLO <span>PAINEL</span>
+            </h2>
           </div>
-                <hr className="dropdown-divider" />
+          <hr className="dropdown-divider" />
+        </div>
+
+        {/* Conteúdo do Menu (Corpo expansível no mobile) */}
+        <div className="dashboard-menu-wrapper">
           <ul className="dashboard-menu">
-            <li
-              className={`dashboard-menu-item ${activeTab === "resumo" ? "active" : ""}`}
-            >
+            <li className={`dashboard-menu-item ${activeTab === "resumo" ? "active" : ""}`}>
               <button
-                onClick={() => handleTabChange("resumo")}
+                type="button"
+                onClick={() => handleSelectTab("resumo")}
                 className="dash-btn-action"
               >
-                <a style={{ pointerEvents: "none" }}>
-                  <BarChart3 size={18} /> Resumo
-                </a>
-              </button>
-            </li>
-            <li
-              className={`dashboard-menu-item ${activeTab === "depoimentos" ? "active" : ""}`}
-            >
-              <button
-                onClick={() => handleTabChange("depoimentos")}
-                className="dash-btn-action"
-              >
-                <a style={{ pointerEvents: "none" }}>
-                  <MessageSquare size={18} /> Avaliações
-                </a>
-              </button>
-            </li>
-            <li
-              className={`dashboard-menu-item ${activeTab === "orcamentos" ? "active" : ""}`}
-            >
-              <button
-                onClick={() => handleTabChange("orcamentos")}
-                className="dash-btn-action"
-              >
-                <a style={{ pointerEvents: "none" }}>
-                  <PiggyBank size={18} /> Mensagens
-                </a>
+                <BarChart3 size={18} />
+                <span>Resumo</span>
               </button>
             </li>
 
-            {/* Galeria de Vídeos */}
-            <li
-              className={`dashboard-menu-item ${activeTab === "video_gallery" ? "active" : ""}`}
-            >
+            <li className={`dashboard-menu-item ${activeTab === "depoimentos" ? "active" : ""}`}>
               <button
-                onClick={() => handleTabChange("video_gallery")}
+                type="button"
+                onClick={() => handleSelectTab("depoimentos")}
                 className="dash-btn-action"
               >
-                <a style={{ pointerEvents: "none" }}>
-                  <SquarePlay size={18} /> Galeria de Vídeos
-                </a>
+                <MessageSquare size={18} />
+                <span>Avaliações</span>
               </button>
             </li>
 
-            {/* Produtos e Serviços */}
-            <li
-              className={`dashboard-menu-item ${activeTab === "service" ? "active" : ""}`}
-            >
+            <li className={`dashboard-menu-item ${activeTab === "orcamentos" ? "active" : ""}`}>
               <button
-                onClick={() => handleTabChange("service")}
+                type="button"
+                onClick={() => handleSelectTab("orcamentos")}
                 className="dash-btn-action"
               >
-                <a style={{ pointerEvents: "none" }}>
-                  <ClipboardList size={18} /> Produtos e Seviços
-                </a>
+                <PiggyBank size={18} />
+                <span>Mensagens</span>
               </button>
             </li>
 
-            {/* Gerenciar Portfólio */}
-            <li
-              className={`dashboard-menu-item ${activeTab === "portifolio" ? "active" : ""}`}
-            >
+            <li className={`dashboard-menu-item ${activeTab === "video_gallery" ? "active" : ""}`}>
               <button
+                type="button"
+                onClick={() => handleSelectTab("video_gallery")}
                 className="dash-btn-action"
-                onClick={() => handleTabChange("portifolio")}
               >
-                <a style={{ pointerEvents: "none" }}>
-                  <Images size={18} /> Gerenciar Portfólio
-                </a>
+                <SquarePlay size={18} />
+                <span>Galeria de Vídeos</span>
+              </button>
+            </li>
+
+            <li className={`dashboard-menu-item ${activeTab === "service" ? "active" : ""}`}>
+              <button
+                type="button"
+                onClick={() => handleSelectTab("service")}
+                className="dash-btn-action"
+              >
+                <ClipboardList size={18} />
+                <span>Produtos e Serviços</span>
+              </button>
+            </li>
+
+            <li className={`dashboard-menu-item ${activeTab === "portifolio" ? "active" : ""}`}>
+              <button
+                type="button"
+                onClick={() => handleSelectTab("portifolio")}
+                className="dash-btn-action"
+              >
+                <Images size={18} />
+                <span>Gerenciar Portfólio</span>
               </button>
             </li>
           </ul>
-        </div>
 
-        {/* --- MENU DROPDOWN DE CONFIGURAÇÕES E SAÍDA --- */}
-        <div>
-          {/* 🔒 ITENS EXCLUSIVOS PARA ADMINISTRADORES */}
-          {isAdmin && (
-            <div
-              className={`dashboard-menu-item dropdown-parent ${configOpen ? "open" : ""}`}
+          {/* Submenu de Configurações para Administradores */}
+          <div className="dashboard-bottom-section">
+            {isAdmin && (
+              <div className={`dashboard-menu-item dropdown-parent ${configOpen ? "open" : ""}`}>
+                <button
+                  type="button"
+                  onClick={toggleConfigDropdown}
+                  className="dropdown-trigger-btn"
+                >
+                  <div className="trigger-left-content">
+                    <Settings size={18} />
+                    <span>Configurações</span>
+                  </div>
+                  <ChevronDown size={16} className="chevron-icon" />
+                </button>
+
+                <ul className="dashboard-submenu">
+                  <li className={`dashboard-menu-item ${activeTab === "usuarios" ? "active" : ""}`}>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectTab("usuarios")}
+                      className="dash-btn-action"
+                    >
+                      <User size={18} />
+                      <span>Usuários</span>
+                    </button>
+                  </li>
+                  <li className={`dashboard-menu-item ${activeTab === "redes" ? "active" : ""}`}>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectTab("redes")}
+                      className="dash-btn-action"
+                    >
+                      <Link2 size={18} />
+                      <span>Redes Sociais</span>
+                    </button>
+                  </li>
+                  <li className={`dashboard-menu-item ${activeTab === "sobre" ? "active-sub" : ""}`}>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectTab("sobre")}
+                      className="dash-btn-action"
+                    >
+                      <FileText size={18} />
+                      <span>Sobre Nós</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+
+            <button className="section-btn-bth" type="button">
+              <a href="/" className="btn-bth">
+                <ArrowLeft size={18} />
+                <span>Voltar para o site</span>
+              </a>
+            </button>
+            <button
+              className="section-btn-bth btn-logout"
+              type="button"
+              onClick={handleLogout}
             >
-              <button
-                type="button"
-                onClick={toggleConfigDropdown}
-                className="dropdown-trigger-btn"
-              >
-                <div className="trigger-left-content">
-                  <Settings size={18} />
-                  <span>Configurações</span>
-                </div>
-                <ChevronDown size={16} className="chevron-icon" />
-              </button>
-
-              {/* Submenu de Configurações */}
-              <ul className="dashboard-submenu">
-                <li
-                  className={`dashboard-menu-item ${activeTab === "usuarios" ? "active" : ""}`}
-                >
-                  <button
-                    onClick={() => handleTabChange("usuarios")}
-                    className="dash-btn-action"
-                  >
-                    <a style={{ pointerEvents: "none" }}>
-                      <User size={18} /> Usuários
-                    </a>
-                  </button>
-                </li>
-                <li
-                  className={`dashboard-menu-item ${activeTab === "redes" ? "active" : ""}`}
-                >
-                  <button
-                    onClick={() => handleTabChange("redes")}
-                    className="dash-btn-action"
-                  >
-                    <a style={{ pointerEvents: "none" }}>
-                      <Link2 size={18} /> Redes Sociais
-                    </a>
-                  </button>
-                </li>
-                <li
-                  className={`dashboard-menu-item ${activeTab === "sobre" ? "active-sub" : ""}`}
-                >
-                  <button
-                    onClick={() => handleTabChange("sobre")}
-                    className="dash-btn-action"
-                  >
-                    <a style={{ pointerEvents: "none" }}>
-                      <FileText size={18} /> Sobre Nós
-                    </a>
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
-
-          <button className="section-btn-bth">
-            <a href="/" className="btn-bth">
-              <ArrowLeft size={18} />
-              <span>Voltar para o site</span>
-            </a>
-          </button>
+              <LogOut size={18} />
+              <span>Sair</span>
+            </button>
+          </div>
         </div>
       </aside>
 
-      {/* --- CONTEÚDO PRINCIPAL --- */}
+      {/* --- CONTEÚDO PRINCIPAL DA DASHBOARD --- */}
       <main className="dashboard-content">
         <div className="dashboard-header">
           <div>
@@ -313,7 +282,7 @@ const Dashboard = () => {
           </div>
           <NavbarUser
             activeTab={activeTab}
-            handleTabChange={handleTabChange}
+            handleTabChange={(tab) => handleSelectTab(tab)}
           />
         </div>
 
@@ -349,14 +318,13 @@ const Dashboard = () => {
                       <p>{depoimentosPendentes}</p>
                     </div>
                     <button
-                      onClick={() => handleTabChange("depoimentos")}
+                      type="button"
+                      onClick={() => handleSelectTab("depoimentos")}
                       className="metric-btn-action"
                     >
-                      <a style={{ pointerEvents: "none" }}>
-                        <div className="metric-icon">
-                          <MessageSquare size={22} />
-                        </div>
-                      </a>
+                      <div className="metric-icon">
+                        <MessageSquare size={22} />
+                      </div>
                     </button>
                   </div>
 
@@ -366,14 +334,13 @@ const Dashboard = () => {
                       <p>{qtdLeads}</p>
                     </div>
                     <button
-                      onClick={() => handleTabChange("orcamentos")}
+                      type="button"
+                      onClick={() => handleSelectTab("orcamentos")}
                       className="metric-btn-action"
                     >
-                      <a style={{ pointerEvents: "none" }}>
-                        <div className="metric-icon">
-                          <ClipboardList size={22} />
-                        </div>
-                      </a>
+                      <div className="metric-icon">
+                        <ClipboardList size={22} />
+                      </div>
                     </button>
                   </div>
                 </section>
@@ -395,42 +362,37 @@ const Dashboard = () => {
               </div>
             )}
 
-            {/* --- VISÃO: GERENCIAR DEPOIMENTOS --- */}
+            {/* --- DEMAIS ABAS --- */}
             {activeTab === "depoimentos" && (
               <section className="dashboard-data-section">
                 <DashDepoimentos />
               </section>
             )}
 
-            {/* --- VISÃO: SOLICITAÇÕES DE ORÇAMENTO --- */}
             {activeTab === "orcamentos" && (
               <section className="dashboard-data-section">
                 <DashLeads />
               </section>
             )}
 
-            {/* --- VÍDEOS GALLERY --- */}
             {activeTab === "video_gallery" && (
               <section className="dashboard-data-section">
                 <Video />
               </section>
             )}
 
-            {/* --- PRODUTOS --- */}
             {activeTab === "service" && (
               <section className="dashboard-data-section">
                 <DashServicos />
               </section>
             )}
 
-            {/* --- VISÃO: MEU PERFIL --- */}
             {activeTab === "change_password" && (
               <section className="dashboard-data-section">
                 <ChangePassword />
               </section>
             )}
 
-            {/* --- TRAVA DE SEGURANÇA EXCLUSIVA NO CONTEÚDO DA TELA PRINCIPAL --- */}
             {activeTab === "usuarios" &&
               (isAdmin ? (
                 <section className="dashboard-data-section">
@@ -464,7 +426,6 @@ const Dashboard = () => {
                 </div>
               ))}
 
-            {/* --- SEÇÃO: PORTFÓLIO EM ÁLBUNS --- */}
             {activeTab === "portifolio" && (
               <section className="dashboard-data-section">
                 <DashPortifolio />
