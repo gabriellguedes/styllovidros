@@ -135,20 +135,22 @@ const NavbarUser = ({ activeTab, handleTabChange }) => {
 
               <hr className="dropdown-divider" />
 
-              <li>
+              <li className={!isNoDashboard ? "disabled-dropdown-item" : ""}>
                 <button
                   type="button"
-                  onClick={() => handleMenuClick("usuarios")}
+                  onClick={() => isNoDashboard && handleMenuClick("profile")}
+                  disabled={!isNoDashboard}
                 >
                   <Settings size={16} />
-                  Editar Usuário
+                  Meu Perfil
                 </button>
               </li>
 
-              <li>
+              <li className={!isNoDashboard ? "disabled-dropdown-item" : ""}>
                 <button
                   type="button"
-                  onClick={() => handleMenuClick("change_password")}
+                  onClick={() => isNoDashboard && handleMenuClick("change_password")}
+                  disabled={!isNoDashboard}
                 >
                   <Key size={16} />
                   Alterar Senha

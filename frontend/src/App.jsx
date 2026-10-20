@@ -5,11 +5,14 @@ import { Toaster } from "react-hot-toast";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
+import NewHome from "./pages/New_Home";
 import EnviarDepoimento from "./pages/EnviarDepoimento";
 import Dashboard from "./pages/Dashboard";
 import ContatoForm from "./components/ContatoForm";
 import Portfolio from "./pages/Portfolio";
+import Contato from "./pages/Contato";
 import "./style.css";
+import "./responsive.css";
 
 function App() {
   return (
@@ -31,9 +34,9 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/fale-conosco" element={<Contato />} />
           <Route path="/avaliar" element={<EnviarDepoimento />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/Contato" element={<ContatoForm />} />
           <Route path="/portfolio" element={<Portfolio />} />
 
           <Route

@@ -14,6 +14,7 @@ import "swiper/css/pagination";
 const Servicos = () => {
   const [servicos, setServicos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [redes, setRedes] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +28,21 @@ const Servicos = () => {
         console.error("Erro ao buscar serviços:", error);
         setLoading(false);
       });
+  }, []);
+
+  useEffect(() => {
+    const fetchRedes = async () => {
+      try {
+        const resRedes = await api.get("redes/").catch(() => ({ data: [] }));
+        if (resRedes.data.length > 0) {
+          setRedes(resRedes.data[0]);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar dados das redes:", err);
+      }
+    };
+
+    fetchRedes();
   }, []);
 
   const handleCardClick = (categoriaId) => {
@@ -45,8 +61,8 @@ const Servicos = () => {
         {servicos.length > 0 ? (
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
-            spaceBetween={25} // Espaço entre os cards (em px)
-            slidesPerView={1} // Quantidade padrão no mobile
+            spaceBetween={25}
+            slidesPerView={1}
             autoplay={{
               delay: 3500,
               disableOnInteraction: false,
@@ -56,9 +72,8 @@ const Servicos = () => {
               dynamicBullets: true,
             }}
             navigation={true}
-            // Responsividade: define quantos itens mostrar baseado na largura da tela
             breakpoints={{
-              640: {
+              993: {
                 slidesPerView: 2,
                 spaceBetween: 20,
               },
@@ -77,28 +92,25 @@ const Servicos = () => {
               <SwiperSlide key={item.id}>
                 <div
                   className="material-card"
-                  key={item.id}
                   onClick={() =>
                     handleCardClick(item.categoria_id || item.categoria)
                   }
                   style={{ cursor: "pointer" }}
                 >
                   <img
-                    src={item.imagem} // URL vinda do Django
+                    src={item.imagem}
                     alt={item.titulo}
                   />
                   <div>
-                    {/* Exibe o nome dinâmico da categoria ou fallback caso não exista */}
-                    <h4 title={item.categoria_detalhes?.nome || "Serviço"}>
-                      {item.titulo}
-                    </h4>
+                    <h4>{item.titulo}</h4>
+                    <span>{item.subtitulo || "Ver Projetos"}</span>
                   </div>
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
         ) : (
-          <p className="text-center">Nenhum serviço disponível no momento.</p>
+          <p className="text-center">Nenhum serviço cadastrado no momento.</p>
         )}
       </div>
     </section>

@@ -128,7 +128,7 @@ const FooterHome = () => {
               </Link>
             </li>
             <li className="footer-menu-item">
-              <Link to="/Contato">
+              <Link to="/fale-conosco">
                 <Phone size={16} /> Contatos
               </Link>
             </li>
@@ -158,7 +158,7 @@ const FooterHome = () => {
         </div>
 
         {/* Na coluna das Redes Sociais, os ícones agora estão maiores via CSS */}
-        <div className="footer-column">
+        <div className="footer-column-social-links">
           {/*<h3>Siga-nos</h3>*/}
           <div className="social-links">
             {linksRedes.instagram && (

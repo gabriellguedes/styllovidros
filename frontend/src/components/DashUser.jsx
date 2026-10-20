@@ -10,6 +10,7 @@ import {
   Check,
   UserCheck,
   UserX,
+  KeyRound,
   X,
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -38,7 +39,6 @@ const DashUser = () => {
     is_active: true,
   });
 
-  // FUNÇÃO AUXILIAR: Remove acentos, une primeiro e último nome com ponto e limpa espaços
   const gerarUsername = (firstName, lastName) => {
     const limpar = (texto) =>
       texto
@@ -69,7 +69,6 @@ const DashUser = () => {
     fetchUsuarios();
   }, []);
 
-  // Handlers para o formulário de cadastro
   const handleFirstNameChange = (e) => {
     const valor = e.target.value;
     setNovoUsuario((prev) => ({
@@ -88,7 +87,6 @@ const DashUser = () => {
     }));
   };
 
-  // Handlers para a edição inline
   const handleEditFirstNameChange = (e) => {
     const valor = e.target.value;
     setDadosEditados((prev) => ({
@@ -107,7 +105,6 @@ const DashUser = () => {
     }));
   };
 
-  // ROTA DE CRIAÇÃO (POST)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -136,7 +133,6 @@ const DashUser = () => {
     }
   };
 
-  // ROTA DE EXCLUSÃO (DELETE)
   const handleDeleteUsuario = async (id, username) => {
     if (
       window.confirm(
@@ -153,7 +149,6 @@ const DashUser = () => {
     }
   };
 
-  // Alterna rapidamente o status Ativo/Inativo na API (PATCH)
   const handleToggleStatus = async (user) => {
     const novoStatus = !user.is_active;
     const mensagem = novoStatus
@@ -176,7 +171,42 @@ const DashUser = () => {
     }
   };
 
-  // Ativa o modo de edição na linha da tabela ou card
+// 🔥 FUNÇÃO 100% SEGURA QUE CHAMA A API REST DEDICADA DO DJANGO
+const handleResetPassword = async (user) => {
+  const nomeExibicao =
+    `${user.first_name} ${user.last_name}`.trim() || user.username;
+
+  if (!user.email) {
+    toast.error(`O usuário "${nomeExibicao}" não possui e-mail cadastrado.`);
+    return;
+  }
+
+  const confirmacao = window.confirm(
+    `Tem certeza que deseja enviar o e-mail de redefinição de senha para "${nomeExibicao}" (${user.email})?`
+  );
+
+  if (confirmacao) {
+    const toastId = toast.loading("Solicitando redefinição de senha...");
+
+    try {
+      // Chama o novo endpoint REST seguro criado no Django
+      await api.post("usuarios/reset-password-email/", { email: user.email });
+
+      toast.success(
+        `E-mail de redefinição de senha enviado para ${user.email}!`,
+        { id: toastId }
+      );
+    } catch (err) {
+      console.error("Erro ao solicitar reset de senha:", err);
+      toast.error(
+        err.response?.data?.detail ||
+          "Erro ao solicitar o e-mail de redefinição de senha.",
+        { id: toastId }
+      );
+    }
+  }
+};
+
   const iniciarEdicao = (user) => {
     setEditandoId(user.id);
     setDadosEditados({
@@ -189,7 +219,6 @@ const DashUser = () => {
     });
   };
 
-  // ROTA DE EDIÇÃO/ATUALIZAÇÃO (PATCH)
   const handleSalvarEdicao = async (id) => {
     const toastId = toast.loading("Atualizando dados...");
     try {
@@ -300,7 +329,6 @@ const DashUser = () => {
           <tbody>
             {usuarios.map((user) => (
               <tr key={user.id} style={{ opacity: user.is_active ? 1 : 0.65 }}>
-                {/* Coluna do Nome */}
                 <td className="table-cell-name">
                   <User size={16} className="icon-user-accent" />
                   {editandoId === user.id ? (
@@ -326,7 +354,6 @@ const DashUser = () => {
                   )}
                 </td>
 
-                {/* Coluna do Usuário */}
                 <td className="table-cell-user">
                   {editandoId === user.id ? (
                     <input
@@ -341,7 +368,6 @@ const DashUser = () => {
                   )}
                 </td>
 
-                {/* Coluna do E-mail */}
                 <td>
                   <span className="table-cell-email">
                     <Mail size={14} />
@@ -363,7 +389,6 @@ const DashUser = () => {
                   </span>
                 </td>
 
-                {/* Coluna do Nível de Acesso */}
                 <td>
                   {editandoId === user.id ? (
                     <select
@@ -389,7 +414,6 @@ const DashUser = () => {
                   )}
                 </td>
 
-                {/* Coluna de Status da Conta */}
                 <td>
                   {editandoId === user.id ? (
                     <select
@@ -428,7 +452,6 @@ const DashUser = () => {
                   )}
                 </td>
 
-                {/* Coluna de Ações */}
                 <td>
                   <div
                     style={{
@@ -479,6 +502,23 @@ const DashUser = () => {
                           <Edit2 size={16} />
                         </button>
 
+                        {/* BOTÃO PARA ENVIAR E-MAIL DE RESET DE SENHA VIA DJANGO */}
+                        <button
+                          type="button"
+                          onClick={() => handleResetPassword(user)}
+                          title="Enviar E-mail de Redefinição de Senha"
+                          style={{
+                            color: "#ce93d8",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <KeyRound size={16} />
+                        </button>
+
                         <button
                           type="button"
                           onClick={() => handleToggleStatus(user)}
@@ -520,14 +560,13 @@ const DashUser = () => {
         </table>
       </div>
 
-      {/* --- VISUALIZAÇÃO MOBILE: CARDS (Estilo Portfólio) --- */}
+      {/* --- VISUALIZAÇÃO MOBILE: CARDS --- */}
       <div className="dash-cards-container-mobile mobile-only-view">
         {usuarios.map((user) => (
           <div
             key={user.id}
             className={`dash-mobile-card ${!user.is_active ? "is-read" : ""}`}
           >
-            {/* Topo do Card: Ações + ID */}
             <div className="dash-card-header">
               <span className="dash-card-id">ID: #{user.id}</span>
               <div className="dash-card-actions">
@@ -564,6 +603,16 @@ const DashUser = () => {
 
                     <button
                       type="button"
+                      onClick={() => handleResetPassword(user)}
+                      className="btn-card-action"
+                      style={{ color: "#ce93d8", borderColor: "rgba(206,147,216,0.3)" }}
+                      title="Enviar E-mail de Reset"
+                    >
+                      <KeyRound size={15} />
+                    </button>
+
+                    <button
+                      type="button"
                       onClick={() => handleToggleStatus(user)}
                       className={`btn-card-action ${user.is_active ? "btn-hide" : "btn-publish"}`}
                       title={user.is_active ? "Desativar" : "Ativar"}
@@ -584,10 +633,8 @@ const DashUser = () => {
               </div>
             </div>
 
-            {/* Corpo do Card: Informações */}
             <div className="dash-card-body">
               {editandoId === user.id ? (
-                /* Formulário de Edição Inline no Mobile */
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   <div style={{ display: "flex", gap: "5px" }}>
                     <input
@@ -650,7 +697,6 @@ const DashUser = () => {
                   </select>
                 </div>
               ) : (
-                /* Exibição Normal dos Dados */
                 <>
                   <div className="dash-card-title-row">
                     <h3>

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import api from "../api";
-import { useLocation } from "react-router-dom"; // 🔥 Importado para capturar o filtro vindo de Serviços
+import { useLocation } from "react-router-dom";
 import {
   Folder,
   Image as ImageIcon,
@@ -8,17 +8,22 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar,
+  MessageCircle,
 } from "lucide-react";
 import HeaderHome from "../components/HeaderHome";
 import FooterHome from "../components/FooterHome";
 
 const Portifolio = () => {
   const [albuns, setAlbuns] = useState([]);
-  const [categorias, setCategorias] = useState([]); // 🔥 Estado para armazenar a lista de categorias para a barra de filtros
-  const [categoriaAtiva, setCategoriaAtiva] = useState("TODOS"); // 🔥 Controla qual filtro está selecionado por padrão
+  const [categorias, setCategorias] = useState([]);
+  const [categoriaAtiva, setCategoriaAtiva] = useState("TODOS");
   const [loading, setLoading] = useState(true);
+  const [redes, setRedes] = useState({});
 
-  // Estados para controlar o Modal de visualização interna do álbum
+  // Referência para a barra de filtros rolável
+  const filterBarRef = useRef(null);
+
+  // Estados para controlar o Modal Lightbox
   const [albumAtivo, setAlbumAtivo] = useState(null);
   const [fotoIndexAtiva, setFotoIndexAtiva] = useState(0);
 
@@ -26,20 +31,23 @@ const Portifolio = () => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
-  const location = useLocation(); // 🔥 Captura o estado passado pelo navigate da página anterior
+  const location = useLocation();
 
   useEffect(() => {
-    // 🔥 Buscamos tanto os álbuns quanto as categorias cadastradas no backend
-    Promise.all([api.get("albuns/"), api.get("categorias/")])
-      .then(([resAlbuns, resCategorias]) => {
+    Promise.all([
+      api.get("albuns/"), 
+      api.get("categorias/"),
+      api.get("redes/").catch(() => ({ data: [] }))
+    ])
+      .then(([resAlbuns, resCategorias, resRedes]) => {
         setAlbuns(resAlbuns.data);
         setCategorias(resCategorias.data);
+        if (resRedes.data.length > 0) {
+          setRedes(resRedes.data[0]);
+        }
 
-        // 🔥 Verifica se o usuário veio redirecionado da página de Serviços com um filtro ativo
         if (location.state && location.state.categoriaFiltroId) {
           setCategoriaAtiva(location.state.categoriaFiltroId);
-
-          // Limpa o estado do histórico para evitar que o filtro fique preso se ele atualizar (F5) a página
           window.history.replaceState({}, document.title);
         }
 
@@ -51,7 +59,20 @@ const Portifolio = () => {
       });
   }, [location]);
 
-  // 🔥 Seleciona a categoria e centraliza o botão na barra de rolagem horizontal
+  const whatsappNumber = redes.whatsapp ? redes.whatsapp.replace(/\D/g, "") : "";
+const whatsappMessage = "Olá! Gostaria de um orçamento para um projeto estilo o: ";
+
+  // Função para rolar a barra de filtros para os lados via botões
+  const handleScrollFiltros = (direction) => {
+    if (filterBarRef.current) {
+      const scrollAmount = 250;
+      filterBarRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleSelectCategoria = (e, catId) => {
     setCategoriaAtiva(catId);
     e.currentTarget.scrollIntoView({
@@ -61,12 +82,10 @@ const Portifolio = () => {
     });
   };
 
-  // 🔥 FILTRAGEM DINÂMICA: Filtra a lista de álbuns no frontend com base no botão ou serviço selecionado
   const albunsFiltrados =
     categoriaAtiva === "TODOS"
       ? albuns
       : albuns.filter((album) => {
-          // Verifica compatibilidade tanto se o campo salvar o ID numérico quanto se salvar o texto/slug da categoria
           return (
             album.categoria === categoriaAtiva ||
             album.categoria_detalhes?.id === categoriaAtiva ||
@@ -75,7 +94,6 @@ const Portifolio = () => {
           );
         });
 
-  // Abrir o álbum na primeira foto
   const handleAbrirAlbum = (album) => {
     if (album.fotos && album.fotos.length > 0) {
       setAlbumAtivo(album);
@@ -83,23 +101,20 @@ const Portifolio = () => {
     }
   };
 
-  // Navegação do Modal (Foto Anterior)
   const handleFotoAnterior = (e) => {
-    if (e) e.stopPropagation(); // Impede fechar o modal
+    if (e) e.stopPropagation();
     setFotoIndexAtiva((prev) =>
       prev === 0 ? albumAtivo.fotos.length - 1 : prev - 1
     );
   };
 
-  // Navegação do Modal (Próxima Foto)
   const handleProximaFoto = (e) => {
-    if (e) e.stopPropagation(); // Impede fechar o modal
+    if (e) e.stopPropagation();
     setFotoIndexAtiva((prev) =>
       prev === albumAtivo.fotos.length - 1 ? 0 : prev + 1
     );
   };
 
-  // --- LÓGICA DO GESTO DE ARRASTAR (SWIPE) NO CELULAR ---
   const handleTouchStart = (e) => {
     setTouchStart(e.targetTouches[0].clientX);
     setTouchEnd(0);
@@ -113,13 +128,11 @@ const Portifolio = () => {
     if (!touchStart || !touchEnd) return;
 
     const distance = touchStart - touchEnd;
-    const minSwipeDistance = 50; // Distância mínima percorrida pelo dedo (em px)
+    const minSwipeDistance = 50;
 
     if (distance > minSwipeDistance) {
-      // Deslizou para a esquerda -> Próxima foto
       handleProximaFoto();
     } else if (distance < -minSwipeDistance) {
-      // Deslizou para a direita -> Foto anterior
       handleFotoAnterior();
     }
   };
@@ -138,7 +151,6 @@ const Portifolio = () => {
       <HeaderHome />
       <main className="section-portfolio-home">
         <div className="portfolio-page-wrapper">
-          {/* Cabeçalho da Página */}
           <header className="portfolio-header-section">
             <h1>
               Nosso <span>Portfólio</span>
@@ -149,32 +161,53 @@ const Portifolio = () => {
             </p>
           </header>
 
-          {/* 🔥 BARRA DE FILTROS DINÂMICA (Uma única linha horizontal deslizável) */}
-          <div className="portfolio-filter-bar">
+          {/* BARRA DE FILTROS COM SETAS LATERAIS */}
+          <div className="portfolio-filter-wrapper">
             <button
-              className={`filter-btn ${categoriaAtiva === "TODOS" ? "active" : ""}`}
-              onClick={(e) => handleSelectCategoria(e, "TODOS")}
+              type="button"
+              className="filter-arrow-btn filter-arrow-left"
+              onClick={() => handleScrollFiltros("left")}
+              aria-label="Rolar filtros para esquerda"
             >
-              Todos os Projetos
+              <ChevronLeft size={20} />
             </button>
 
-            {categorias.map((cat) => (
+            <div className="portfolio-filter-bar" ref={filterBarRef}>
               <button
-                key={cat.id || cat.valor}
-                className={`filter-btn ${
-                  String(categoriaAtiva) === String(cat.id || cat.valor)
-                    ? "active"
-                    : ""
-                }`}
-                // Se o backend usar o ID na FK usa cat.id, se for texto estático usa cat.valor
-                onClick={(e) => handleSelectCategoria(e, cat.id || cat.valor)}
+                type="button"
+                className={`filter-btn ${categoriaAtiva === "TODOS" ? "active" : ""}`}
+                onClick={(e) => handleSelectCategoria(e, "TODOS")}
               >
-                {cat.nome || cat.label}
+                Todos os Projetos
               </button>
-            ))}
+
+              {categorias.map((cat) => (
+                <button
+                  key={cat.id || cat.valor}
+                  type="button"
+                  className={`filter-btn ${
+                    String(categoriaAtiva) === String(cat.id || cat.valor)
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={(e) => handleSelectCategoria(e, cat.id || cat.valor)}
+                >
+                  {cat.nome || cat.label}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className="filter-arrow-btn filter-arrow-right"
+              onClick={() => handleScrollFiltros("right")}
+              aria-label="Rolar filtros para direita"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
 
-          {/* Grid de Álbuns (Usa a lista que passou pela filtragem) */}
+          {/* Grid de Álbuns */}
           <div className="portfolio-grid-container">
             {albunsFiltrados.length > 0 ? (
               albunsFiltrados.map((album) => (
@@ -214,6 +247,19 @@ const Portifolio = () => {
                           : "Recente"}
                       </span>
                     </div>
+
+                    {/* Botão Tenho Interesse via WhatsApp */}
+                    {whatsappNumber && (
+                      <a
+                        href={`https://wa.me/55${whatsappNumber}?text=${whatsappMessage}${encodeURIComponent(album.titulo)}%20-%20${encodeURIComponent(album.categoria_detalhes?.nome || "Geral")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-card-whatsapp"
+                        onClick={(e) => e.stopPropagation()} // Impede de abrir o modal ao clicar no botão
+                      >
+                        <MessageCircle size={18} /> Tenho interesse
+                      </a>
+                    )}
                   </div>
                 </div>
               ))
@@ -225,7 +271,7 @@ const Portifolio = () => {
             )}
           </div>
 
-          {/* --- MODAL LIGHTBOX DE VISUALIZAÇÃO DO ÁLBUM --- */}
+          {/* Lightbox Modal */}
           {albumAtivo && (
             <div
               className="portfolio-lightbox-overlay"
@@ -242,7 +288,6 @@ const Portifolio = () => {
                 className="lightbox-content-box"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Área Principal da Imagem com suporte a gestos Touch */}
                 <div
                   className="lightbox-image-viewer"
                   onTouchStart={handleTouchStart}
@@ -279,7 +324,6 @@ const Portifolio = () => {
                   )}
                 </div>
 
-                {/* Rodapé Informativo do Modal */}
                 <div className="lightbox-info-panel">
                   <div>
                     <h2>{albumAtivo.titulo}</h2>

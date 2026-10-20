@@ -90,6 +90,7 @@ class Album(models.Model):
     descricao = models.TextField(blank=True, null=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='albuns')
     criado_em = models.DateTimeField(auto_now_add=True)
+    visivel = models.BooleanField(default=True)
     
     # Campo que vai guardar a Chave Estrangeira para a FOTO escolhida como capa
     # null=True e blank=True são necessários porque quando criamos o álbum, ele ainda não tem fotos cadastradas

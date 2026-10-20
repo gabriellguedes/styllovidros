@@ -15,7 +15,6 @@ const DepoimentosHome = () => {
   useEffect(() => {
     const fetchDepoimentos = async () => {
       const res = await api.get("depoimentos/");
-      // Filtra apenas os que o seu amigo aprovou no dashboard
       setDepoimentos(res.data.filter((d) => d.exibir_no_site === true));
     };
     fetchDepoimentos();
@@ -62,14 +61,14 @@ const DepoimentosHome = () => {
                     <Star
                       key={index}
                       size={18}
-                      // Se o índice for menor ou igual à nota salva (d.avaliacao), a estrela fica preenchida de roxo
+                      // CORREÇÃO: Utilizando d.estrelas para refletir o número correto salvo no banco de dados
                       fill={
-                        index <= (d.avaliacao || 5)
+                        index <= (d.estrelas || 5)
                           ? "var(--accent-purple)"
                           : "none"
                       }
                       color={
-                        index <= (d.avaliacao || 5)
+                        index <= (d.estrelas || 5)
                           ? "var(--accent-purple)"
                           : "#444"
                       }

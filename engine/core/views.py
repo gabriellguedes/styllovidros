@@ -9,6 +9,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordResetForm
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -125,3 +127,29 @@ class ChangePasswordView(APIView):
     return Response(
         {'detail': 'Senha alterada com sucesso!'}, status=status.HTTP_200_OK
     )
+
+class AdminPasswordResetResetView(APIView):
+    # Trava de segurança: Apenas administradores logados podem disparar essa ação
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        email = request.data.get('email')
+        
+        if not email:
+            return Response({'detail': 'O e-mail é obrigatório.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verifica se o usuário realmente existe no banco
+        user_exists = User.objects.filter(email=email, is_active=True).exists()
+        
+        if user_exists:
+            # Reutiliza o formulário oficial do Django para gerar o token e disparar o e-mail
+            form = PasswordResetForm({'email': email})
+            if form.is_valid():
+                form.save(
+                    request=request,
+                    use_https=request.is_secure(),
+                    email_template_name='registration/password_reset_email.html', # Template padrão do Django
+                )
+                return Response({'detail': 'E-mail de redefinição enviado com sucesso.'}, status=status.HTTP_200_OK)
+        
+        return Response({'detail': 'Usuário ativo com este e-mail não foi encontrado.'}, status=status.HTTP_404_NOT_FOUND)

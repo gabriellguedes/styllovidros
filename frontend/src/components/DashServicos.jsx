@@ -1,33 +1,41 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import { Plus, Trash2, Image as ImageIcon, FolderPlus } from "lucide-react";
+import { Plus, Trash2, Edit3, X, FolderPlus, Tag } from "lucide-react";
 import toast from "react-hot-toast";
 
 const DashServicos = () => {
   const [servicos, setServicos] = useState([]);
-  const [categorias, setCategorias] = useState([]); // Agora começa vazio e vem da API
+  const [categorias, setCategorias] = useState([]);
 
-  const [novoServico, setNovoServico] = useState({
+  // Estado do formulário
+  const [formDataServico, setFormDataServico] = useState({
     titulo: "",
-    categoria: "", // Vai armazenar o ID numérico da categoria selecionada
+    categoria: "",
     imagem: null,
   });
 
-  // Estados para gerenciar a criação e exibição de novas categorias customizadas
+  const [editandoId, setEditandoId] = useState(null);
   const [mostrarCriarCategoria, setMostrarCriarCategoria] = useState(false);
   const [novaCategoriaTexto, setNovaCategoriaTexto] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Carrega as categorias salvas no Banco de Dados
+  // Filtro de formatação: primeira letra de cada palavra maiúscula
+  const formatarCaseSensitive = (texto) => {
+    if (!texto) return "";
+    return texto
+      .trim()
+      .toLowerCase()
+      .split(" ")
+      .map((palavra) => palavra.charAt(0).toUpperCase() + palavra.slice(1))
+      .join(" ");
+  };
+
   const fetchCategorias = async () => {
     try {
       const res = await api.get("categorias/");
       setCategorias(res.data);
-
-      if (res.data.length > 0 && !novoServico.categoria) {
-        setNovoServico((prev) => ({ ...prev, categoria: res.data[0].id }));
-      } else if (res.data.length === 0) {
-        setNovoServico((prev) => ({ ...prev, categoria: "" }));
+      if (res.data.length > 0 && !formDataServico.categoria) {
+        setFormDataServico((prev) => ({ ...prev, categoria: res.data[0].id }));
       }
     } catch (err) {
       console.error("Erro ao carregar categorias:", err);
@@ -35,7 +43,6 @@ const DashServicos = () => {
     }
   };
 
-  // Carrega a listagem de serviços cadastrados
   const fetchServicos = async () => {
     try {
       const res = await api.get("servicos/");
@@ -45,37 +52,34 @@ const DashServicos = () => {
     }
   };
 
-  // Roda uma única vez ao abrir a tela
   useEffect(() => {
     fetchCategorias();
     fetchServicos();
   }, []);
 
   const handleFileChange = (e) => {
-    setNovoServico({ ...novoServico, imagem: e.target.files[0] });
+    setFormDataServico({ ...formDataServico, imagem: e.target.files[0] });
   };
 
-  // Monitora a troca de seleção do select principal
   const handleCategoriaChange = (e) => {
-    const valorSelecionado = e.target.value;
-
-    if (valorSelecionado === "ADICIONAR_NOVA") {
+    const valor = e.target.value;
+    if (valor === "ADICIONAR_NOVA") {
       setMostrarCriarCategoria(true);
     } else {
       setMostrarCriarCategoria(false);
-      setNovoServico({ ...novoServico, categoria: Number(valorSelecionado) });
+      setFormDataServico({ ...formDataServico, categoria: Number(valor) });
     }
   };
 
-  // 🔥 INTEGRAÇÃO API: Cadastra uma nova categoria no Banco de Dados (POST)
   const handleAdicionarCategoriaAPI = async (e) => {
     e.preventDefault();
     if (!novaCategoriaTexto.trim()) return;
 
-    const nomeFormatado = novaCategoriaTexto.trim().toUpperCase();
+    const nomeFormatado = formatarCaseSensitive(novaCategoriaTexto);
 
-    // Validação local rápida para evitar requisição redundante
-    const jaExiste = categorias.some((c) => c.nome === nomeFormatado);
+    const jaExiste = categorias.some(
+      (c) => c.nome.toLowerCase() === nomeFormatado.toLowerCase()
+    );
     if (jaExiste) {
       toast.error("Esta categoria já existe no sistema!");
       return;
@@ -83,101 +87,95 @@ const DashServicos = () => {
 
     const toastId = toast.loading("Salvando nova categoria...");
     try {
-      // Envia para o endpoint do Django
       const res = await api.post("categorias/", { nome: nomeFormatado });
-
-      toast.success(`Categoria "${nomeFormatado}" salva com sucesso!`, {
-        id: toastId,
-      });
+      toast.success(`Categoria "${nomeFormatado}" salva!`, { id: toastId });
       setNovaCategoriaTexto("");
       setMostrarCriarCategoria(false);
 
-      // Atualiza a lista local com a resposta contendo o ID gerado pelo Django
       setCategorias([...categorias, res.data]);
-      // Deixa a nova categoria selecionada por padrão
-      setNovoServico({ ...novoServico, categoria: res.data.id });
+      setFormDataServico((prev) => ({ ...prev, categoria: res.data.id }));
     } catch (err) {
-      console.error(err);
-      toast.error("Erro ao cadastrar categoria no banco.", { id: toastId });
+      toast.error("Erro ao cadastrar categoria.", { id: toastId });
     }
   };
 
-  // 🔥 INTEGRAÇÃO API: Remove uma categoria do Banco de Dados (DELETE)
   const handleRemoverCategoriaAPI = async (categoriaId, categoriaNome) => {
-    // Validação de segurança: Impede apagar caso algum serviço cadastrado na tela dependa dela
     const possuiServico = servicos.some((s) => s.categoria === categoriaId);
     if (possuiServico) {
-      toast.error(
-        "Não é possível remover! Existem serviços ativos vinculados a esta categoria.",
-      );
+      toast.error("Existem serviços vinculados a esta categoria.");
       return;
     }
 
-    if (
-      window.confirm(
-        `Deseja realmente excluir permanentemente a categoria "${categoriaNome}"?`,
-      )
-    ) {
-      const toastId = toast.loading("Excluindo do sistema...");
+    if (window.confirm(`Excluir permanentemente "${categoriaNome}"?`)) {
+      const toastId = toast.loading("Excluindo...");
       try {
         await api.delete(`categorias/${categoriaId}/`);
         toast.success("Categoria removida!", { id: toastId });
 
-        // Remove da lista do estado do React
-        const listaAtualizada = categorias.filter((c) => c.id !== categoriaId);
-        setCategorias(listaAtualizada);
-
-        // Reseta o formulário para a primeira categoria restante
-        setNovoServico({
-          ...novoServico,
-          categoria: listaAtualizada[0]?.id || "",
-        });
+        const lista = categorias.filter((c) => c.id !== categoriaId);
+        setCategorias(lista);
+        setFormDataServico((prev) => ({ ...prev, categoria: lista[0]?.id || "" }));
       } catch (err) {
-        console.error(err);
-        toast.error("Erro ao excluir. Verifique se existem dependências.", {
-          id: toastId,
-        });
+        toast.error("Erro ao excluir categoria.", { id: toastId });
       }
     }
   };
 
-  // Salva o Serviço Completo
+  const iniciarEdicao = (servico) => {
+    setEditandoId(servico.id);
+    setFormDataServico({
+      titulo: servico.titulo,
+      categoria: servico.categoria || categorias[0]?.id || "",
+      imagem: null,
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const cancelarEdicao = () => {
+    setEditandoId(null);
+    setFormDataServico({
+      titulo: "",
+      categoria: categorias[0]?.id || "",
+      imagem: null,
+    });
+    const input = document.getElementById("file-input-servico");
+    if (input) input.value = "";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!novoServico.categoria) {
-      toast.error("Por favor, selecione uma categoria válida antes de salvar.");
+    if (!formDataServico.categoria) {
+      toast.error("Selecione uma categoria válida.");
       return;
     }
 
     setLoading(true);
-    const t = toast.loading("Enviando serviço...");
+    const t = toast.loading(editandoId ? "Atualizando..." : "Salvando...");
 
     try {
-      const formData = new FormData();
-      formData.append("titulo", novoServico.titulo);
-      formData.append("categoria", novoServico.categoria); // Envia o ID numérico correto
-      formData.append("imagem", novoServico.imagem);
+      const data = new FormData();
+      data.append("titulo", formatarCaseSensitive(formDataServico.titulo));
+      data.append("categoria", formDataServico.categoria);
+      if (formDataServico.imagem) {
+        data.append("imagem", formDataServico.imagem);
+      }
 
-      await api.post("servicos/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      if (editandoId) {
+        await api.patch(`servicos/${editandoId}/`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("Serviço atualizado!", { id: t });
+      } else {
+        await api.post("servicos/", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("Serviço cadastrado!", { id: t });
+      }
 
-      toast.success("Serviço cadastrado!", { id: t });
-
-      // Limpa o formulário mantendo a categoria anterior ativa
-      setNovoServico({
-        titulo: "",
-        categoria: novoServico.categoria,
-        imagem: null,
-      });
-
-      // Reseta o input do arquivo fisicamente (limpa a seleção anterior)
-      document.getElementById("file-input-servico").value = "";
-
+      cancelarEdicao();
       fetchServicos();
     } catch (err) {
-      toast.error("Erro ao enviar serviço.", { id: t });
+      toast.error("Erro ao processar serviço.", { id: t });
     } finally {
       setLoading(false);
     }
@@ -196,179 +194,337 @@ const DashServicos = () => {
   };
 
   return (
-    <div className="dash-section">
-      <h3>
-        <Plus size={20} /> Adicionar Novo Serviço
-      </h3>
-
-      <form onSubmit={handleSubmit} className="dash-form" name="form-new-service">
-        <input
-          type="text"
-          placeholder="Título do Trabalho"
-          value={novoServico.titulo}
-          onChange={(e) =>
-            setNovoServico({ ...novoServico, titulo: e.target.value })
-          }
-          required
-        />
-
-        {/* SELECT DINÂMICO MAPEADO DO BANCO DE DADOS */}
-        <select
-          value={
-            mostrarCriarCategoria ? "ADICIONAR_NOVA" : novoServico.categoria
-          }
-          onChange={handleCategoriaChange}
-          required
-        >
-          <option value="" disabled hidden>
-            {categorias.length === 0
-              ? "Nenhuma categoria cadastrada"
-              : "Selecione uma Categoria"}
-          </option>
-
-          {categorias.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.nome}
-            </option>
-          ))}
-
-          <option
-            value="ADICIONAR_NOVA"
-            style={{ fontWeight: "bold", color: "#8a2be2" }}
+    <div className="dash-section" style={{ maxWidth: "900px", margin: "0 auto" }}>
+      {/* CABEÇALHO DO FORMULÁRIO */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+        <h2 style={{ fontSize: "1.3rem", fontWeight: "700", color: "#fff", display: "flex", alignItems: "center", gap: "8px" }}>
+          {editandoId ? <Edit3 size={22} color="#8a2be2" /> : <Plus size={22} />}
+          {editandoId ? `Editar Serviço #${editandoId}` : "Adicionar Novo Serviço"}
+        </h2>
+</div>
+        {editandoId && (
+          <button
+            type="button"
+            onClick={cancelarEdicao}
+            className="btn-cancelar"
           >
-            ➕ Adicionar / Gerenciar Categorias...
-          </option>
-        </select>
+            <X size={18} /> Cancelar Edição
+          </button>
+        )}
+      
 
-        {/* CONTROLE DE GERENCIAMENTO DE CATEGORIAS */}
-        {mostrarCriarCategoria && (
-          <div
-            className="category-manager-box"
+      {/* BLOCO CARD DO FORMULÁRIO */}
+      <div
+        style={{
+          background: "rgba(255, 255, 255, 0.03)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: "14px",
+          padding: "20px",
+          marginBottom: "35px",
+        }}
+      >
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <input
+            type="text"
+            placeholder="Título do Trabalho (Ex: Box de Vidro Temperado)"
+            value={formDataServico.titulo}
+            onChange={(e) =>
+              setFormDataServico({ ...formDataServico, titulo: e.target.value })
+            }
+            required
             style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
               width: "100%",
-              marginTop: "-5px",
+              padding: "12px 14px",
+              background: "rgba(0, 0, 0, 0.3)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "8px",
+              color: "#fff",
+              fontSize: "0.9rem",
+              outline: "none",
+            }}
+          />
+
+          <select
+            value={mostrarCriarCategoria ? "ADICIONAR_NOVA" : formDataServico.categoria}
+            onChange={handleCategoriaChange}
+            required
+            style={{
+              width: "100%",
+              padding: "12px 14px",
+              background: "rgba(0, 0, 0, 0.3)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "8px",
+              color: "#fff",
+              fontSize: "0.9rem",
+              outline: "none",
             }}
           >
-            <div style={{ display: "flex", gap: "10px", width: "100%" }}>
-              <input
-                type="text"
-                placeholder="Nome da Nova Categoria (Ex: Cortina de Vidro)"
-                value={novaCategoriaTexto}
-                onChange={(e) => setNovaCategoriaTexto(e.target.value)}
-                style={{ flex: 1 }}
-              />
-              <button
-                type="button"
-                onClick={handleAdicionarCategoriaAPI}
-                className="btn-add-inline"
-                style={{
-                  padding: "0 15px",
-                  background: "#8a2be2",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-                title="Salvar na API"
-              >
-                <FolderPlus size={18} />
-              </button>
-            </div>
+            <option value="" disabled hidden>
+              {categorias.length === 0 ? "Nenhuma categoria cadastrada" : "Selecione uma Categoria"}
+            </option>
+            {categorias.map((cat) => (
+              <option key={cat.id} value={cat.id} style={{ background: "#1a1a2e", color: "#fff" }}>
+                {cat.nome}
+              </option>
+            ))}
+            <option value="ADICIONAR_NOVA" style={{ background: "#1a1a2e", fontWeight: "bold", color: "#8a2be2" }}>
+              ➕ Adicionar / Gerenciar Categorias...
+            </option>
+          </select>
 
-            {/* Listagem das categorias vindas da API com botão de exclusão real */}
-            <div
-              className="custom-categories-list"
-              style={{
-                background: "rgba(0,0,0,0.2)",
-                padding: "12px",
-                borderRadius: "6px",
-                maxHeight: "150px",
-                overflowY: "auto",
-                border: "1px solid rgba(255,255,255,0.05)",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "0.78rem",
-                  color: "rgba(255,255,255,0.4)",
-                  display: "block",
-                  marginBottom: "8px",
-                  fontWeight: "500",
-                }}
-              >
-                Categorias Atuais no Banco de Dados:
-              </span>
-              {categorias.map((cat) => (
-                <div
-                  key={cat.id}
+          {mostrarCriarCategoria && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <input
+                  type="text"
+                  placeholder="Nova Categoria..."
+                  value={novaCategoriaTexto}
+                  onChange={(e) => setNovaCategoriaTexto(e.target.value)}
                   style={{
+                    flex: 1,
+                    padding: "10px",
+                    background: "rgba(0, 0, 0, 0.3)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    borderRadius: "6px",
+                    color: "#fff",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleAdicionarCategoriaAPI}
+                  style={{
+                    padding: "0 16px",
+                    background: "#8a2be2",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
                     display: "flex",
-                    justifyContent: "space-between",
                     alignItems: "center",
-                    padding: "6px 0",
-                    fontSize: "0.88rem",
-                    borderBottom: "1px solid rgba(255,255,255,0.03)",
                   }}
                 >
-                  <span style={{ color: "rgba(255,255,255,0.75)" }}>
-                    {cat.nome}
-                  </span>
+                  <FolderPlus size={18} />
+                </button>
+              </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleRemoverCategoriaAPI(cat.id, cat.nome)}
+              <div
+                style={{
+                  background: "rgba(0,0,0,0.2)",
+                  padding: "10px",
+                  borderRadius: "6px",
+                  maxHeight: "120px",
+                  overflowY: "auto",
+                }}
+              >
+                {categorias.map((cat) => (
+                  <div
+                    key={cat.id}
                     style={{
-                      background: "none",
-                      border: "none",
-                      color: "#ff4d4d",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "4px 0",
+                      fontSize: "0.85rem",
+                      borderBottom: "1px solid rgba(255,255,255,0.05)",
+                    }}
+                  >
+                    <span style={{ color: "rgba(255,255,255,0.7)" }}>{cat.nome}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoverCategoriaAPI(cat.id, cat.nome)}
+                      style={{ background: "none", border: "none", color: "#ff4d4d", cursor: "pointer" }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.6)" }}>
+              {editandoId ? "Alterar Imagem (Opcional):" : "Imagem do Serviço:"}
+            </label>
+            <input
+              id="file-input-servico"
+              type="file"
+              onChange={handleFileChange}
+              required={!editandoId}
+              style={{
+                fontSize: "0.85rem",
+                color: "rgba(255,255,255,0.7)",
+              }}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: "100%",
+              padding: "12px",
+              background: editandoId ? "#28a745" : "#8a2be2",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              fontWeight: "600",
+              fontSize: "0.95rem",
+              cursor: "pointer",
+              marginTop: "6px",
+              boxShadow: "0 4px 12px rgba(138, 43, 226, 0.25)",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {loading ? "Processando..." : editandoId ? "Salvar Alterações" : "Salvar Serviço"}
+          </button>
+        </form>
+      </div>
+
+      {/* LISTAGEM EM CARDS (JUNÇÃO VÍDEOS + DEPOIMENTOS) */}
+      <h3 style={{ fontSize: "1.1rem", color: "#fff", marginBottom: "16px", fontWeight: "600" }}>
+        Serviços Cadastrados ({servicos.length})
+      </h3>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+          gap: "18px",
+        }}
+      >
+        {servicos.map((s) => (
+          <div
+            key={s.id}
+            style={{
+              background: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRadius: "14px",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            }}
+          >
+            {/* CAPA DA IMAGEM (ESTILO VÍDEOS) */}
+            {s.imagem ? (
+              <img
+                src={s.imagem}
+                alt={s.titulo}
+                style={{
+                  width: "100%",
+                  height: "160px",
+                  objectFit: "cover",
+                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: "100%",
+                  height: "160px",
+                  background: "rgba(255,255,255,0.04)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "rgba(255,255,255,0.2)",
+                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                }}
+              >
+                Sem Imagem
+              </div>
+            )}
+
+            {/* CORPO DO CARD (ESTILO DEPOIMENTOS) */}
+            <div style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "10px", flex: 1 }}>
+              {/* TOPO: ID + BOTÕES DE AÇÃO */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.4)", fontWeight: "600" }}>
+                  #{s.id}
+                </span>
+
+                <div style={{ display: "flex", gap: "6px" }}>
+                  <button
+                    onClick={() => iniciarEdicao(s)}
+                    title="Editar Serviço"
+                    style={{
+                      background: "rgba(138, 43, 226, 0.15)",
+                      border: "1px solid rgba(138, 43, 226, 0.3)",
+                      color: "#a855f7",
+                      padding: "6px",
+                      borderRadius: "6px",
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
-                      padding: "2px",
                     }}
-                    title={`Excluir permanentemente ${cat.nome}`}
                   >
-                    <Trash2 size={14} />
+                    <Edit3 size={15} />
+                  </button>
+
+                  <button
+                    onClick={() => deleteServico(s.id)}
+                    title="Excluir Serviço"
+                    style={{
+                      background: "rgba(255, 77, 77, 0.15)",
+                      border: "1px solid rgba(255, 77, 77, 0.3)",
+                      color: "#ff4d4d",
+                      padding: "6px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Trash2 size={15} />
                   </button>
                 </div>
-              ))}
+              </div>
+
+              {/* TÍTULO DO TRABALHO */}
+              <h4 style={{ fontSize: "1rem", color: "#fff", fontWeight: "700", margin: "2px 0" }}>
+                {s.titulo}
+              </h4>
+
+              {/* BADGE DE CATEGORIA */}
+              <div>
+                <span
+                  style={{
+                    background: "rgba(138, 43, 226, 0.2)",
+                    border: "1px solid rgba(138, 43, 226, 0.3)",
+                    color: "#d8b4fe",
+                    padding: "3px 10px",
+                    borderRadius: "12px",
+                    fontSize: "0.75rem",
+                    fontWeight: "600",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  <Tag size={12} />
+                  {s.categoria_detalhes?.nome || "Sem Categoria"}
+                </span>
+              </div>
             </div>
-          </div>
-        )}
-
-        <input
-          id="file-input-servico"
-          type="file"
-          onChange={handleFileChange}
-          required
-        />
-
-        <button type="submit" disabled={loading} className="btn-add">
-          {loading ? "Processando..." : "Salvar Serviço"}
-        </button>
-      </form>
-
-      {/* LISTAGEM DE SERVIÇOS CADASTRADOS */}
-      <div className="dash-list">
-        {servicos.map((s) => (
-          <div key={s.id} className="dash-item">
-            <span>
-              {s.titulo} —{" "}
-              <strong style={{ color: "var(--accent-purple)" }}>
-                {s.categoria_detalhes?.nome || "Sem Categoria"}
-              </strong>
-            </span>
-            <button onClick={() => deleteServico(s.id)} className="btn-del">
-              <Trash2 size={16} />
-            </button>
           </div>
         ))}
       </div>
+
+      {servicos.length === 0 && (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "40px",
+            color: "rgba(255,255,255,0.4)",
+            background: "rgba(255,255,255,0.02)",
+            borderRadius: "12px",
+            border: "1px solid rgba(255,255,255,0.05)",
+          }}
+        >
+          Nenhum serviço cadastrado até o momento.
+        </div>
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import {
   User,
+  UserCheck,
   Link2,
   BarChart3,
   MessageSquare,
@@ -30,6 +31,7 @@ import DashAbout from "../components/DashAbout";
 import NavbarUser from "../components/NavbarUser";
 import DashPortifolio from "../components/DashPortifolio";
 import ChangePassword from "../components/ChangePassword";
+import DashProfile from "../components/DashProfile";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("resumo");
@@ -167,7 +169,7 @@ const Dashboard = () => {
               </button>
             </li>
 
-            <li className={`dashboard-menu-item ${activeTab === "video_gallery" ? "active" : ""}`}>
+            <li className={`dashboard-menu-item ${activeTab === "video_gallery" ? "active" : ""}`} style={{display:"none"}}>
               <button
                 type="button"
                 onClick={() => handleSelectTab("video_gallery")}
@@ -199,6 +201,16 @@ const Dashboard = () => {
                 <span>Gerenciar Portfólio</span>
               </button>
             </li>
+            <li className={`dashboard-menu-item ${activeTab === "profile" ? "active" : ""}`}>
+  <button
+    type="button"
+    onClick={() => handleSelectTab("profile")}
+    className="dash-btn-action"
+  >
+    <UserCheck size={18} />
+    <span>Meu Perfil</span>
+  </button>
+</li>
           </ul>
 
           {/* Submenu de Configurações para Administradores */}
@@ -386,7 +398,11 @@ const Dashboard = () => {
                 <DashServicos />
               </section>
             )}
-
+            {activeTab === "profile" && (
+  <section className="dashboard-data-section">
+    <DashProfile />
+  </section>
+)}
             {activeTab === "change_password" && (
               <section className="dashboard-data-section">
                 <ChangePassword />

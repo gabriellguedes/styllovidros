@@ -27,8 +27,12 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-#ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'styllo-vidros-api.onrender.com', '192.168.100.10']
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='192.168.100.10',
+     cast=lambda v: [s.strip() for s in v.split(',')]
+)
+#ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'styllo-vidros-api.onrender.com', '192.168.100.10']
 
 # Application definition
 
@@ -122,7 +126,18 @@ REST_FRAMEWORK = {
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
+# settings.py
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://192.168.100.10:5173",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+CORS_ALLOWED_ORIGINS = [
+    "http://192.168.100.10:5173",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
 LANGUAGE_CODE = 'pt-br'
 
 TIME_ZONE = 'UTC'
@@ -146,3 +161,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Permite que o site use frames do mesmo domínio
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# X_FRAME_OPTIONS = 'DENY' # Previne ataques de Clickjacking
+# SECURE_SSL_REDIRECT = True 
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
