@@ -10,6 +10,7 @@ import {
   Calendar,
   MessageCircle,
 } from "lucide-react";
+import SEO from "../components/SEO";
 import HeaderHome from "../components/HeaderHome";
 import FooterHome from "../components/FooterHome";
 
@@ -148,6 +149,10 @@ const whatsappMessage = "Olá! Gostaria de um orçamento para um projeto estilo 
 
   return (
     <>
+    <SEO 
+        title="Vidraçaria em Valparaíso de Goiás e DF"
+        description="Especialistas em box de vidro, cortina de vidro e espelhos sob medida com atendimento rápido. Peça um orçamento!"
+      />
       <HeaderHome />
       <main className="section-portfolio-home">
         <div className="portfolio-page-wrapper">

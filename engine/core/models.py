@@ -1,4 +1,37 @@
+import os
+from io import BytesIO
+from PIL import Image
+from django.core.files.base import ContentFile
 from django.db import models
+
+def converter_para_webp(imagem, max_width=1200, qualidade=80):
+    """
+    Redimensiona e converte qualquer imagem enviada (JPG, PNG) para WebP comprimido.
+    """
+    if not imagem:
+        return imagem
+
+    img = Image.open(imagem)
+
+    # Converte imagens RGBA/P para RGB se necessário
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGB")
+
+    # Redimensiona mantendo a proporção caso seja muito grande
+    if img.width > max_width:
+        proporcao = max_width / float(img.width)
+        altura_proporcional = int((float(img.height) * float(proporcao)))
+        img = img.resize((max_width, altura_proporcional), Image.Resampling.LANCZOS)
+
+    output = BytesIO()
+    img.save(output, format='WEBP', quality=qualidade, optimize=True)
+    output.seek(0)
+
+    # Altera a extensão do arquivo para .webp
+    nome_sem_extensao = os.path.splitext(imagem.name)[0]
+    novo_nome = f"{nome_sem_extensao}.webp"
+
+    return ContentFile(output.read(), name=novo_nome)
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100, unique=True)
@@ -22,6 +55,12 @@ class Servico(models.Model):
     imagem = models.ImageField(upload_to='portfolio/')
     video_url = models.URLField(blank=True, null=True) # Caso queira linkar do YouTube/Drive
     criado_em = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        # Converte para WebP apenas se houver um novo arquivo de imagem sendo salvo
+        if self.imagem and (not self.pk or 'imagem' in kwargs.get('update_fields', [])):
+            self.imagem = converter_para_webp(self.imagem)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.titulo} - {self.categoria.nome}"
@@ -33,6 +72,12 @@ class Depoimento(models.Model):
     foto_cliente = models.ImageField(upload_to='depoimentos/', blank=True, null=True)
     exibir_no_site = models.BooleanField(default=False)
     data_envio = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        if self.foto_cliente:
+            self.foto_cliente = converter_para_webp(self.foto_cliente)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.nome_cliente
  
@@ -110,6 +155,9 @@ class AlbumFoto(models.Model):
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='fotos')
     imagem = models.ImageField(upload_to='portfoli_albuns/')
     criado_em = models.DateTimeField(auto_now_add=True)
-
+    def save(self, *args, **kwargs):
+        if self.imagem:
+            self.imagem = converter_para_webp(self.imagem)
+        super().save(*args, **kwargs)
     def __str__(self):
         return f"Foto de {self.album.titulo} ({self.id})"   

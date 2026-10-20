@@ -4,7 +4,7 @@ import { MessageCircle, ShieldCheck, Clock, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import ServicosHome from "../components/Servicos";
 import DepoimentosHome from "../components/Depoimentos";
-import VideosHome from "../components/VideoGallery";
+import SEO from "../components/SEO";
 import ContatoForm from "../components/ContatoForm";
 import HeaderHome from "../components/HeaderHome";
 import FooterHome from "../components/FooterHome";
@@ -28,6 +28,12 @@ const Home = () => {
   }, []);
 
   return (
+    <>
+    <SEO 
+        title="Vidraçaria em Valparaíso de Goiás e DF"
+        description="Especialistas em box de vidro, cortina de vidro e espelhos sob medida com atendimento rápido. Peça um orçamento!"
+      />
+  
     <div className="app-wrapper">
       <HeaderHome />
       {/* 2. Container Principal com efeito Parallax */}
@@ -97,6 +103,7 @@ const Home = () => {
       </main>
       <FooterHome />
     </div>
+    </>
   );
 };
 
