@@ -1159,7 +1159,7 @@ body {
 
 /* --- FOOTER --- */
 .footer-main {
-  background: linear-gradient(135deg, rgba(138, 43, 226, 0.55) 0%, rgb(18, 18, 18) 15%)rgba(20, 0, 35, 0.95);
+  background: linear-gradient(155deg, rgba(138, 43, 226, 0.95) 0%, rgb(18, 18, 18) 10%);
   padding: 60px 0 0;
 }
 
@@ -1277,14 +1277,13 @@ body {
   /* Reutiliza a imagem de vidros de fundo se desejar, ou mantenha um gradiente escuro */
   background: radial-gradient(
     circle at center,
-    var(--primary-medium) 0%,
-    var(--primary-dark) 100%
+    var(--bg-black) 0%,
+    rgb(0,0,0) 10%
   );
   padding: 20px;
   overflow: hidden;
 }
 
-/* Opcional: Se quiser a mesma imagem de fundo do parallax na tela de login */
 .login-page-container::before {
   content: "";
   position: absolute;
@@ -1305,7 +1304,7 @@ body {
   z-index: 1;
   width: 100%;
   max-width: 420px;
-  background: rgba(255, 255, 255, 0.04); /* Fundo branco ultra translúcido */
+  background:  rgb(18, 18, 18, 0.95);
   backdrop-filter: blur(16px); /* Desfoque intenso de vidro */
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
