@@ -13,6 +13,9 @@ import os
 import dj_database_url 
 from pathlib import Path
 from decouple import config
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,14 +45,16 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    # Cloudinary deve vir antes de staticfiles se possível
+    'cloudinary_storage',
+    'django.contrib.staticfiles',
+    'cloudinary',
     #MY APPS
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     'engine.core',
-     'cloudinary_storage',
     'django.contrib.staticfiles',
-    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -159,7 +164,16 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Configuração de arquivos de mídia (Fotos e Vídeos)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# Se o seu Django for versão 4.2 ou superior, use este formato no final do arquivo:
+# --- CONFIGURAÇÃO DO CLOUDINARY ---
+cloudinary.config(
+  cloud_name = config('CLOUDINARY_CLOUD_NAME'),
+  api_key = config('CLOUDINARY_API_KEY'),
+  api_secret = config('CLOUDINARY_API_SECRET'),
+  secure = True
+)
+
+# Define o Cloudinary como o armazenamento padrão para arquivos de mídia (imagens)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Permite que o site use frames do mesmo domínio
 X_FRAME_OPTIONS = 'SAMEORIGIN'
