@@ -4,3 +4,4 @@
 *.py[code]
 media/
 categorias.py
+settings_bkp_localserver.py
