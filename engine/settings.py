@@ -132,6 +132,18 @@ CORS_ALLOWED_ORIGINS = [
     "https://styllovidros.vercel.app",
 ]
 
+# --- COMPATIBILIDADE DE STORAGE PARA O DJANGO RECENTE ---
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'UTC'
 USE_I18N = True
