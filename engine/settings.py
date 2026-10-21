@@ -30,31 +30,29 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+# CORRIGIDO: Removido o 'https://' (O Django aceita apenas o nome do domínio ou '*' para testes)
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
-    default='https://styllo-vidros-api.onrender.com',
-     cast=lambda v: [s.strip() for s in v.split(',')]
+    default='styllovidros-api.onrender.com',
+    cast=lambda v: [s.strip() for s in v.split(',')]
 )
-#ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'styllo-vidros-api.onrender.com', '192.168.100.10']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    # Cloudinary deve vir antes de staticfiles se possível
+    # Cloudinary e Staticfiles (declarados apenas uma vez)
     'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
-    #MY APPS
+    # MY APPS
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     'engine.core',
-    'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
@@ -87,27 +85,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'engine.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}"""
-
-# 🔥 CONFIGURAÇÃO DO BANCO DE DADOS (Lê o Render se houver, se não, usa o SQLite local)
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'),
         conn_max_age=600
     )
 }
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -129,41 +115,38 @@ REST_FRAMEWORK = {
     ],
 }
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-# settings.py
 
+# CORRIGIDO: Removida a barra '/' no final do link da Vercel
 CSRF_TRUSTED_ORIGINS = [
     "http://192.168.100.10:5173",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://styllovidros.vercel.app/",
+    "https://styllovidros.vercel.app",
 ]
+
+# CORRIGIDO: Removida a barra '/' no final do link da Vercel
 CORS_ALLOWED_ORIGINS = [
     "http://192.168.100.10:5173",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://styllovidros.vercel.app/",
+    "https://styllovidros.vercel.app",
 ]
+
 LANGUAGE_CODE = 'pt-br'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
+# Static files
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 CORS_ALLOW_ALL_ORIGINS = True
-# Configuração de arquivos de mídia (Fotos e Vídeos)
+
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # --- CONFIGURAÇÃO DO CLOUDINARY ---
 cloudinary.config(
   cloud_name = config('CLOUDINARY_CLOUD_NAME'),
@@ -172,15 +155,7 @@ cloudinary.config(
   secure = True
 )
 
-# Define o Cloudinary como o armazenamento padrão para arquivos de mídia (imagens)
+# Define o Cloudinary como armazenamento padrão
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Permite que o site use frames do mesmo domínio
 X_FRAME_OPTIONS = 'SAMEORIGIN'
-
-# SECURE_BROWSER_XSS_FILTER = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# X_FRAME_OPTIONS = 'DENY' # Previne ataques de Clickjacking
-# SECURE_SSL_REDIRECT = True 
-#SESSION_COOKIE_SECURE = True
-#CSRF_COOKIE_SECURE = True
