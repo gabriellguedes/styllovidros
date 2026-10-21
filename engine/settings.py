@@ -29,7 +29,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
-    default='192.168.100.10',
+    default='https://styllo-vidros-api.onrender.com',
      cast=lambda v: [s.strip() for s in v.split(',')]
 )
 #ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'styllo-vidros-api.onrender.com', '192.168.100.10']
@@ -132,14 +132,12 @@ CSRF_TRUSTED_ORIGINS = [
     "http://192.168.100.10:5173",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://styllo-vidros-api.onrender.com",
     "https://styllovidros.vercel.app/",
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://192.168.100.10:5173",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://styllo-vidros-api.onrender.com",
     "https://styllovidros.vercel.app/",
 ]
 LANGUAGE_CODE = 'pt-br'
